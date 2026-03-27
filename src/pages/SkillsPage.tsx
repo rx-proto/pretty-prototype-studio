@@ -4,17 +4,17 @@ import { Search, Plus, Eye, FileText, AlertTriangle, ClipboardCheck, ShieldAlert
 import { Input } from "@/components/ui/input";
 import type { LucideIcon } from "lucide-react";
 
-const iconMap: Record<string, LucideIcon> = {
-  "eye": Eye,
-  "file-text": FileText,
-  "alert-triangle": AlertTriangle,
-  "clipboard-check": ClipboardCheck,
-  "shield-alert": ShieldAlert,
-  "refresh-cw": RefreshCw,
-  "heart": Heart,
-  "bar-chart-3": BarChart3,
-  "pen-tool": PenTool,
-  "send": Send,
+const iconMap: Record<string, { icon: LucideIcon; color: string; bg: string }> = {
+  "eye": { icon: Eye, color: "text-blue-600", bg: "bg-blue-50" },
+  "file-text": { icon: FileText, color: "text-amber-600", bg: "bg-amber-50" },
+  "alert-triangle": { icon: AlertTriangle, color: "text-orange-600", bg: "bg-orange-50" },
+  "clipboard-check": { icon: ClipboardCheck, color: "text-emerald-600", bg: "bg-emerald-50" },
+  "shield-alert": { icon: ShieldAlert, color: "text-red-600", bg: "bg-red-50" },
+  "refresh-cw": { icon: RefreshCw, color: "text-cyan-600", bg: "bg-cyan-50" },
+  "heart": { icon: Heart, color: "text-pink-600", bg: "bg-pink-50" },
+  "bar-chart-3": { icon: BarChart3, color: "text-violet-600", bg: "bg-violet-50" },
+  "pen-tool": { icon: PenTool, color: "text-indigo-600", bg: "bg-indigo-50" },
+  "send": { icon: Send, color: "text-teal-600", bg: "bg-teal-50" },
 };
 
 export default function SkillsPage() {
@@ -44,12 +44,13 @@ export default function SkillsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 animate-stagger">
         {filtered.map((skill) => {
-          const Icon = iconMap[skill.icon] || Eye;
+          const entry = iconMap[skill.icon] || { icon: Eye, color: "text-blue-600", bg: "bg-blue-50" };
+          const Icon = entry.icon;
           return (
             <div key={skill.id} className="card-interactive rounded-xl border border-border p-5 cursor-pointer group relative noise-overlay">
               <div className="relative">
-                <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center mb-3 group-hover:bg-primary/[0.08] transition-colors duration-200">
-                  <Icon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors duration-200" />
+                <div className={`w-9 h-9 rounded-lg ${entry.bg} flex items-center justify-center mb-3 transition-colors duration-200`}>
+                  <Icon className={`w-4 h-4 ${entry.color} transition-colors duration-200`} />
                 </div>
                 <h3 className="text-[14px] font-semibold text-foreground mb-1">{skill.name}</h3>
                 <p className="text-[12px] text-muted-foreground leading-relaxed mb-3">{skill.summary}</p>

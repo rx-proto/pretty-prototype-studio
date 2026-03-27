@@ -17,7 +17,7 @@ export default function HomePage() {
       <div className="grid grid-cols-3 gap-3 animate-stagger">
         <div className="card-premium rounded-xl border border-border p-5 relative noise-overlay">
           <div className="flex items-center gap-2 mb-3">
-            <Users className="w-4 h-4 text-muted-foreground" />
+            <Users className="w-4 h-4 text-blue-500" />
             <p className="section-label">Employees</p>
           </div>
           <p className="text-[22px] font-bold text-foreground tracking-tight">{workingCount} <span className="text-[13px] font-medium text-muted-foreground">working</span></p>
@@ -26,7 +26,7 @@ export default function HomePage() {
 
         <div className="card-premium rounded-xl border border-border p-5 relative noise-overlay">
           <div className="flex items-center gap-2 mb-3">
-            <DollarSign className="w-4 h-4 text-muted-foreground" />
+            <DollarSign className="w-4 h-4 text-emerald-500" />
             <p className="section-label">Balance</p>
           </div>
           <p className="text-[22px] font-bold text-foreground tracking-tight">${workspace.balance.toFixed(2)}</p>
@@ -35,7 +35,7 @@ export default function HomePage() {
 
         <div className="card-premium rounded-xl border border-border p-5 relative noise-overlay">
           <div className="flex items-center gap-2 mb-3">
-            <Plug className="w-4 h-4 text-muted-foreground" />
+            <Plug className="w-4 h-4 text-violet-500" />
             <p className="section-label">Connectors</p>
           </div>
           <p className="text-[22px] font-bold text-foreground tracking-tight">{workspace.connectorsActive} <span className="text-[13px] font-medium text-muted-foreground">active</span></p>

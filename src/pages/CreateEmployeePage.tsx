@@ -8,11 +8,11 @@ import type { LucideIcon } from "lucide-react";
 
 type Step = "describe" | "review" | "activated";
 
-const templateIcons: Record<string, LucideIcon> = {
-  megaphone: Megaphone,
-  clipboard: ClipboardList,
-  trending: TrendingUp,
-  search: Search,
+const templateIcons: Record<string, { icon: LucideIcon; color: string; bg: string }> = {
+  megaphone: { icon: Megaphone, color: "text-orange-600", bg: "bg-orange-50" },
+  clipboard: { icon: ClipboardList, color: "text-blue-600", bg: "bg-blue-50" },
+  trending: { icon: TrendingUp, color: "text-emerald-600", bg: "bg-emerald-50" },
+  search: { icon: Search, color: "text-violet-600", bg: "bg-violet-50" },
 };
 
 const mockDraft = {
