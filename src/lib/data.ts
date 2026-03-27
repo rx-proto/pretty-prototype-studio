@@ -60,6 +60,7 @@ export interface AttentionItem {
   detail: string;
   tone: EmployeeState;
   action: string;
+  suggestion: string;
 }
 
 export interface SettingsGroupPreview {
@@ -258,10 +259,10 @@ export const roleTemplates: RoleTemplate[] = [
 ];
 
 export const attentionItems: AttentionItem[] = [
-  { title: "Sora", detail: "Approaching weekly spend limit due to high ticket volume.", tone: "warning", action: "Review" },
-  { title: "Iris", detail: "Salesforce connector needs to be set up to resume work.", tone: "blocked", action: "Connect" },
-  { title: "Maya", detail: "New pricing brief is ready for your review.", tone: "accent", action: "Review" },
-  { title: "Kai", detail: "Auth migration blocker — awaiting backend team response for 24h.", tone: "warning", action: "Check" },
+  { title: "Sora", detail: "Approaching weekly spend limit due to high ticket volume.", tone: "warning", action: "Review", suggestion: "Consider raising Sora's weekly budget cap in Settings → Billing, or pause non-critical ticket processing until next week's cycle resets." },
+  { title: "Iris", detail: "Salesforce connector needs to be set up to resume work.", tone: "blocked", action: "Connect", suggestion: "Go to Connectors and set up the Salesforce integration. Iris needs read access to Opportunities and Contacts to continue prospecting." },
+  { title: "Maya", detail: "New pricing brief is ready for your review.", tone: "accent", action: "Review", suggestion: "Open Maya's latest output to review the competitive pricing brief. Approve or leave feedback so she can iterate." },
+  { title: "Kai", detail: "Auth migration blocker — awaiting backend team response for 24h.", tone: "warning", action: "Check", suggestion: "The backend team hasn't responded to the auth migration ticket in 24 hours. Consider pinging them directly or reassigning the blocker." },
 ];
 
 export const settingsGroups: SettingsGroupPreview[] = [

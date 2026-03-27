@@ -1,17 +1,22 @@
-import { employees, attentionItems, dailySpend, weeklySpend, todaySpend, recentActivity } from "@/lib/data";
+import { useState } from "react";
+import { employees, attentionItems, dailySpend, weeklySpend, todaySpend, recentActivity, AttentionItem } from "@/lib/data";
 import { StateDot, EmployeeAvatar } from "@/components/StateBadge";
 import { useNavigate } from "react-router-dom";
 import { Users, TrendingUp, ChevronRight, AlertTriangle, Clock } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 export default function HomePage() {
   const navigate = useNavigate();
   const activeCount = employees.filter(e => e.state === "working" || e.state === "warning" || e.state === "ready").length;
   const actionItems = attentionItems.filter(item => item.tone === "warning" || item.tone === "blocked");
+  const [selectedItem, setSelectedItem] = useState<AttentionItem | null>(null);
 
-  // Find employee id by name for navigation
-  const getEmployeeId = (name: string) => employees.find(e => e.name === name)?.id;
-
-  // Sparkline bar chart inline
   const maxSpend = Math.max(...dailySpend.map(d => d.amount));
 
   return (
@@ -77,29 +82,52 @@ export default function HomePage() {
             <h2 className="text-[13px] font-semibold text-foreground">Action required</h2>
           </div>
           <div className="space-y-2">
-            {actionItems.map((item, i) => {
-              const empId = getEmployeeId(item.title);
-              return (
-                <button
-                  key={i}
-                  onClick={() => empId && navigate(`/app/employees/${empId}`)}
-                  className="w-full card-interactive rounded-xl border border-border px-5 py-3.5 flex items-center gap-4 text-left"
-                >
-                  <EmployeeAvatar name={item.title} size="sm" />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="text-[13px] font-medium text-foreground">{item.title}</p>
-                      <StateDot state={item.tone} />
-                    </div>
-                    <p className="text-[12px] text-muted-foreground mt-0.5">{item.detail}</p>
+            {actionItems.map((item, i) => (
+              <button
+                key={i}
+                onClick={() => setSelectedItem(item)}
+                className="w-full card-interactive rounded-xl border border-border px-5 py-3.5 flex items-center gap-4 text-left"
+              >
+                <EmployeeAvatar name={item.title} size="sm" />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="text-[13px] font-medium text-foreground">{item.title}</p>
+                    <StateDot state={item.tone} />
                   </div>
-                  <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/30 flex-shrink-0" />
-                </button>
-              );
-            })}
+                  <p className="text-[12px] text-muted-foreground mt-0.5">{item.detail}</p>
+                </div>
+                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/30 flex-shrink-0" />
+              </button>
+            ))}
           </div>
         </div>
       )}
+
+      {/* Action detail dialog */}
+      <Dialog open={!!selectedItem} onOpenChange={(open) => !open && setSelectedItem(null)}>
+        <DialogContent className="sm:max-w-[420px]">
+          {selectedItem && (
+            <>
+              <DialogHeader>
+                <div className="flex items-center gap-3 mb-1">
+                  <EmployeeAvatar name={selectedItem.title} size="sm" />
+                  <div className="flex items-center gap-2">
+                    <DialogTitle className="text-[15px]">{selectedItem.title}</DialogTitle>
+                    <StateDot state={selectedItem.tone} />
+                  </div>
+                </div>
+                <DialogDescription className="text-[13px] pt-1">
+                  {selectedItem.detail}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="mt-2 rounded-lg bg-muted/50 border border-border px-4 py-3">
+                <p className="text-[12px] font-medium text-muted-foreground mb-1.5">Suggested action</p>
+                <p className="text-[13px] text-foreground leading-relaxed">{selectedItem.suggestion}</p>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Recent activity */}
       <div className="opacity-0 animate-fade-in" style={{ animationDelay: "0.3s" }}>
