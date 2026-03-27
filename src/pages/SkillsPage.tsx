@@ -31,7 +31,7 @@ export default function SkillsPage() {
           <h1 className="text-[24px] font-bold text-foreground tracking-tight">Skills</h1>
           <p className="text-muted-foreground text-[13px] mt-1">Capabilities your employees can use</p>
         </div>
-        <button className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-[12px] font-semibold bg-primary text-primary-foreground shadow-md shadow-primary/20 hover:brightness-110 transition-all">
+        <button className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-[12px] font-semibold bg-foreground text-background shadow-sm hover:bg-foreground/90 transition-all">
           <Plus className="w-3.5 h-3.5" />
           Create skill
         </button>

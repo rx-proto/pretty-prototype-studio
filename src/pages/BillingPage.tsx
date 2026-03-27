@@ -84,7 +84,7 @@ export default function BillingPage() {
         <div className="card-premium rounded-xl border border-border p-5 flex flex-col items-center justify-center text-center">
           <button
             onClick={handleAddFunds}
-            className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-[13px] font-semibold bg-primary text-primary-foreground shadow-md shadow-primary/20 hover:brightness-110 transition-all"
+            className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-[13px] font-semibold bg-foreground text-background shadow-sm hover:bg-foreground/90 transition-all"
           >
             <Plus className="w-4 h-4" />
             Add funds
