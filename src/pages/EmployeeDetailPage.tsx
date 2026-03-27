@@ -6,7 +6,8 @@ import { StateDot, EmployeeAvatar } from "@/components/StateBadge";
 import { ActivityLog } from "@/components/employee-detail/ActivityLog";
 import { EditableTagList } from "@/components/employee-detail/EditableTagList";
 import { ConnectorsPanel } from "@/components/employee-detail/ConnectorsPanel";
-import { ArrowLeft, Zap, Wrench, Archive, RotateCcw, AlertTriangle, DollarSign } from "lucide-react";
+import { CostPanel } from "@/components/employee-detail/CostPanel";
+import { ArrowLeft, Zap, Wrench, Archive, RotateCcw, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -19,19 +20,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-
-// Synthetic cost data per employee
-const costData: Record<string, { today: number; week: number; month: number; avgPerRun: number }> = {
-  "maya-competitive-intel": { today: 2.40, week: 14.80, month: 52.30, avgPerRun: 0.18 },
-  "sora-support-triage": { today: 5.10, week: 31.60, month: 118.40, avgPerRun: 0.08 },
-  "niko-launch-ops": { today: 0.60, week: 4.20, month: 16.50, avgPerRun: 0.22 },
-  "iris-deal-risk": { today: 0, week: 1.80, month: 8.90, avgPerRun: 0.35 },
-  "alex-gtm": { today: 1.90, week: 12.40, month: 45.20, avgPerRun: 0.15 },
-  "kai-ai-pm": { today: 0.80, week: 6.30, month: 22.10, avgPerRun: 0.12 },
-  "vera-analyst": { today: 3.20, week: 18.90, month: 71.60, avgPerRun: 0.42 },
-};
-
-const defaultCost = { today: 0, week: 0, month: 0, avgPerRun: 0 };
 
 export default function EmployeeDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -49,7 +37,6 @@ export default function EmployeeDetailPage() {
 
   const logs = getActivityLogs(emp.id);
   const connectorDetails = getConnectorDetails(emp.connectors);
-  const cost = costData[emp.id] || defaultCost;
 
   const handleArchive = () => {
     setIsArchived(true);
@@ -104,31 +91,7 @@ export default function EmployeeDetailPage() {
 
         {/* Right sidebar */}
         <div className="space-y-4 animate-stagger">
-          {/* Cost card */}
-          <div className="card-premium rounded-xl border border-border p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <DollarSign className="w-3.5 h-3.5 text-muted-foreground" />
-              <h3 className="section-label">Cost</h3>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <p className="text-[11px] text-muted-foreground">Today</p>
-                <p className="text-[15px] font-semibold text-foreground tabular-nums">${cost.today.toFixed(2)}</p>
-              </div>
-              <div>
-                <p className="text-[11px] text-muted-foreground">This week</p>
-                <p className="text-[15px] font-semibold text-foreground tabular-nums">${cost.week.toFixed(2)}</p>
-              </div>
-              <div>
-                <p className="text-[11px] text-muted-foreground">This month</p>
-                <p className="text-[15px] font-semibold text-foreground tabular-nums">${cost.month.toFixed(2)}</p>
-              </div>
-              <div>
-                <p className="text-[11px] text-muted-foreground">Avg / run</p>
-                <p className="text-[15px] font-semibold text-foreground tabular-nums">${cost.avgPerRun.toFixed(2)}</p>
-              </div>
-            </div>
-          </div>
+          <CostPanel employeeId={emp.id} />
 
           <EditableTagList
             items={emp.skills}
