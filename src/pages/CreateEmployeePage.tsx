@@ -1,11 +1,19 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Send, Check, ArrowRight, Plug } from "lucide-react";
+import { ArrowLeft, Send, Check, ArrowRight, Plug, Search, Headphones, Rocket, Shield } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { roleTemplates } from "@/lib/data";
 import { toast } from "sonner";
+import type { LucideIcon } from "lucide-react";
 
 type Step = "describe" | "review" | "activated";
+
+const templateIcons: Record<string, LucideIcon> = {
+  search: Search,
+  headphones: Headphones,
+  rocket: Rocket,
+  shield: Shield,
+};
 
 const mockDraft = {
   name: "Maya",
@@ -52,7 +60,7 @@ export default function CreateEmployeePage() {
           </p>
           <div className="flex flex-col gap-3 opacity-0 animate-fade-in-up" style={{ animationDelay: "0.35s" }}>
             <button
-              onClick={() => navigate("/preview/employees/maya-competitive-intel")}
+              onClick={() => navigate("/app/employees/maya-competitive-intel")}
               className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-semibold bg-primary text-primary-foreground shadow-md shadow-primary/20 hover:brightness-110 transition-all"
             >
               Go see {mockDraft.name} <ArrowRight className="w-4 h-4" />
@@ -143,23 +151,26 @@ export default function CreateEmployeePage() {
         <div className="mb-8 opacity-0 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
           <p className="section-label mb-3">Start from a template</p>
           <div className="grid grid-cols-2 gap-3">
-            {roleTemplates.map((tpl) => (
-              <button
-                key={tpl.id}
-                onClick={() => { setSelectedTemplate(tpl.id); setDescription(""); }}
-                className={`text-left rounded-xl border p-4 transition-all duration-200 group ${
-                  selectedTemplate === tpl.id
-                    ? "border-primary/30 bg-primary/[0.03] ring-1 ring-primary/15 shadow-sm"
-                    : "border-border hover:border-border/80 card-interactive"
-                }`}
-              >
-                <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center mb-2.5 text-[10px] font-bold text-muted-foreground tracking-wide group-hover:bg-primary/[0.08] group-hover:text-primary transition-colors duration-200">
-                  {tpl.icon}
-                </div>
-                <h3 className="text-[13px] font-semibold text-foreground mb-0.5">{tpl.name}</h3>
-                <p className="text-[11px] text-muted-foreground leading-relaxed">{tpl.description}</p>
-              </button>
-            ))}
+            {roleTemplates.map((tpl) => {
+              const Icon = templateIcons[tpl.icon] || Search;
+              return (
+                <button
+                  key={tpl.id}
+                  onClick={() => { setSelectedTemplate(tpl.id); setDescription(""); }}
+                  className={`text-left rounded-xl border p-4 transition-all duration-200 group ${
+                    selectedTemplate === tpl.id
+                      ? "border-primary/30 bg-primary/[0.03] ring-1 ring-primary/15 shadow-sm"
+                      : "border-border hover:border-border/80 card-interactive"
+                  }`}
+                >
+                  <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center mb-2.5 group-hover:bg-primary/[0.08] transition-colors duration-200">
+                    <Icon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors duration-200" />
+                  </div>
+                  <h3 className="text-[13px] font-semibold text-foreground mb-0.5">{tpl.name}</h3>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">{tpl.description}</p>
+                </button>
+              );
+            })}
           </div>
         </div>
 

@@ -1,7 +1,21 @@
 import { useState } from "react";
 import { skills } from "@/lib/data";
-import { Search, Plus } from "lucide-react";
+import { Search, Plus, Eye, FileText, AlertTriangle, ClipboardCheck, ShieldAlert, RefreshCw, Heart, BarChart3, PenTool, Send } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import type { LucideIcon } from "lucide-react";
+
+const iconMap: Record<string, LucideIcon> = {
+  "eye": Eye,
+  "file-text": FileText,
+  "alert-triangle": AlertTriangle,
+  "clipboard-check": ClipboardCheck,
+  "shield-alert": ShieldAlert,
+  "refresh-cw": RefreshCw,
+  "heart": Heart,
+  "bar-chart-3": BarChart3,
+  "pen-tool": PenTool,
+  "send": Send,
+};
 
 export default function SkillsPage() {
   const [search, setSearch] = useState("");
@@ -29,20 +43,23 @@ export default function SkillsPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 animate-stagger">
-        {filtered.map((skill) => (
-          <div key={skill.id} className="card-interactive rounded-xl border border-border p-5 cursor-pointer group relative noise-overlay">
-            <div className="relative">
-              <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center mb-3 text-[11px] font-bold text-muted-foreground tracking-wide group-hover:bg-primary/[0.08] group-hover:text-primary transition-colors duration-200">
-                {skill.icon}
+        {filtered.map((skill) => {
+          const Icon = iconMap[skill.icon] || Eye;
+          return (
+            <div key={skill.id} className="card-interactive rounded-xl border border-border p-5 cursor-pointer group relative noise-overlay">
+              <div className="relative">
+                <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center mb-3 group-hover:bg-primary/[0.08] transition-colors duration-200">
+                  <Icon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors duration-200" />
+                </div>
+                <h3 className="text-[14px] font-semibold text-foreground mb-1">{skill.name}</h3>
+                <p className="text-[12px] text-muted-foreground leading-relaxed mb-3">{skill.summary}</p>
+                <p className="text-[11px] text-muted-foreground">
+                  {skill.usedBy > 0 ? `${skill.usedBy} employee${skill.usedBy > 1 ? "s" : ""} using` : "Not in use yet"}
+                </p>
               </div>
-              <h3 className="text-[14px] font-semibold text-foreground mb-1">{skill.name}</h3>
-              <p className="text-[12px] text-muted-foreground leading-relaxed mb-3">{skill.summary}</p>
-              <p className="text-[11px] text-muted-foreground">
-                {skill.usedBy > 0 ? `${skill.usedBy} employee${skill.usedBy > 1 ? "s" : ""} using` : "Not in use yet"}
-              </p>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {filtered.length === 0 && (

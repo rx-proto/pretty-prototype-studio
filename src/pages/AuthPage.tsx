@@ -25,12 +25,11 @@ export default function AuthPage() {
       return;
     }
     toast.success(tab === "login" ? "Welcome back!" : "Account created!");
-    navigate("/preview/workspace");
+    navigate("/app/home");
   };
 
   return (
     <div className="min-h-screen flex">
-      {/* Left panel */}
       <div className="hidden lg:flex w-[480px] flex-shrink-0 sidebar-gradient flex-col justify-between p-10 relative overflow-hidden">
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[400px] h-[400px] rounded-full bg-primary/[0.06] blur-[100px] pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[300px] h-[300px] rounded-full bg-state-accent/[0.04] blur-[80px] pointer-events-none" />
@@ -64,7 +63,6 @@ export default function AuthPage() {
         <p className="relative z-10 text-[11px] text-sidebar-muted">© 2025 Agens.run</p>
       </div>
 
-      {/* Right panel */}
       <div className="flex-1 flex items-center justify-center p-8 bg-background relative">
         <div className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full bg-primary/[0.02] blur-[100px] pointer-events-none" />
 
@@ -77,20 +75,10 @@ export default function AuthPage() {
           </div>
 
           <div className="flex gap-1 p-1 rounded-xl bg-muted mb-8 animate-fade-in" style={{ animationDelay: "0.1s" }}>
-            <button
-              onClick={() => setTab("login")}
-              className={`flex-1 py-2 rounded-lg text-[13px] font-medium transition-all duration-200 ${
-                tab === "login" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
+            <button onClick={() => setTab("login")} className={`flex-1 py-2 rounded-lg text-[13px] font-medium transition-all duration-200 ${tab === "login" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
               Login
             </button>
-            <button
-              onClick={() => setTab("signup")}
-              className={`flex-1 py-2 rounded-lg text-[13px] font-medium transition-all duration-200 ${
-                tab === "signup" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
+            <button onClick={() => setTab("signup")} className={`flex-1 py-2 rounded-lg text-[13px] font-medium transition-all duration-200 ${tab === "signup" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
               Sign up
             </button>
           </div>

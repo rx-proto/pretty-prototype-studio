@@ -28,9 +28,9 @@ const App = () => (
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/auth" element={<AuthPage />} />
-          <Route path="/preview" element={<AppLayout />}>
-            <Route index element={<Navigate to="/preview/workspace" replace />} />
-            <Route path="workspace" element={<HomePage />} />
+          <Route path="/app" element={<AppLayout />}>
+            <Route index element={<Navigate to="/app/home" replace />} />
+            <Route path="home" element={<HomePage />} />
             <Route path="employees" element={<EmployeesPage />} />
             <Route path="employees/:id" element={<EmployeeDetailPage />} />
             <Route path="skills" element={<SkillsPage />} />

@@ -1,7 +1,18 @@
 import { useState } from "react";
 import { tools } from "@/lib/data";
-import { Search } from "lucide-react";
+import { Search, Globe, Monitor, Terminal, FileText, Table, Calendar, Image } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import type { LucideIcon } from "lucide-react";
+
+const iconMap: Record<string, LucideIcon> = {
+  "globe": Globe,
+  "monitor": Monitor,
+  "terminal": Terminal,
+  "file-text": FileText,
+  "table": Table,
+  "calendar": Calendar,
+  "image": Image,
+};
 
 export default function ToolsPage() {
   const [search, setSearch] = useState("");
@@ -23,20 +34,23 @@ export default function ToolsPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 animate-stagger">
-        {filtered.map((tool) => (
-          <div key={tool.id} className="card-interactive rounded-xl border border-border p-5 cursor-pointer group relative noise-overlay">
-            <div className="relative">
-              <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center mb-3 text-[11px] font-bold text-muted-foreground tracking-wide group-hover:bg-primary/[0.08] group-hover:text-primary transition-colors duration-200">
-                {tool.icon}
+        {filtered.map((tool) => {
+          const Icon = iconMap[tool.icon] || Globe;
+          return (
+            <div key={tool.id} className="card-interactive rounded-xl border border-border p-5 cursor-pointer group relative noise-overlay">
+              <div className="relative">
+                <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center mb-3 group-hover:bg-primary/[0.08] transition-colors duration-200">
+                  <Icon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors duration-200" />
+                </div>
+                <h3 className="text-[14px] font-semibold text-foreground mb-1">{tool.name}</h3>
+                <p className="text-[12px] text-muted-foreground leading-relaxed mb-3">{tool.summary}</p>
+                <p className="text-[11px] text-muted-foreground">
+                  {tool.usedBy > 0 ? `${tool.usedBy} employee${tool.usedBy > 1 ? "s" : ""} using` : "Not in use yet"}
+                </p>
               </div>
-              <h3 className="text-[14px] font-semibold text-foreground mb-1">{tool.name}</h3>
-              <p className="text-[12px] text-muted-foreground leading-relaxed mb-3">{tool.summary}</p>
-              <p className="text-[11px] text-muted-foreground">
-                {tool.usedBy > 0 ? `${tool.usedBy} employee${tool.usedBy > 1 ? "s" : ""} using` : "Not in use yet"}
-              </p>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {filtered.length === 0 && (
