@@ -1,5 +1,5 @@
 import { workspace, employees, attentionItems } from "@/lib/data";
-import { StateBadge, StateDot, EmployeeAvatar } from "@/components/StateBadge";
+import { StateBadge, StateDot, EmployeeAvatar, avatarMap } from "@/components/StateBadge";
 import { useNavigate } from "react-router-dom";
 import { TrendingUp, AlertCircle, ArrowRight, Zap, ChevronRight } from "lucide-react";
 
@@ -44,9 +44,7 @@ export default function HomePage() {
           {/* Mini avatars */}
           <div className="flex -space-x-1.5 mt-3">
             {employees.slice(0, 5).map((emp) => (
-              <div key={emp.id} className="w-6 h-6 rounded-full bg-gradient-to-br from-primary/80 to-state-accent/80 flex items-center justify-center text-[9px] font-semibold text-primary-foreground ring-2 ring-card">
-                {emp.name[0]}
-              </div>
+              <img key={emp.id} src={avatarMap[emp.name]} alt={emp.name} className="w-6 h-6 rounded-full object-cover ring-2 ring-card" loading="lazy" />
             ))}
             {employees.length > 5 && (
               <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-[9px] font-medium text-muted-foreground ring-2 ring-card">
@@ -81,9 +79,7 @@ export default function HomePage() {
         <div className="space-y-2">
           {attentionItems.map((item, i) => (
             <div key={i} className="card-interactive rounded-xl border border-border px-5 py-3.5 flex items-center gap-4 cursor-pointer">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/80 to-state-accent/80 flex items-center justify-center text-xs font-semibold text-primary-foreground flex-shrink-0">
-                {item.title[0]}
-              </div>
+              <EmployeeAvatar name={item.title} size="sm" />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <p className="text-[13px] font-medium text-foreground">{item.title}</p>
