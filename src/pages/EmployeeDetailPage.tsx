@@ -89,9 +89,41 @@ export default function EmployeeDetailPage() {
 
       {/* Main content */}
       <div className="grid grid-cols-3 gap-5">
-        {/* Left: Activity log */}
+        {/* Left: Tab content */}
         <div className="col-span-2 animate-stagger flex flex-col">
-          <ActivityLog entries={logs} />
+          {/* Tab switcher */}
+          <div className="flex gap-1 p-1 rounded-lg bg-muted mb-4 w-fit">
+            <button
+              onClick={() => setActiveTab("activity")}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-medium transition-all duration-200",
+                activeTab === "activity"
+                  ? "bg-card text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Clock className="w-3.5 h-3.5" />
+              Activity
+            </button>
+            <button
+              onClick={() => setActiveTab("messages")}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-medium transition-all duration-200",
+                activeTab === "messages"
+                  ? "bg-card text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <MessageSquare className="w-3.5 h-3.5" />
+              Messages
+            </button>
+          </div>
+
+          {activeTab === "activity" ? (
+            <ActivityLog entries={logs} />
+          ) : (
+            <MessagesPanel employeeId={emp.id} employeeName={emp.name} />
+          )}
         </div>
 
         {/* Right sidebar */}
