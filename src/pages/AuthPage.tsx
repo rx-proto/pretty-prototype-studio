@@ -68,8 +68,8 @@ export default function AuthPage() {
 
         <div className="w-full max-w-[380px] relative z-10">
           <div className="lg:hidden flex items-center gap-2.5 mb-10">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <Layers className="w-4 h-4 text-primary-foreground" />
+            <div className="w-8 h-8 rounded-lg bg-foreground flex items-center justify-center">
+              <Layers className="w-4 h-4 text-background" />
             </div>
             <span className="text-[15px] font-bold text-foreground tracking-tight">Agens.run</span>
           </div>
@@ -117,7 +117,7 @@ export default function AuthPage() {
                 <label className="text-[12px] font-medium text-muted-foreground">Password</label>
                 <Input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" className="h-10 text-[13px]" />
               </div>
-              <button type="submit" className="w-full py-2.5 rounded-xl text-[13px] font-semibold text-primary-foreground bg-primary hover:brightness-110 transition-all shadow-md shadow-primary/20 mt-2">
+              <button type="submit" className="w-full py-2.5 rounded-xl text-[13px] font-semibold text-background bg-foreground hover:bg-foreground/90 transition-all shadow-sm mt-2">
                 {tab === "login" ? "Sign in" : "Create account"}
               </button>
             </form>

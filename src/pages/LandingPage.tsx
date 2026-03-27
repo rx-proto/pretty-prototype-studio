@@ -15,8 +15,8 @@ export default function LandingPage() {
       {/* Nav */}
       <header className="relative flex items-center justify-between px-8 py-5 max-w-[1120px] mx-auto animate-fade-in">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <Layers className="w-4 h-4 text-primary-foreground" />
+          <div className="w-8 h-8 rounded-lg bg-foreground flex items-center justify-center">
+            <Layers className="w-4 h-4 text-background" />
           </div>
           <span className="text-[15px] font-bold text-foreground tracking-tight">Agens.run</span>
         </div>
@@ -24,7 +24,7 @@ export default function LandingPage() {
           <button onClick={() => navigate("/auth")} className="text-[13px] font-medium text-muted-foreground hover:text-foreground transition-colors px-4 py-2">
             Login
           </button>
-          <button onClick={() => navigate("/auth?tab=signup")} className="text-[13px] font-semibold text-primary-foreground bg-primary hover:brightness-110 transition-all px-5 py-2 rounded-lg shadow-sm shadow-primary/20">
+          <button onClick={() => navigate("/auth?tab=signup")} className="text-[13px] font-semibold text-background bg-foreground hover:bg-foreground/90 transition-all px-5 py-2 rounded-lg">
             Get Started
           </button>
         </div>
@@ -46,7 +46,7 @@ export default function LandingPage() {
           Hire AI employees that monitor, analyze, and act across your tools — so your team can focus on what matters.
         </p>
         <div className="flex items-center justify-center gap-3 mt-10 opacity-0 animate-fade-in-up" style={{ animationDelay: "0.5s" }}>
-          <button onClick={() => navigate("/auth?tab=signup")} className="text-[14px] font-semibold text-primary-foreground bg-primary hover:brightness-110 transition-all px-7 py-3 rounded-xl flex items-center gap-2 shadow-md shadow-primary/20">
+          <button onClick={() => navigate("/auth?tab=signup")} className="text-[14px] font-semibold text-background bg-foreground hover:bg-foreground/90 transition-all px-7 py-3 rounded-xl flex items-center gap-2">
             Get Started <ArrowRight className="w-4 h-4" />
           </button>
           <button onClick={() => navigate("/auth")} className="text-[14px] font-medium text-foreground bg-card hover:bg-accent transition-colors px-7 py-3 rounded-xl border border-border shadow-sm">
