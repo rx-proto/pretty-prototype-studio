@@ -135,7 +135,6 @@ export default function AppLayout() {
                 <img src={sarahAvatar} alt="Sarah Chen" className="w-7 h-7 rounded-full object-cover flex-shrink-0" />
                 <div className="min-w-0 flex-1 text-left">
                   <span className="text-[12px] font-medium text-sidebar-accent-foreground truncate block">Sarah Chen</span>
-                  <span className="text-[10px] text-sidebar-muted">sarah@acme.com</span>
                 </div>
                 <ChevronUp className="w-3.5 h-3.5 text-sidebar-muted flex-shrink-0" />
               </button>
