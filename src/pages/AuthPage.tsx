@@ -68,8 +68,8 @@ export default function AuthPage() {
 
         <div className="w-full max-w-[380px] relative z-10">
           <div className="lg:hidden flex items-center gap-2.5 mb-10">
-            <div className="w-8 h-8 rounded-lg bg-foreground flex items-center justify-center">
-              <Layers className="w-4 h-4 text-background" />
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+              <Layers className="w-4 h-4 text-primary-foreground" />
             </div>
             <span className="text-[15px] font-bold text-foreground tracking-tight">Agens.run</span>
           </div>
