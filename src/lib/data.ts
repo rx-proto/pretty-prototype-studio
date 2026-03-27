@@ -84,10 +84,24 @@ export interface InvoicePreview {
 export interface DailySpend {
   day: string;
   date: string;
+  dateObj: Date;
   amount: number;
-  inference: number;
-  toolCalls: number;
+  byEmployee: Record<string, number>;
 }
+
+// Employee colors for charts
+export const employeeColors: Record<string, string> = {
+  Vera: "hsl(260, 60%, 65%)",
+  Maya: "hsl(220, 60%, 60%)",
+  Kai: "hsl(180, 50%, 50%)",
+  Niko: "hsl(340, 55%, 60%)",
+  Alex: "hsl(30, 65%, 55%)",
+  Sora: "hsl(150, 50%, 50%)",
+  Lina: "hsl(280, 45%, 60%)",
+  Reo: "hsl(200, 55%, 55%)",
+  Iris: "hsl(45, 60%, 55%)",
+  Jun: "hsl(0, 50%, 60%)",
+};
 
 // --- Data ---
 
@@ -336,30 +350,51 @@ export const invoices: InvoicePreview[] = [
   { id: "inv-5", date: "Nov 1, 2024", amount: 412.50, status: "paid", description: "November usage" },
 ];
 
-export const dailySpend: DailySpend[] = [
-  { day: "Mon", date: "Mar 17", amount: 42.40, inference: 28.60, toolCalls: 13.80 },
-  { day: "Tue", date: "Mar 18", amount: 58.60, inference: 38.20, toolCalls: 20.40 },
-  { day: "Wed", date: "Mar 19", amount: 45.20, inference: 30.10, toolCalls: 15.10 },
-  { day: "Thu", date: "Mar 20", amount: 62.10, inference: 41.40, toolCalls: 20.70 },
-  { day: "Fri", date: "Mar 21", amount: 39.80, inference: 26.50, toolCalls: 13.30 },
-  { day: "Sat", date: "Mar 22", amount: 14.20, inference: 9.80, toolCalls: 4.40 },
-  { day: "Sun", date: "Mar 23", amount: 8.50, inference: 5.60, toolCalls: 2.90 },
-];
+// Generate 60 days of daily spend data with per-employee breakdown
+const employeeNames = ["Vera", "Maya", "Kai", "Niko", "Alex", "Sora", "Lina", "Reo", "Iris", "Jun"];
+const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-export const employeeSpend: { name: string; amount: number }[] = [
-  { name: "Vera", amount: 64.80 },
-  { name: "Maya", amount: 44.80 },
-  { name: "Kai", amount: 41.40 },
-  { name: "Niko", amount: 31.40 },
-  { name: "Alex", amount: 28.60 },
-  { name: "Sora", amount: 22.60 },
-  { name: "Lina", amount: 16.20 },
-  { name: "Reo", amount: 8.40 },
-  { name: "Iris", amount: 6.40 },
-  { name: "Jun", amount: 5.40 },
-];
+function seededRandom(seed: number) {
+  let s = seed;
+  return () => { s = (s * 16807 + 0) % 2147483647; return s / 2147483647; };
+}
 
-export const weeklySpend = dailySpend.reduce((sum, d) => sum + d.amount, 0);
+function generateDailySpend(): DailySpend[] {
+  const days: DailySpend[] = [];
+  const rand = seededRandom(42);
+  // Generate from Jan 26 to Mar 27 2026 (about 60 days)
+  const start = new Date(2026, 0, 26);
+  const end = new Date(2026, 2, 27);
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    const dateObj = new Date(d);
+    const isWeekend = dateObj.getDay() === 0 || dateObj.getDay() === 6;
+    const byEmployee: Record<string, number> = {};
+    for (const name of employeeNames) {
+      const base = isWeekend ? 1.5 : 6;
+      const variance = rand() * base;
+      byEmployee[name] = parseFloat((variance + (isWeekend ? 0.2 : 1)).toFixed(2));
+    }
+    const amount = parseFloat(Object.values(byEmployee).reduce((s, v) => s + v, 0).toFixed(2));
+    days.push({
+      day: dayNames[dateObj.getDay()],
+      date: `${monthNames[dateObj.getMonth()]} ${dateObj.getDate()}`,
+      dateObj,
+      amount,
+      byEmployee,
+    });
+  }
+  return days;
+}
+
+export const dailySpend: DailySpend[] = generateDailySpend();
+
+export const employeeSpend: { name: string; amount: number }[] = employeeNames.map(name => ({
+  name,
+  amount: parseFloat(dailySpend.reduce((s, d) => s + (d.byEmployee[name] || 0), 0).toFixed(2)),
+})).sort((a, b) => b.amount - a.amount);
+
+export const weeklySpend = dailySpend.slice(-7).reduce((sum, d) => sum + d.amount, 0);
 export const todaySpend = dailySpend[dailySpend.length - 1]?.amount ?? 0;
 
 export interface RecentActivity {

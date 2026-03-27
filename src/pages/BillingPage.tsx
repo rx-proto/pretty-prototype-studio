@@ -1,32 +1,108 @@
-import { useState } from "react";
-import { workspace, dailySpend, employeeSpend, invoices } from "@/lib/data";
+import { useState, useMemo } from "react";
+import { workspace, dailySpend, employeeSpend, employeeColors, invoices } from "@/lib/data";
 import { EmployeeAvatar } from "@/components/StateBadge";
-import { DollarSign, Plus, Receipt, TrendingUp, X, CreditCard, ChevronDown, Check, Download } from "lucide-react";
+import { DollarSign, Plus, Receipt, TrendingUp, X, CreditCard, ChevronDown, Check, Download, CalendarIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
+import { format, subDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subMonths, isWithinInterval } from "date-fns";
 import { toast } from "sonner";
+import type { DateRange } from "react-day-picker";
 
-const dateRanges = ["This week", "Last 7 days", "Last 30 days", "This month", "Last month"];
+const presetRanges = [
+  { label: "This week", getRange: () => ({ from: startOfWeek(new Date(2026, 2, 27), { weekStartsOn: 1 }), to: new Date(2026, 2, 27) }) },
+  { label: "Last 7 days", getRange: () => ({ from: subDays(new Date(2026, 2, 27), 6), to: new Date(2026, 2, 27) }) },
+  { label: "Last 30 days", getRange: () => ({ from: subDays(new Date(2026, 2, 27), 29), to: new Date(2026, 2, 27) }) },
+  { label: "This month", getRange: () => ({ from: startOfMonth(new Date(2026, 2, 27)), to: new Date(2026, 2, 27) }) },
+  { label: "Last month", getRange: () => ({ from: startOfMonth(subMonths(new Date(2026, 2, 27), 1)), to: endOfMonth(subMonths(new Date(2026, 2, 27), 1)) }) },
+];
+
 const fundAmounts = [50, 100, 250, 500, 1000];
 
 export default function BillingPage() {
-  const [dateRange, setDateRange] = useState("This week");
+  const [dateLabel, setDateLabel] = useState("This week");
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(presetRanges[0].getRange());
   const [employeeFilter, setEmployeeFilter] = useState<string | null>(null);
   const [showAddFunds, setShowAddFunds] = useState(false);
   const [fundAmount, setFundAmount] = useState<number>(100);
   const [customAmount, setCustomAmount] = useState("");
   const [fundStep, setFundStep] = useState<"amount" | "payment" | "success">("amount");
   const [showDateDropdown, setShowDateDropdown] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
   const [showAllEmployees, setShowAllEmployees] = useState(false);
   const VISIBLE_COUNT = 5;
 
-  const filteredSpend = employeeFilter
-    ? employeeSpend.filter(e => e.name === employeeFilter)
-    : employeeSpend;
+  // Filter daily data by date range
+  const filteredDays = useMemo(() => {
+    if (!dateRange?.from) return dailySpend;
+    return dailySpend.filter(d => {
+      const to = dateRange.to || dateRange.from!;
+      return isWithinInterval(d.dateObj, { start: dateRange.from!, end: to });
+    });
+  }, [dateRange]);
 
-  const weeklyTotal = dailySpend.reduce((s, d) => s + d.amount, 0);
-  const maxSpend = Math.max(...dailySpend.map(d => d.amount));
-  const filteredTotal = filteredSpend.reduce((s, e) => s + e.amount, 0);
+  // Compute employee totals for the selected date range
+  const rangeEmployeeSpend = useMemo(() => {
+    const totals: Record<string, number> = {};
+    for (const d of filteredDays) {
+      for (const [name, amt] of Object.entries(d.byEmployee)) {
+        totals[name] = (totals[name] || 0) + amt;
+      }
+    }
+    return Object.entries(totals)
+      .map(([name, amount]) => ({ name, amount: parseFloat(amount.toFixed(2)) }))
+      .sort((a, b) => b.amount - a.amount);
+  }, [filteredDays]);
+
+  // If employee filter active, further filter
+  const displayEmployees = employeeFilter
+    ? rangeEmployeeSpend.filter(e => e.name === employeeFilter)
+    : rangeEmployeeSpend;
+
+  const rangeTotal = useMemo(() => {
+    if (employeeFilter) {
+      return filteredDays.reduce((s, d) => s + (d.byEmployee[employeeFilter] || 0), 0);
+    }
+    return filteredDays.reduce((s, d) => s + d.amount, 0);
+  }, [filteredDays, employeeFilter]);
+
+  const dailyAvg = filteredDays.length > 0 ? rangeTotal / filteredDays.length : 0;
+
+  // Chart data: get per-employee breakdown for each day, filtered by employee
+  const chartData = useMemo(() => {
+    const activeEmployees = employeeFilter
+      ? [employeeFilter]
+      : rangeEmployeeSpend.map(e => e.name);
+    
+    return filteredDays.map(d => {
+      const segments: { name: string; value: number; color: string }[] = [];
+      for (const name of activeEmployees) {
+        const val = d.byEmployee[name] || 0;
+        if (val > 0) segments.push({ name, value: val, color: employeeColors[name] || "hsl(0,0%,70%)" });
+      }
+      const total = segments.reduce((s, seg) => s + seg.value, 0);
+      return { ...d, segments, total };
+    });
+  }, [filteredDays, employeeFilter, rangeEmployeeSpend]);
+
+  const maxSpend = Math.max(...chartData.map(d => d.total), 1);
+
+  const handlePreset = (preset: typeof presetRanges[0]) => {
+    setDateRange(preset.getRange());
+    setDateLabel(preset.label);
+    setShowDateDropdown(false);
+  };
+
+  const handleCustomDate = (range: DateRange | undefined) => {
+    setDateRange(range);
+    if (range?.from && range?.to) {
+      setDateLabel(`${format(range.from, "MMM d")} – ${format(range.to, "MMM d")}`);
+    } else if (range?.from) {
+      setDateLabel(format(range.from, "MMM d"));
+    }
+  };
 
   const handleAddFunds = () => {
     setFundStep("amount");
@@ -34,17 +110,15 @@ export default function BillingPage() {
     setCustomAmount("");
     setShowAddFunds(true);
   };
-
-  const handlePayment = () => {
-    setFundStep("payment");
-  };
-
+  const handlePayment = () => setFundStep("payment");
   const handleConfirmPayment = () => {
     setFundStep("success");
     toast.success(`$${fundAmount.toFixed(2)} added to your balance`);
   };
-
   const selectedAmount = customAmount ? parseFloat(customAmount) || 0 : fundAmount;
+
+  // Date range display label
+  const dateRangeDisplay = dateLabel;
 
   return (
     <div className="p-8 max-w-[960px] mx-auto space-y-6">
@@ -55,7 +129,6 @@ export default function BillingPage() {
 
       {/* Top cards */}
       <div className="grid grid-cols-3 gap-3 animate-stagger">
-        {/* Balance */}
         <div className="card-premium rounded-xl border border-border p-5 relative noise-overlay">
           <div className="relative">
             <div className="flex items-center gap-2 mb-3">
@@ -70,19 +143,17 @@ export default function BillingPage() {
           </div>
         </div>
 
-        {/* This week */}
         <div className="card-premium rounded-xl border border-border p-5 relative noise-overlay">
           <div className="relative">
             <div className="flex items-center gap-2 mb-3">
               <TrendingUp className="w-4 h-4 text-muted-foreground" />
-              <p className="section-label">This week</p>
+              <p className="section-label">{dateRangeDisplay}</p>
             </div>
-            <p className="text-[28px] font-bold text-foreground tracking-tight">${weeklyTotal.toFixed(2)}</p>
-            <p className="text-[12px] text-muted-foreground mt-1">${(weeklyTotal / 7).toFixed(2)}/day avg</p>
+            <p className="text-[28px] font-bold text-foreground tracking-tight">${rangeTotal.toFixed(2)}</p>
+            <p className="text-[12px] text-muted-foreground mt-1">${dailyAvg.toFixed(2)}/day avg</p>
           </div>
         </div>
 
-        {/* Add funds */}
         <div className="card-premium rounded-xl border border-border p-5 flex flex-col items-center justify-center text-center">
           <button
             onClick={handleAddFunds}
@@ -97,28 +168,54 @@ export default function BillingPage() {
 
       {/* Filters row */}
       <div className="flex items-center gap-3 opacity-0 animate-fade-in relative z-30" style={{ animationDelay: "0.1s" }}>
-        {/* Date range dropdown */}
+        {/* Date range dropdown with presets + calendar */}
         <div className="relative z-30">
           <button
             onClick={() => setShowDateDropdown(!showDateDropdown)}
             className="flex items-center gap-2 px-3.5 py-2 rounded-lg border border-border text-[12px] font-medium text-foreground hover:bg-muted/40 transition-colors"
           >
-            {dateRange}
+            <CalendarIcon className="w-3.5 h-3.5 text-muted-foreground" />
+            {dateRangeDisplay}
             <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
           </button>
           {showDateDropdown && (
             <>
-              <div className="fixed inset-0 z-10" onClick={() => setShowDateDropdown(false)} />
-              <div className="absolute top-full left-0 mt-1 z-50 bg-card border border-border rounded-xl shadow-lg py-1 min-w-[160px]">
-                {dateRanges.map(r => (
+              <div className="fixed inset-0 z-10" onClick={() => { setShowDateDropdown(false); setShowCalendar(false); }} />
+              <div className="absolute top-full left-0 mt-1 z-50 bg-card border border-border rounded-xl shadow-lg py-1 min-w-[200px]">
+                {presetRanges.map(r => (
                   <button
-                    key={r}
-                    onClick={() => { setDateRange(r); setShowDateDropdown(false); }}
-                    className={`w-full text-left px-3.5 py-2 text-[12px] hover:bg-muted/40 transition-colors ${r === dateRange ? "font-semibold text-foreground" : "text-muted-foreground"}`}
+                    key={r.label}
+                    onClick={() => handlePreset(r)}
+                    className={`w-full text-left px-3.5 py-2 text-[12px] hover:bg-muted/40 transition-colors ${r.label === dateLabel ? "font-semibold text-foreground" : "text-muted-foreground"}`}
                   >
-                    {r}
+                    {r.label}
                   </button>
                 ))}
+                <div className="h-px bg-border mx-2 my-1" />
+                <Popover open={showCalendar} onOpenChange={setShowCalendar}>
+                  <PopoverTrigger asChild>
+                    <button className="w-full text-left px-3.5 py-2 text-[12px] text-muted-foreground hover:bg-muted/40 transition-colors flex items-center gap-2">
+                      <CalendarIcon className="w-3.5 h-3.5" />
+                      Custom range…
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start" side="right" sideOffset={8}>
+                    <Calendar
+                      mode="range"
+                      selected={dateRange}
+                      onSelect={(range) => {
+                        handleCustomDate(range);
+                        if (range?.from && range?.to) {
+                          setShowCalendar(false);
+                          setShowDateDropdown(false);
+                        }
+                      }}
+                      numberOfMonths={2}
+                      defaultMonth={new Date(2026, 1)}
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
             </>
           )}
@@ -132,107 +229,120 @@ export default function BillingPage() {
           >
             All employees
           </button>
-          {(showAllEmployees ? employeeSpend : employeeSpend.slice(0, VISIBLE_COUNT)).map(e => (
+          {(showAllEmployees ? rangeEmployeeSpend : rangeEmployeeSpend.slice(0, VISIBLE_COUNT)).map(e => (
             <button
               key={e.name}
               onClick={() => setEmployeeFilter(employeeFilter === e.name ? null : e.name)}
-              className={`px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all ${employeeFilter === e.name ? "bg-foreground text-background" : "bg-muted text-muted-foreground hover:text-foreground"}`}
+              className={`px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all flex items-center gap-1.5 ${employeeFilter === e.name ? "bg-foreground text-background" : "bg-muted text-muted-foreground hover:text-foreground"}`}
             >
+              <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: employeeColors[e.name] }} />
               {e.name}
             </button>
           ))}
-          {employeeSpend.length > VISIBLE_COUNT && (
+          {rangeEmployeeSpend.length > VISIBLE_COUNT && (
             <button
               onClick={() => setShowAllEmployees(!showAllEmployees)}
               className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-muted text-muted-foreground hover:text-foreground transition-all"
             >
-              {showAllEmployees ? "Show less" : `+${employeeSpend.length - VISIBLE_COUNT} more`}
+              {showAllEmployees ? "Show less" : `+${rangeEmployeeSpend.length - VISIBLE_COUNT} more`}
             </button>
           )}
         </div>
       </div>
 
-      {/* Spend chart */}
+      {/* Unified spend chart + employee breakdown */}
       <div className="card-premium rounded-xl border border-border p-5 opacity-0 animate-fade-in" style={{ animationDelay: "0.15s" }}>
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-4">
-            <h2 className="text-[13px] font-semibold text-foreground">Daily spend — {dateRange.toLowerCase()}</h2>
-            <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-                <span className="w-2.5 h-2.5 rounded-[3px] bg-primary/[0.15]" />
-                LLM Inference
-              </span>
-              <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-                <span className="w-2.5 h-2.5 rounded-[3px] bg-primary/30" />
-                Tool calls
-              </span>
-            </div>
-          </div>
-          <span className="text-[12px] font-medium text-muted-foreground">${weeklyTotal.toFixed(2)} total</span>
+          <h2 className="text-[13px] font-semibold text-foreground">
+            Daily spend — {dateRangeDisplay.toLowerCase()}
+            {employeeFilter && <span className="text-muted-foreground font-normal ml-1">· {employeeFilter}</span>}
+          </h2>
+          <span className="text-[12px] font-medium text-muted-foreground">${rangeTotal.toFixed(2)} total</span>
         </div>
-        <div className="flex items-end gap-2 h-[140px]">
-          {dailySpend.map((d) => {
-            const totalH = (d.amount / maxSpend) * 100 + 8;
-            const toolH = (d.toolCalls / d.amount) * totalH;
-            const inferH = totalH - toolH;
+
+        {/* Stacked bar chart */}
+        <div className="flex items-end gap-[3px] h-[160px] mb-6">
+          {chartData.map((d, i) => {
+            const totalH = (d.total / maxSpend) * 140 + 8;
             return (
-              <div key={d.day} className="flex-1 flex flex-col items-center gap-1.5 group cursor-default">
-                <span className="text-[10px] font-medium text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">${d.amount.toFixed(2)}</span>
-                <div className="w-full flex flex-col" style={{ height: `${totalH}px` }}>
-                  <div
-                    className="w-full rounded-t-md bg-primary/[0.15] group-hover:bg-primary/[0.25] transition-colors duration-200"
-                    style={{ height: `${inferH}px` }}
-                  />
-                  <div
-                    className="w-full bg-primary/30 group-hover:bg-primary/40 transition-colors duration-200"
-                    style={{ height: `${toolH}px` }}
-                  />
+              <div key={i} className="flex-1 flex flex-col items-center gap-1 group cursor-default min-w-0">
+                <span className="text-[9px] font-medium text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity truncate">
+                  ${d.total.toFixed(0)}
+                </span>
+                <div className="w-full flex flex-col rounded-t-[4px] overflow-hidden" style={{ height: `${totalH}px` }}>
+                  {d.segments.map((seg, j) => (
+                    <div
+                      key={j}
+                      className="w-full transition-opacity duration-200 group-hover:opacity-80"
+                      style={{
+                        height: `${(seg.value / d.total) * 100}%`,
+                        background: seg.color,
+                        opacity: 0.55,
+                      }}
+                    />
+                  ))}
                 </div>
-                <div className="text-center">
-                  <span className="text-[10px] font-medium text-muted-foreground block">{d.day}</span>
-                  <span className="text-[9px] text-muted-foreground/60">{d.date}</span>
-                </div>
+                {/* Show date label for first, last, and every ~7th */}
+                {(i === 0 || i === chartData.length - 1 || (chartData.length <= 14) || (i % Math.ceil(chartData.length / 7) === 0)) ? (
+                  <div className="text-center">
+                    <span className="text-[8px] text-muted-foreground/60 block truncate">{d.date}</span>
+                  </div>
+                ) : (
+                  <div className="h-[12px]" />
+                )}
               </div>
+            );
+          })}
+        </div>
+
+        {/* Legend (top employees) */}
+        <div className="flex items-center gap-3 flex-wrap mb-5 pb-5 border-b border-border/60">
+          {(employeeFilter ? displayEmployees : rangeEmployeeSpend.slice(0, 6)).map(e => (
+            <span key={e.name} className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+              <span className="w-2.5 h-2.5 rounded-[3px] flex-shrink-0" style={{ background: employeeColors[e.name], opacity: 0.7 }} />
+              {e.name}
+            </span>
+          ))}
+          {!employeeFilter && rangeEmployeeSpend.length > 6 && (
+            <span className="text-[10px] text-muted-foreground/60">+{rangeEmployeeSpend.length - 6} more</span>
+          )}
+        </div>
+
+        {/* Employee breakdown rows */}
+        <div className="space-y-2.5">
+          {displayEmployees.map((emp) => {
+            const maxEmp = rangeEmployeeSpend[0]?.amount || 1;
+            return (
+              <button
+                key={emp.name}
+                onClick={() => setEmployeeFilter(employeeFilter === emp.name ? null : emp.name)}
+                className="flex items-center gap-3 w-full text-left group"
+              >
+                <EmployeeAvatar name={emp.name} size="sm" />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[13px] font-medium text-foreground group-hover:text-primary transition-colors">{emp.name}</span>
+                    <span className="text-[12px] font-mono font-medium text-foreground">${emp.amount.toFixed(2)}</span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-300"
+                      style={{
+                        width: `${(emp.amount / maxEmp) * 100}%`,
+                        background: employeeColors[emp.name],
+                        opacity: 0.5,
+                      }}
+                    />
+                  </div>
+                </div>
+              </button>
             );
           })}
         </div>
       </div>
 
-      {/* Spend by employee */}
-      <div className="card-premium rounded-xl border border-border p-5 opacity-0 animate-fade-in" style={{ animationDelay: "0.25s" }}>
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-[13px] font-semibold text-foreground">
-            Spend by employee {employeeFilter && <span className="text-muted-foreground font-normal">— {employeeFilter}</span>}
-          </h2>
-          <span className="text-[12px] font-medium text-muted-foreground">${filteredTotal.toFixed(2)}</span>
-        </div>
-        <div className="space-y-3">
-          {filteredSpend.map((emp) => (
-            <button
-              key={emp.name}
-              onClick={() => setEmployeeFilter(employeeFilter === emp.name ? null : emp.name)}
-              className="flex items-center gap-3 w-full text-left group"
-            >
-              <EmployeeAvatar name={emp.name} size="sm" />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-[13px] font-medium text-foreground group-hover:text-primary transition-colors">{emp.name}</span>
-                  <span className="text-[12px] font-mono font-medium text-foreground">${emp.amount.toFixed(2)}</span>
-                </div>
-                <div className="h-1.5 rounded-full bg-muted overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-primary/30 group-hover:bg-primary/50 transition-colors duration-200"
-                    style={{ width: `${(emp.amount / employeeSpend[0].amount) * 100}%` }}
-                  />
-                </div>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* Invoices */}
-      <div className="card-premium rounded-xl border border-border p-5 opacity-0 animate-fade-in" style={{ animationDelay: "0.35s" }}>
+      <div className="card-premium rounded-xl border border-border p-5 opacity-0 animate-fade-in" style={{ animationDelay: "0.25s" }}>
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Receipt className="w-4 h-4 text-muted-foreground" />
@@ -294,7 +404,7 @@ export default function BillingPage() {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[14px] font-semibold text-muted-foreground">$</span>
                   <Input
                     value={customAmount}
-                    onChange={e => { setCustomAmount(e.target.value); }}
+                    onChange={e => setCustomAmount(e.target.value)}
                     placeholder="Other"
                     className="h-full pl-7 text-[14px] font-semibold text-center rounded-xl"
                   />
