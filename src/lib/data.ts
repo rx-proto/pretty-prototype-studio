@@ -84,10 +84,24 @@ export interface InvoicePreview {
 export interface DailySpend {
   day: string;
   date: string;
+  dateObj: Date;
   amount: number;
-  inference: number;
-  toolCalls: number;
+  byEmployee: Record<string, number>;
 }
+
+// Employee colors for charts
+export const employeeColors: Record<string, string> = {
+  Vera: "hsl(260, 60%, 65%)",
+  Maya: "hsl(220, 60%, 60%)",
+  Kai: "hsl(180, 50%, 50%)",
+  Niko: "hsl(340, 55%, 60%)",
+  Alex: "hsl(30, 65%, 55%)",
+  Sora: "hsl(150, 50%, 50%)",
+  Lina: "hsl(280, 45%, 60%)",
+  Reo: "hsl(200, 55%, 55%)",
+  Iris: "hsl(45, 60%, 55%)",
+  Jun: "hsl(0, 50%, 60%)",
+};
 
 // --- Data ---
 
