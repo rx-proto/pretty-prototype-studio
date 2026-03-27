@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Send, Check, ArrowRight, Plug, Search, Headphones, Rocket, Shield } from "lucide-react";
+import { ArrowLeft, Send, Check, ArrowRight, Plug, Search, Megaphone, ClipboardList, TrendingUp } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { roleTemplates } from "@/lib/data";
 import { toast } from "sonner";
@@ -9,10 +9,10 @@ import type { LucideIcon } from "lucide-react";
 type Step = "describe" | "review" | "activated";
 
 const templateIcons: Record<string, LucideIcon> = {
+  megaphone: Megaphone,
+  clipboard: ClipboardList,
+  trending: TrendingUp,
   search: Search,
-  headphones: Headphones,
-  rocket: Rocket,
-  shield: Shield,
 };
 
 const mockDraft = {

@@ -61,7 +61,7 @@ export default function AppLayout() {
 
         <div className="relative px-4 pt-5 pb-4">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-sidebar-accent flex items-center justify-center flex-shrink-0">
+            <div onClick={() => navigate("/app/home")} className="w-9 h-9 rounded-xl bg-sidebar-accent flex items-center justify-center flex-shrink-0 cursor-pointer hover:bg-sidebar-accent/80 transition-colors">
               <Layers className="w-4 h-4 text-sidebar-primary" />
             </div>
             <div className="min-w-0 flex-1">
