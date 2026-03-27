@@ -128,14 +128,47 @@ export default function AppLayout() {
           </div>
         </nav>
 
-        <div className="relative px-4 py-3 border-t border-sidebar-border/60">
-          <div className="flex items-center gap-2.5">
-            <img src={sarahAvatar} alt="Sarah Chen" className="w-7 h-7 rounded-full object-cover" />
-            <div className="min-w-0">
-              <span className="text-[12px] font-medium text-sidebar-accent-foreground truncate block">Sarah Chen</span>
-              <span className="text-[10px] text-sidebar-muted">sarah@acme.com</span>
-            </div>
-          </div>
+        <div className="relative px-3 py-3 border-t border-sidebar-border/60">
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="w-full flex items-center gap-2.5 px-1.5 py-1.5 rounded-lg hover:bg-sidebar-accent/40 transition-colors">
+                <img src={sarahAvatar} alt="Sarah Chen" className="w-7 h-7 rounded-full object-cover flex-shrink-0" />
+                <div className="min-w-0 flex-1 text-left">
+                  <span className="text-[12px] font-medium text-sidebar-accent-foreground truncate block">Sarah Chen</span>
+                  <span className="text-[10px] text-sidebar-muted">sarah@acme.com</span>
+                </div>
+                <ChevronUp className="w-3.5 h-3.5 text-sidebar-muted flex-shrink-0" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent side="top" align="start" className="w-[220px] p-0" sideOffset={8}>
+              <div className="p-4 border-b border-border">
+                <div className="flex items-center gap-3">
+                  <img src={sarahAvatar} alt="Sarah Chen" className="w-10 h-10 rounded-full object-cover" />
+                  <div className="min-w-0">
+                    <p className="text-[13px] font-semibold text-foreground">Sarah Chen</p>
+                    <p className="text-[11px] text-muted-foreground">sarah@acme.com</p>
+                  </div>
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-2.5 px-0.5">Admin · {wsName}</p>
+              </div>
+              <div className="p-1.5">
+                <button
+                  onClick={() => navigate("/app/settings")}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-[12px] font-medium text-foreground hover:bg-muted transition-colors"
+                >
+                  <User className="w-3.5 h-3.5 text-muted-foreground" />
+                  Profile & Settings
+                </button>
+                <button
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-[12px] font-medium text-foreground hover:bg-muted transition-colors"
+                  onClick={() => navigate("/")}
+                >
+                  <LogOut className="w-3.5 h-3.5 text-muted-foreground" />
+                  Sign out
+                </button>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </aside>
 
