@@ -83,9 +83,9 @@ export default function EmployeeDetailPage() {
       </div>
 
       {/* Main content */}
-      <div className="grid grid-cols-3 gap-5">
+      <div className="grid grid-cols-3 gap-5 items-start">
         {/* Left: Activity log */}
-        <div className="col-span-2 space-y-5 animate-stagger">
+        <div className="col-span-2 animate-stagger">
           <ActivityLog entries={logs} />
         </div>
 
