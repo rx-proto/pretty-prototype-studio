@@ -107,7 +107,7 @@ export default function BillingPage() {
           {showDateDropdown && (
             <>
               <div className="fixed inset-0 z-10" onClick={() => setShowDateDropdown(false)} />
-              <div className="absolute top-full left-0 mt-1 z-20 bg-card border border-border rounded-xl shadow-lg py-1 min-w-[160px]">
+              <div className="absolute top-full left-0 mt-1 z-50 bg-card border border-border rounded-xl shadow-lg py-1 min-w-[160px]">
                 {dateRanges.map(r => (
                   <button
                     key={r}
