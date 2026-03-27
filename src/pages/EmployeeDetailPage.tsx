@@ -121,7 +121,7 @@ export default function EmployeeDetailPage() {
           ) : (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <button className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-[12px] font-medium transition-all duration-200 border border-transparent text-muted-foreground/60 hover:text-destructive hover:bg-destructive/5">
+                <button className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-[12px] font-medium transition-all duration-200 border border-border text-muted-foreground/60 hover:text-destructive hover:bg-destructive/5 card-premium">
                   <Archive className="w-3.5 h-3.5" />
                   Archive
                 </button>
