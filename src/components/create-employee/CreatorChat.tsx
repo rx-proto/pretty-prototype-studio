@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Send } from "lucide-react";
+import { ArrowUp } from "lucide-react";
 import type { ChatMessage } from "./types";
 
 interface Props {
@@ -24,55 +24,81 @@ export default function CreatorChat({ messages, onSendMessage, isTyping }: Props
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-y-auto scrollbar-thin px-6 py-6 space-y-4">
-        {messages.map((msg) => (
-          <div key={msg.id} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-            <div
-              className={`max-w-[85%] rounded-2xl px-4 py-3 text-[13px] leading-relaxed ${
-                msg.role === "user"
-                  ? "bg-foreground text-background rounded-br-md"
-                  : "bg-muted text-foreground rounded-bl-md"
-              }`}
-            >
-              {msg.content.split("\n").map((line, i) => (
-                <span key={i}>
-                  {line}
-                  {i < msg.content.split("\n").length - 1 && <br />}
-                </span>
-              ))}
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto scrollbar-thin">
+        <div className="max-w-[640px] mx-auto px-6 py-8 space-y-6">
+          {messages.length === 0 && !isTyping && (
+            <div className="flex flex-col items-center justify-center pt-24 text-center">
+              <h2 className="text-[20px] font-semibold text-foreground mb-1">What role are you looking to fill?</h2>
+              <p className="text-[13px] text-muted-foreground">Describe the employee you need and I'll help shape the role.</p>
             </div>
-          </div>
-        ))}
-        {isTyping && (
-          <div className="flex justify-start">
-            <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3">
-              <div className="flex gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "0ms" }} />
-                <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "150ms" }} />
-                <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "300ms" }} />
+          )}
+
+          {messages.map((msg, i) => (
+            <div key={msg.id} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+              {msg.role === "assistant" && (
+                <div className="w-6 h-6 rounded-full bg-foreground flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
+                  <span className="text-[10px] font-bold text-background">A</span>
+                </div>
+              )}
+              <div
+                className={`${
+                  msg.role === "user"
+                    ? "max-w-[75%] bg-foreground text-background rounded-[20px] rounded-br-sm px-4 py-2.5"
+                    : "max-w-[85%] text-foreground"
+                } text-[13.5px] leading-[1.65]`}
+              >
+                {msg.content.split("\n").map((line, i) => (
+                  <span key={i}>
+                    {line}
+                    {i < msg.content.split("\n").length - 1 && <br />}
+                  </span>
+                ))}
               </div>
             </div>
-          </div>
-        )}
-        <div ref={endRef} />
+          ))}
+
+          {isTyping && (
+            <div className="flex justify-start">
+              <div className="w-6 h-6 rounded-full bg-foreground flex items-center justify-center flex-shrink-0 mt-0.5 mr-3">
+                <span className="text-[10px] font-bold text-background">A</span>
+              </div>
+              <div className="flex items-center gap-1 pt-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50 animate-bounce" style={{ animationDelay: "0ms" }} />
+                <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50 animate-bounce" style={{ animationDelay: "150ms" }} />
+                <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50 animate-bounce" style={{ animationDelay: "300ms" }} />
+              </div>
+            </div>
+          )}
+          <div ref={endRef} />
+        </div>
       </div>
 
-      <div className="border-t border-border px-4 py-3">
-        <div className="flex items-center gap-2">
-          <input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
-            placeholder="Describe what you need…"
-            className="flex-1 bg-muted rounded-xl px-4 py-2.5 text-[13px] text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-ring transition-shadow"
-          />
-          <button
-            onClick={handleSend}
-            disabled={!input.trim()}
-            className="w-9 h-9 rounded-xl bg-foreground text-background flex items-center justify-center hover:bg-foreground/90 transition-colors disabled:opacity-40"
-          >
-            <Send className="w-4 h-4" />
-          </button>
+      {/* Input */}
+      <div className="px-6 py-4">
+        <div className="max-w-[640px] mx-auto">
+          <div className="relative">
+            <textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSend();
+                }
+              }}
+              placeholder="Describe the role you need…"
+              rows={1}
+              className="w-full bg-muted/60 border border-border rounded-2xl pl-4 pr-12 py-3 text-[13.5px] text-foreground placeholder:text-muted-foreground outline-none focus:border-foreground/20 focus:bg-muted/80 transition-all resize-none"
+            />
+            <button
+              onClick={handleSend}
+              disabled={!input.trim()}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-xl bg-foreground text-background flex items-center justify-center hover:bg-foreground/90 transition-colors disabled:opacity-30 disabled:hover:bg-foreground"
+            >
+              <ArrowUp className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
     </div>

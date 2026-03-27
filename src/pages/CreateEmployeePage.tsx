@@ -18,35 +18,25 @@ export default function CreateEmployeePage() {
   const [isTyping, setIsTyping] = useState(false);
 
   const advanceChat = useCallback((fromIndex: number) => {
-    // Find next assistant message to show
-    const nextMessages: ChatMessage[] = [];
-    let idx = fromIndex;
-
-    // Add the next assistant message(s) with typing delay
+    const idx = fromIndex;
     if (idx < syntheticChat.length && syntheticChat[idx].role === "assistant") {
       setIsTyping(true);
       setTimeout(() => {
         const msg = syntheticChat[idx];
-        nextMessages.push(msg);
         setMessages((prev) => [...prev, msg]);
         setIsTyping(false);
-
-        // Update draft based on snapshots
         const snapshot = draftSnapshots.find((s) => s.afterMessageId === msg.id);
         if (snapshot) setCurrentDraft(snapshot.draft);
-
         setChatIndex(idx + 1);
       }, 1200);
     }
   }, []);
 
-  const startSession = useCallback((templateId?: string) => {
+  const startSession = useCallback((_templateId?: string) => {
     setStep("session");
     setMessages([]);
     setChatIndex(0);
     setCurrentDraft({});
-
-    // Show first assistant message after a beat
     setIsTyping(true);
     setTimeout(() => {
       const firstMsg = syntheticChat[0];
@@ -57,30 +47,16 @@ export default function CreateEmployeePage() {
   }, []);
 
   const handleSendMessage = useCallback((text: string) => {
-    // Find the next user message in synthetic chat to match
     const nextUserIdx = chatIndex;
     if (nextUserIdx < syntheticChat.length && syntheticChat[nextUserIdx].role === "user") {
-      const userMsg: ChatMessage = {
-        ...syntheticChat[nextUserIdx],
-        content: text, // Use actual user text but advance synthetic flow
-      };
+      const userMsg: ChatMessage = { ...syntheticChat[nextUserIdx], content: text };
       setMessages((prev) => [...prev, userMsg]);
-
-      // Update draft if snapshot exists for this message
       const snapshot = draftSnapshots.find((s) => s.afterMessageId === userMsg.id);
       if (snapshot) setCurrentDraft(snapshot.draft);
-
       setChatIndex(nextUserIdx + 1);
-      // Trigger assistant response
       setTimeout(() => advanceChat(nextUserIdx + 1), 300);
     } else {
-      // Past synthetic data — just echo
-      const echoMsg: ChatMessage = {
-        id: `user-${Date.now()}`,
-        role: "user",
-        content: text,
-      };
-      setMessages((prev) => [...prev, echoMsg]);
+      setMessages((prev) => [...prev, { id: `user-${Date.now()}`, role: "user", content: text }]);
     }
   }, [chatIndex, advanceChat]);
 
@@ -89,13 +65,10 @@ export default function CreateEmployeePage() {
     toast.success("Employee created and activated!");
   };
 
-  // Check if chat has reached the final state (all synthetic messages shown)
   const isSessionComplete = chatIndex >= syntheticChat.length && !isTyping;
+  const hasDraft = !!(currentDraft.name || currentDraft.jobDescription);
 
-  if (step === "activated") {
-    return <ActivatedView draft={finalDraft} />;
-  }
-
+  if (step === "activated") return <ActivatedView draft={finalDraft} />;
   if (step === "templates") {
     return (
       <TemplateSelect
@@ -106,7 +79,6 @@ export default function CreateEmployeePage() {
     );
   }
 
-  // Session step — split view: chat left, preview right
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
@@ -119,18 +91,16 @@ export default function CreateEmployeePage() {
         <h2 className="text-[13px] font-semibold text-foreground">Creator session</h2>
       </div>
 
-      {/* Split pane */}
+      {/* Split pane — preview only appears when draft exists */}
       <div className="flex-1 flex overflow-hidden">
-        <div className="flex-1 min-w-0 border-r border-border">
+        <div className="flex-1 min-w-0">
           <CreatorChat messages={messages} onSendMessage={handleSendMessage} isTyping={isTyping} />
         </div>
-        <div className="w-[340px] flex-shrink-0">
-          <EmployeePreviewPanel
-            draft={currentDraft}
-            onConfirm={handleConfirm}
-            showConfirm={isSessionComplete}
-          />
-        </div>
+        {hasDraft && (
+          <div className="w-[320px] flex-shrink-0 animate-fade-in">
+            <EmployeePreviewPanel draft={currentDraft} onConfirm={handleConfirm} showConfirm={isSessionComplete} />
+          </div>
+        )}
       </div>
     </div>
   );
