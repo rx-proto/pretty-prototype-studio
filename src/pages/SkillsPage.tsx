@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { skills, employees, type SkillPreview } from "@/lib/data";
-import { Search, Plus, Eye, FileText, AlertTriangle, ClipboardCheck, ShieldAlert, RefreshCw, Heart, BarChart3, PenTool, Send, Users, Pencil, Trash2, Clock, Zap } from "lucide-react";
+import { Search, Plus, Eye, FileText, AlertTriangle, ClipboardCheck, ShieldAlert, RefreshCw, Heart, BarChart3, PenTool, Send, Users } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { EmployeeAvatar, StateDot } from "@/components/StateBadge";
