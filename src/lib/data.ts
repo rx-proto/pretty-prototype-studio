@@ -85,6 +85,8 @@ export interface DailySpend {
   day: string;
   date: string;
   amount: number;
+  inference: number;
+  toolCalls: number;
 }
 
 // --- Data ---
