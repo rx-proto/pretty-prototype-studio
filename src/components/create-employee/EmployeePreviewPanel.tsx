@@ -1,4 +1,5 @@
 import type { EmployeeDraft } from "./types";
+import mayaAvatar from "@/assets/avatars/maya.jpg";
 
 interface Props {
   draft: Partial<EmployeeDraft>;
@@ -18,11 +19,7 @@ export default function EmployeePreviewPanel({ draft, onConfirm, showConfirm }: 
         <div className="opacity-0 animate-fade-in-up space-y-5">
           {/* Avatar + Name */}
           <div className="flex items-start gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-foreground flex items-center justify-center flex-shrink-0">
-              <span className="text-[18px] font-bold text-background">
-                {draft.avatar || draft.name?.[0] || "?"}
-              </span>
-            </div>
+            <img src={mayaAvatar} alt={draft.name || "Employee"} className="w-12 h-12 rounded-2xl object-cover flex-shrink-0" />
             <div className="pt-0.5">
               <h3 className="text-[18px] font-bold text-foreground tracking-tight">{draft.name || "Unnamed"}</h3>
               <p className="text-[12px] text-muted-foreground mt-0.5">Draft employee</p>

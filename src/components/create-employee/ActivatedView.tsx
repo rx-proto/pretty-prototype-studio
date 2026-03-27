@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Check, ArrowRight, Plug } from "lucide-react";
 import type { EmployeeDraft } from "./types";
+import mayaAvatar from "@/assets/avatars/maya.jpg";
 
 interface Props {
   draft: EmployeeDraft;
@@ -15,8 +16,8 @@ export default function ActivatedView({ draft }: Props) {
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-state-working/[0.04] blur-[100px]" />
       </div>
       <div className="max-w-md text-center relative z-10">
-        <div className="w-16 h-16 rounded-2xl bg-state-working/[0.08] flex items-center justify-center mx-auto mb-6 opacity-0 animate-scale-in">
-          <Check className="w-8 h-8 text-state-working" />
+        <div className="w-16 h-16 rounded-2xl overflow-hidden mx-auto mb-6 opacity-0 animate-scale-in">
+          <img src={mayaAvatar} alt={draft.name} className="w-full h-full object-cover" />
         </div>
         <h1 className="text-[24px] font-bold text-foreground tracking-tight mb-2 opacity-0 animate-fade-in-up" style={{ animationDelay: "0.15s" }}>
           {draft.name} is now active
