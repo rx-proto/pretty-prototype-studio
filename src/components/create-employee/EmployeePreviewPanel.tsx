@@ -37,7 +37,7 @@ export default function EmployeePreviewPanel({ draft, onConfirm, showConfirm }: 
           {/* Skills — shown subtly */}
           {draft.skills && draft.skills.length > 0 && (
             <div>
-              <p className="section-label mb-2">Auto-equipped skills</p>
+              <p className="section-label mb-2">Skills</p>
               <div className="flex flex-wrap gap-1.5">
                 {draft.skills.map((s) => (
                   <span key={s} className="px-2.5 py-1 text-[11px] font-medium bg-primary/[0.06] text-primary rounded-lg ring-1 ring-inset ring-primary/10">{s}</span>
@@ -49,7 +49,7 @@ export default function EmployeePreviewPanel({ draft, onConfirm, showConfirm }: 
           {/* Tools */}
           {draft.tools && draft.tools.length > 0 && (
             <div>
-              <p className="section-label mb-2">Auto-equipped tools</p>
+              <p className="section-label mb-2">Tools</p>
               <div className="flex flex-wrap gap-1.5">
                 {draft.tools.map((t) => (
                   <span key={t} className="px-2.5 py-1 text-[11px] font-medium bg-muted text-foreground rounded-lg">{t}</span>
