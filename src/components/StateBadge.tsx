@@ -11,6 +11,7 @@ import alexAvatar from "@/assets/avatars/alex.jpg";
 import kaiAvatar from "@/assets/avatars/kai.jpg";
 import veraAvatar from "@/assets/avatars/vera.jpg";
 import reoAvatar from "@/assets/avatars/reo.jpg";
+import danaAvatar from "@/assets/avatars/dana.jpg";
 import sarahAvatar from "@/assets/avatars/sarah-chen.jpg";
 
 type DotState = EmployeeState | AttentionTone;
@@ -54,6 +55,7 @@ const avatarMap: Record<string, string> = {
   Kai: kaiAvatar,
   Vera: veraAvatar,
   Reo: reoAvatar,
+  Dana: danaAvatar,
   "Sarah Chen": sarahAvatar,
 };
 
