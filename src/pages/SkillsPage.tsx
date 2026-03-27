@@ -1,36 +1,56 @@
+import { useState } from "react";
 import { skills } from "@/lib/data";
-import { StateBadge } from "@/components/StateBadge";
+import { Search, Plus } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 export default function SkillsPage() {
+  const [search, setSearch] = useState("");
+  const filtered = skills.filter(s =>
+    s.name.toLowerCase().includes(search.toLowerCase()) ||
+    s.summary.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div className="p-8 max-w-[960px] mx-auto space-y-6">
-      <div className="pt-2">
-        <h1 className="text-[22px] font-bold text-foreground tracking-tight">Skills</h1>
-        <p className="text-muted-foreground text-[13px] mt-1">{skills.length} skills configured in your workspace</p>
+      <div className="pt-2 flex items-start justify-between">
+        <div>
+          <h1 className="text-[22px] font-bold text-foreground tracking-tight">Skills</h1>
+          <p className="text-muted-foreground text-[13px] mt-1">Capabilities your AI employees can use</p>
+        </div>
+        <button className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-[12px] font-semibold bg-primary text-primary-foreground shadow-md shadow-primary/20 hover:brightness-110 transition-all">
+          <Plus className="w-3.5 h-3.5" />
+          Create skill
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {skills.map((skill) => (
-          <div key={skill.id} className="card-premium rounded-xl border border-border p-5">
-            <div className="flex items-start justify-between mb-2">
-              <div>
-                <p className="text-[13px] font-semibold text-foreground">{skill.name}</p>
-                <p className="text-[11px] text-muted-foreground">{skill.category}</p>
-              </div>
-              <StateBadge state={skill.state} />
-            </div>
-            <p className="text-[12px] text-muted-foreground mb-4 leading-relaxed">{skill.summary}</p>
-            <div className="flex items-center justify-between">
-              <div className="flex flex-wrap gap-1.5">
-                {skill.employeeNames.map((name) => (
-                  <span key={name} className="px-2 py-0.5 text-[10px] font-medium bg-muted rounded-full text-foreground">{name}</span>
-                ))}
-              </div>
-              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-primary/6 text-primary ring-1 ring-inset ring-primary/10">{skill.source}</span>
-            </div>
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Input
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Search skills..."
+          className="pl-10 h-10 text-[13px]"
+        />
+      </div>
+
+      {/* Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        {filtered.map((skill) => (
+          <div key={skill.id} className="card-interactive rounded-xl border border-border p-5 cursor-pointer">
+            <div className="text-2xl mb-3">{skill.icon}</div>
+            <h3 className="text-[14px] font-semibold text-foreground mb-1">{skill.name}</h3>
+            <p className="text-[12px] text-muted-foreground leading-relaxed mb-3">{skill.summary}</p>
+            <p className="text-[11px] text-muted-foreground">
+              {skill.usedBy > 0 ? `${skill.usedBy} employee${skill.usedBy > 1 ? "s" : ""} using` : "Not in use yet"}
+            </p>
           </div>
         ))}
       </div>
+
+      {filtered.length === 0 && (
+        <p className="text-[13px] text-muted-foreground text-center py-12">No skills match your search.</p>
+      )}
     </div>
   );
 }

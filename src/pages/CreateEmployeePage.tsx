@@ -1,162 +1,188 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserPlus, Sparkles, ArrowLeft, Plus, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { ArrowLeft, Sparkles, Send, Check, ArrowRight, Plug } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import { roleTemplates } from "@/lib/data";
 import { toast } from "sonner";
 
-const channelOptions = ["Slack", "Email", "Lark", "Webhook"];
-const skillOptions = ["Market Watch", "Research Briefs", "Escalation Triage", "Launch Checklist", "Deal Risk Radar", "Follow-through"];
-const teamOptions = ["Growth", "Support Ops", "Operations", "Revenue", "Research", "Customer Success"];
+type Step = "describe" | "review" | "activated";
+
+// Simulated generated draft
+const mockDraft = {
+  name: "Maya",
+  title: "Competitive intelligence lead",
+  summary: "Monitors competitor pricing, feature releases, and market positioning across your tracked companies. Delivers weekly briefs and real-time alerts when something changes.",
+  skills: ["Market Watch", "Research Briefs"],
+  tools: ["Web Search", "PDF Reader"],
+};
 
 export default function CreateEmployeePage() {
   const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [title, setTitle] = useState("");
-  const [team, setTeam] = useState("");
-  const [summary, setSummary] = useState("");
-  const [weeklyBudget, setWeeklyBudget] = useState("");
-  const [defaultRoute, setDefaultRoute] = useState("");
-  const [selectedChannels, setSelectedChannels] = useState<string[]>([]);
-  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const [step, setStep] = useState<Step>("describe");
+  const [description, setDescription] = useState("");
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
 
-  const toggleItem = (item: string, list: string[], setList: (v: string[]) => void) => {
-    setList(list.includes(item) ? list.filter(i => i !== item) : [...list, item]);
-  };
-
-  const handleCreate = () => {
-    if (!name || !title || !team) {
-      toast.error("Please fill in the required fields");
+  const handleGenerate = () => {
+    if (!description && !selectedTemplate) {
+      toast.error("Describe what you need or pick a template");
       return;
     }
-    toast.success(`${name} has been created successfully!`);
-    navigate("/preview/employees");
+    setStep("review");
   };
+
+  const handleActivate = () => {
+    setStep("activated");
+    toast.success("Employee created and activated!");
+  };
+
+  if (step === "activated") {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-8">
+        <div className="max-w-md text-center">
+          <div className="w-16 h-16 rounded-2xl bg-state-working/10 flex items-center justify-center mx-auto mb-6">
+            <Check className="w-8 h-8 text-state-working" />
+          </div>
+          <h1 className="text-[22px] font-bold text-foreground tracking-tight mb-2">{mockDraft.name} is now working</h1>
+          <p className="text-[14px] text-muted-foreground leading-relaxed mb-8">
+            She's getting familiar with your workspace. You'll see her first work results soon.
+          </p>
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={() => navigate("/preview/employees/maya-competitive-intel")}
+              className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-semibold bg-primary text-primary-foreground shadow-md shadow-primary/20 hover:brightness-110 transition-all"
+            >
+              Go see {mockDraft.name} <ArrowRight className="w-4 h-4" />
+            </button>
+            <button
+              className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-medium text-foreground border border-border hover:bg-muted/50 transition-colors"
+            >
+              <Plug className="w-4 h-4" />
+              Connect Slack (optional)
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (step === "review") {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="max-w-2xl mx-auto px-8 py-10">
+          <button onClick={() => setStep("describe")} className="flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground transition-colors mb-6">
+            <ArrowLeft className="w-3.5 h-3.5" />
+            Back
+          </button>
+
+          <div className="mb-6">
+            <h1 className="text-[22px] font-bold text-foreground tracking-tight mb-1">Review your new employee</h1>
+            <p className="text-[13px] text-muted-foreground">Here's what we've put together. You can adjust anything before activating.</p>
+          </div>
+
+          <div className="card-premium rounded-xl border border-border p-6 space-y-5 mb-6">
+            <div>
+              <p className="section-label mb-1">Name</p>
+              <p className="text-[16px] font-semibold text-foreground">{mockDraft.name}</p>
+            </div>
+            <div>
+              <p className="section-label mb-1">Role</p>
+              <p className="text-[14px] text-foreground">{mockDraft.title}</p>
+            </div>
+            <div>
+              <p className="section-label mb-1">What they'll do</p>
+              <p className="text-[13px] text-muted-foreground leading-relaxed">{mockDraft.summary}</p>
+            </div>
+            <div>
+              <p className="section-label mb-2">Auto-equipped skills</p>
+              <div className="flex flex-wrap gap-1.5">
+                {mockDraft.skills.map(s => (
+                  <span key={s} className="px-2.5 py-1 text-[11px] font-medium bg-primary/6 text-primary rounded-lg ring-1 ring-inset ring-primary/10">{s}</span>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p className="section-label mb-2">Auto-equipped tools</p>
+              <div className="flex flex-wrap gap-1.5">
+                {mockDraft.tools.map(t => (
+                  <span key={t} className="px-2.5 py-1 text-[11px] font-medium bg-muted rounded-lg text-foreground">{t}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button onClick={() => setStep("describe")} className="px-5 py-2.5 rounded-xl text-[13px] font-medium text-foreground border border-border hover:bg-muted/50 transition-colors">
+              Let me adjust
+            </button>
+            <button onClick={handleActivate} className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-semibold bg-primary text-primary-foreground shadow-md shadow-primary/20 hover:brightness-110 transition-all">
+              <Sparkles className="w-4 h-4" />
+              Looks good, activate
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-2xl mx-auto px-8 py-10">
-        {/* Header */}
+        <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground transition-colors mb-6">
+          <ArrowLeft className="w-3.5 h-3.5" />
+          Back
+        </button>
+
         <div className="mb-8">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-6"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            Back
-          </button>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-state-accent flex items-center justify-center shadow-lg shadow-primary/20">
-              <UserPlus className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-foreground">Create Employee</h1>
-              <p className="text-xs text-muted-foreground">Set up a new AI employee for your workspace</p>
-            </div>
+          <h1 className="text-[22px] font-bold text-foreground tracking-tight mb-1">Create a new employee</h1>
+          <p className="text-[13px] text-muted-foreground">Pick a template or describe what you need in your own words.</p>
+        </div>
+
+        {/* Templates */}
+        <div className="mb-8">
+          <p className="section-label mb-3">Start from a template</p>
+          <div className="grid grid-cols-2 gap-3">
+            {roleTemplates.map((tpl) => (
+              <button
+                key={tpl.id}
+                onClick={() => { setSelectedTemplate(tpl.id); setDescription(""); }}
+                className={`text-left rounded-xl border p-4 transition-all ${
+                  selectedTemplate === tpl.id
+                    ? "border-primary/40 bg-primary/4 ring-1 ring-primary/20"
+                    : "border-border hover:border-border/80 card-interactive"
+                }`}
+              >
+                <div className="text-xl mb-2">{tpl.icon}</div>
+                <h3 className="text-[13px] font-semibold text-foreground mb-0.5">{tpl.name}</h3>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">{tpl.description}</p>
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Form */}
-        <div className="space-y-6">
-          {/* Identity */}
-          <section className="rounded-xl border border-border/60 bg-card p-5 space-y-4 shadow-sm">
-            <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <Sparkles className="w-3.5 h-3.5 text-primary" />
-              Identity
-            </h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-muted-foreground">Name *</label>
-                <Input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Maya" className="h-9 text-sm" />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-muted-foreground">Team *</label>
-                <select
-                  value={team}
-                  onChange={e => setTeam(e.target.value)}
-                  className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                >
-                  <option value="">Select team</option>
-                  {teamOptions.map(t => <option key={t} value={t}>{t}</option>)}
-                </select>
-              </div>
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-muted-foreground">Title *</label>
-              <Input value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Competitive intelligence lead" className="h-9 text-sm" />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-muted-foreground">Summary</label>
-              <Textarea value={summary} onChange={e => setSummary(e.target.value)} placeholder="What does this employee do?" className="text-sm min-h-[80px] resize-none" />
-            </div>
-          </section>
-
-          {/* Skills */}
-          <section className="rounded-xl border border-border/60 bg-card p-5 space-y-3 shadow-sm">
-            <h2 className="text-sm font-semibold text-foreground">Skills</h2>
-            <div className="flex flex-wrap gap-2">
-              {skillOptions.map(skill => (
-                <button
-                  key={skill}
-                  onClick={() => toggleItem(skill, selectedSkills, setSelectedSkills)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 border ${
-                    selectedSkills.includes(skill)
-                      ? "bg-primary/10 border-primary/30 text-primary"
-                      : "bg-muted/30 border-border/60 text-muted-foreground hover:border-border hover:text-foreground"
-                  }`}
-                >
-                  {selectedSkills.includes(skill) ? <X className="w-3 h-3 inline mr-1" /> : <Plus className="w-3 h-3 inline mr-1" />}
-                  {skill}
-                </button>
-              ))}
-            </div>
-          </section>
-
-          {/* Channels & Budget */}
-          <section className="rounded-xl border border-border/60 bg-card p-5 space-y-4 shadow-sm">
-            <h2 className="text-sm font-semibold text-foreground">Channels & Budget</h2>
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-muted-foreground">Channels</label>
-              <div className="flex flex-wrap gap-2">
-                {channelOptions.map(ch => (
-                  <button
-                    key={ch}
-                    onClick={() => toggleItem(ch, selectedChannels, setSelectedChannels)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 border ${
-                      selectedChannels.includes(ch)
-                        ? "bg-primary/10 border-primary/30 text-primary"
-                        : "bg-muted/30 border-border/60 text-muted-foreground hover:border-border hover:text-foreground"
-                    }`}
-                  >
-                    {ch}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-muted-foreground">Weekly budget (credits)</label>
-                <Input type="number" value={weeklyBudget} onChange={e => setWeeklyBudget(e.target.value)} placeholder="e.g. 150" className="h-9 text-sm" />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-muted-foreground">Default route</label>
-                <Input value={defaultRoute} onChange={e => setDefaultRoute(e.target.value)} placeholder="e.g. Slack #channel" className="h-9 text-sm" />
-              </div>
-            </div>
-          </section>
-
-          {/* Actions */}
-          <div className="flex items-center justify-end gap-3 pt-2">
-            <Button variant="outline" onClick={() => navigate(-1)} className="text-xs h-9">
-              Cancel
-            </Button>
-            <Button onClick={handleCreate} className="text-xs h-9 gap-1.5 shadow-md shadow-primary/20">
-              <UserPlus className="w-3.5 h-3.5" />
-              Create Employee
-            </Button>
-          </div>
+        {/* Divider */}
+        <div className="flex items-center gap-3 mb-6">
+          <div className="flex-1 h-px bg-border" />
+          <span className="text-[11px] text-muted-foreground">or describe what you need</span>
+          <div className="flex-1 h-px bg-border" />
         </div>
+
+        {/* Free-form description */}
+        <div className="mb-6">
+          <Textarea
+            value={description}
+            onChange={e => { setDescription(e.target.value); setSelectedTemplate(null); }}
+            placeholder="e.g. I need someone to monitor our competitors' pricing pages and alert me when anything changes..."
+            className="text-[13px] min-h-[120px] resize-none"
+          />
+        </div>
+
+        <button
+          onClick={handleGenerate}
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-semibold bg-primary text-primary-foreground shadow-md shadow-primary/20 hover:brightness-110 transition-all"
+        >
+          <Send className="w-4 h-4" />
+          Generate employee
+        </button>
       </div>
     </div>
   );

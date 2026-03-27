@@ -4,10 +4,13 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import AppLayout from "@/components/AppLayout";
+import LandingPage from "@/pages/LandingPage";
+import AuthPage from "@/pages/AuthPage";
 import HomePage from "@/pages/HomePage";
 import EmployeesPage from "@/pages/EmployeesPage";
 import EmployeeDetailPage from "@/pages/EmployeeDetailPage";
 import SkillsPage from "@/pages/SkillsPage";
+import ToolsPage from "@/pages/ToolsPage";
 import ConnectionsPage from "@/pages/ConnectionsPage";
 import BillingPage from "@/pages/BillingPage";
 import SettingsPage from "@/pages/SettingsPage";
@@ -23,13 +26,16 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Navigate to="/preview/workspace" replace />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/auth" element={<AuthPage />} />
           <Route path="/preview" element={<AppLayout />}>
+            <Route index element={<Navigate to="/preview/workspace" replace />} />
             <Route path="workspace" element={<HomePage />} />
             <Route path="employees" element={<EmployeesPage />} />
             <Route path="employees/:id" element={<EmployeeDetailPage />} />
             <Route path="skills" element={<SkillsPage />} />
-            <Route path="connections" element={<ConnectionsPage />} />
+            <Route path="tools" element={<ToolsPage />} />
+            <Route path="connectors" element={<ConnectionsPage />} />
             <Route path="billing" element={<BillingPage />} />
             <Route path="create-employee" element={<CreateEmployeePage />} />
             <Route path="settings" element={<SettingsPage />} />

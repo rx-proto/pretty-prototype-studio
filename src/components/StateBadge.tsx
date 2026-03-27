@@ -13,7 +13,7 @@ const stateConfig: Record<EmployeeState, { label: string; dotClass: string; bgCl
   working: { label: "Working", dotClass: "bg-state-working", bgClass: "bg-state-working/8", textClass: "text-state-working", ringClass: "ring-state-working/20" },
   warning: { label: "Warning", dotClass: "bg-state-warning", bgClass: "bg-state-warning/8", textClass: "text-state-warning", ringClass: "ring-state-warning/20" },
   blocked: { label: "Blocked", dotClass: "bg-state-blocked", bgClass: "bg-state-blocked/8", textClass: "text-state-blocked", ringClass: "ring-state-blocked/20" },
-  quiet: { label: "Quiet", dotClass: "bg-state-quiet", bgClass: "bg-state-quiet/8", textClass: "text-state-quiet", ringClass: "ring-state-quiet/20" },
+  idle: { label: "Idle", dotClass: "bg-state-quiet", bgClass: "bg-state-quiet/8", textClass: "text-state-quiet", ringClass: "ring-state-quiet/20" },
   ready: { label: "Ready", dotClass: "bg-state-ready", bgClass: "bg-state-ready/8", textClass: "text-state-ready", ringClass: "ring-state-ready/20" },
   accent: { label: "Review", dotClass: "bg-state-accent", bgClass: "bg-state-accent/8", textClass: "text-state-accent", ringClass: "ring-state-accent/20" },
 };
