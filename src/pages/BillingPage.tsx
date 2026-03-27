@@ -94,9 +94,9 @@ export default function BillingPage() {
       </div>
 
       {/* Filters row */}
-      <div className="flex items-center gap-3 opacity-0 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+      <div className="flex items-center gap-3 opacity-0 animate-fade-in relative z-30" style={{ animationDelay: "0.1s" }}>
         {/* Date range dropdown */}
-        <div className="relative">
+        <div className="relative z-30">
           <button
             onClick={() => setShowDateDropdown(!showDateDropdown)}
             className="flex items-center gap-2 px-3.5 py-2 rounded-lg border border-border text-[12px] font-medium text-foreground hover:bg-muted/40 transition-colors"
