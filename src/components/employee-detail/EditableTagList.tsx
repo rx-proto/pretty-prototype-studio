@@ -1,0 +1,135 @@
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { Pencil, X, Plus, Check } from "lucide-react";
+import { skills as allSkills, tools as allTools } from "@/lib/data";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+
+interface EditableTagListProps {
+  items: string[];
+  type: "skills" | "tools";
+  icon: React.ReactNode;
+  label: string;
+}
+
+export function EditableTagList({ items: initialItems, type, icon, label }: EditableTagListProps) {
+  const [items, setItems] = useState(initialItems);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const allOptions = type === "skills"
+    ? allSkills.map(s => ({ name: s.name, summary: s.summary }))
+    : allTools.map(t => ({ name: t.name, summary: t.summary }));
+
+  const available = allOptions.filter(o => !items.includes(o.name));
+
+  const handleRemove = (item: string) => {
+    setItems(items.filter(i => i !== item));
+  };
+
+  const handleAdd = (item: string) => {
+    setItems([...items, item]);
+  };
+
+  const tagStyle = type === "skills"
+    ? "bg-primary/[0.06] text-primary ring-1 ring-inset ring-primary/10"
+    : "bg-muted text-foreground";
+
+  return (
+    <>
+      <div className="card-premium rounded-xl border border-border p-5">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            {icon}
+            <h3 className="section-label">{label}</h3>
+          </div>
+          <button
+            onClick={() => setIsEditing(true)}
+            className="text-muted-foreground hover:text-primary transition-colors duration-200"
+          >
+            <Pencil className="w-3.5 h-3.5" />
+          </button>
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {items.map((item) => (
+            <span key={item} className={cn("px-2.5 py-1 text-[11px] font-medium rounded-lg", tagStyle)}>
+              {item}
+            </span>
+          ))}
+          {items.length === 0 && (
+            <p className="text-[12px] text-muted-foreground">None configured</p>
+          )}
+        </div>
+      </div>
+
+      <Dialog open={isEditing} onOpenChange={setIsEditing}>
+        <DialogContent className="sm:max-w-[420px]">
+          <DialogHeader>
+            <DialogTitle className="text-[15px]">Edit {label}</DialogTitle>
+            <DialogDescription className="text-[13px]">
+              Add or remove {label.toLowerCase()} for this employee.
+            </DialogDescription>
+          </DialogHeader>
+
+          {/* Current items */}
+          <div className="space-y-2">
+            <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Active</p>
+            {items.length === 0 ? (
+              <p className="text-[12px] text-muted-foreground py-2">No {label.toLowerCase()} assigned.</p>
+            ) : (
+              <div className="flex flex-wrap gap-1.5">
+                {items.map(item => (
+                  <button
+                    key={item}
+                    onClick={() => handleRemove(item)}
+                    className={cn(
+                      "group inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-medium rounded-lg transition-all duration-200 hover:bg-destructive/10 hover:text-destructive",
+                      tagStyle
+                    )}
+                  >
+                    {item}
+                    <X className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Available items */}
+          {available.length > 0 && (
+            <div className="space-y-2 mt-2">
+              <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Available</p>
+              <div className="space-y-1 max-h-[200px] overflow-y-auto">
+                {available.map(option => (
+                  <button
+                    key={option.name}
+                    onClick={() => handleAdd(option.name)}
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left hover:bg-muted/50 transition-colors duration-150 group"
+                  >
+                    <Plus className="w-3.5 h-3.5 text-muted-foreground/40 group-hover:text-primary transition-colors" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[12px] font-medium text-foreground">{option.name}</p>
+                      <p className="text-[11px] text-muted-foreground truncate">{option.summary}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <button
+            onClick={() => setIsEditing(false)}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-[12px] font-medium hover:bg-primary/90 transition-colors mt-1"
+          >
+            <Check className="w-3.5 h-3.5" />
+            Done
+          </button>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}

@@ -1,9 +1,24 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getEmployeeById } from "@/lib/data";
-import { StateDot, StateBadge, EmployeeAvatar } from "@/components/StateBadge";
-import { ArrowLeft, Zap, Wrench, Plug, Plus, Archive, RotateCcw, AlertTriangle } from "lucide-react";
+import { getActivityLogs, getConnectorDetails } from "@/lib/employee-detail-data";
+import { StateDot, EmployeeAvatar } from "@/components/StateBadge";
+import { ActivityLog } from "@/components/employee-detail/ActivityLog";
+import { EditableTagList } from "@/components/employee-detail/EditableTagList";
+import { ConnectorsPanel } from "@/components/employee-detail/ConnectorsPanel";
+import { ArrowLeft, Zap, Wrench, Archive, RotateCcw, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function EmployeeDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -19,9 +34,17 @@ export default function EmployeeDetailPage() {
     );
   }
 
-  const handleToggleArchive = () => {
-    setIsArchived(!isArchived);
-    toast.success(isArchived ? `${emp.name} has been restored` : `${emp.name} has been archived`);
+  const logs = getActivityLogs(emp.id);
+  const connectorDetails = getConnectorDetails(emp.connectors);
+
+  const handleArchive = () => {
+    setIsArchived(true);
+    toast.success(`${emp.name} has been archived`);
+  };
+
+  const handleRestore = () => {
+    setIsArchived(false);
+    toast.success(`${emp.name} has been restored`);
   };
 
   return (
@@ -31,7 +54,8 @@ export default function EmployeeDetailPage() {
         Employees
       </button>
 
-      <div className={`card-premium rounded-xl border border-border p-6 mb-6 relative noise-overlay opacity-0 animate-fade-in-up ${isArchived ? "opacity-70" : ""}`} style={{ animationDelay: "0.1s" }}>
+      {/* Header card */}
+      <div className={`card-premium rounded-xl border border-border p-6 mb-6 relative noise-overlay opacity-0 animate-fade-in-up ${isArchived ? "opacity-60" : ""}`} style={{ animationDelay: "0.1s" }}>
         <div className="relative flex items-start gap-4">
           <EmployeeAvatar name={emp.name} size="lg" />
           <div className="flex-1 min-w-0">
@@ -57,91 +81,67 @@ export default function EmployeeDetailPage() {
         </div>
       </div>
 
+      {/* Main content */}
       <div className="grid grid-cols-3 gap-5">
+        {/* Left: Activity log */}
         <div className="col-span-2 space-y-5 animate-stagger">
-          <div className="card-premium rounded-xl border border-border p-5">
-            <h2 className="text-[13px] font-semibold text-foreground mb-2">What they're doing now</h2>
-            <p className="text-[13px] text-muted-foreground leading-relaxed">{emp.statusMessage}</p>
-          </div>
-          <div className="card-premium rounded-xl border border-border p-5">
-            <h2 className="text-[13px] font-semibold text-foreground mb-2">Recent work</h2>
-            <p className="text-[13px] text-muted-foreground leading-relaxed">{emp.lastWork}</p>
-          </div>
+          <ActivityLog entries={logs} />
         </div>
 
+        {/* Right sidebar */}
         <div className="space-y-4 animate-stagger">
-          <div className="card-premium rounded-xl border border-border p-5">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <Zap className="w-3.5 h-3.5 text-muted-foreground" />
-                <h3 className="section-label">Skills</h3>
-              </div>
-              <button className="text-muted-foreground hover:text-primary transition-colors duration-200">
-                <Plus className="w-3.5 h-3.5" />
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-1.5">
-              {emp.skills.map((s) => (
-                <span key={s} className="px-2.5 py-1 text-[11px] font-medium bg-primary/[0.06] text-primary rounded-lg ring-1 ring-inset ring-primary/10">{s}</span>
-              ))}
-            </div>
-          </div>
+          <EditableTagList
+            items={emp.skills}
+            type="skills"
+            icon={<Zap className="w-3.5 h-3.5 text-muted-foreground" />}
+            label="Skills"
+          />
 
-          <div className="card-premium rounded-xl border border-border p-5">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <Wrench className="w-3.5 h-3.5 text-muted-foreground" />
-                <h3 className="section-label">Tools</h3>
-              </div>
-              <button className="text-muted-foreground hover:text-primary transition-colors duration-200">
-                <Plus className="w-3.5 h-3.5" />
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-1.5">
-              {emp.tools.map((t) => (
-                <span key={t} className="px-2.5 py-1 text-[11px] font-medium bg-muted rounded-lg text-foreground">{t}</span>
-              ))}
-            </div>
-          </div>
+          <EditableTagList
+            items={emp.tools}
+            type="tools"
+            icon={<Wrench className="w-3.5 h-3.5 text-muted-foreground" />}
+            label="Tools"
+          />
 
-          <div className="card-premium rounded-xl border border-border p-5">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <Plug className="w-3.5 h-3.5 text-muted-foreground" />
-                <h3 className="section-label">Connectors</h3>
-              </div>
-              <button className="text-muted-foreground hover:text-primary transition-colors duration-200">
-                <Plus className="w-3.5 h-3.5" />
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-1.5">
-              {emp.connectors.map((c) => (
-                <span key={c} className="px-2.5 py-1 text-[11px] font-medium bg-muted rounded-lg text-foreground">{c}</span>
-              ))}
-            </div>
-          </div>
+          <ConnectorsPanel details={connectorDetails} employeeName={emp.name} />
 
-          {/* Archive / Restore action */}
-          <button
-            onClick={handleToggleArchive}
-            className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-[12px] font-medium transition-all duration-200 border ${
-              isArchived
-                ? "border-border text-foreground hover:bg-muted"
-                : "border-transparent text-muted-foreground/60 hover:text-destructive hover:bg-destructive/5"
-            }`}
-          >
-            {isArchived ? (
-              <>
-                <RotateCcw className="w-3.5 h-3.5" />
-                Restore employee
-              </>
-            ) : (
-              <>
-                <Archive className="w-3.5 h-3.5" />
-                Archive employee
-              </>
-            )}
-          </button>
+          {/* Archive / Restore */}
+          {isArchived ? (
+            <button
+              onClick={handleRestore}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-[12px] font-medium transition-all duration-200 border border-border text-foreground hover:bg-muted"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              Restore employee
+            </button>
+          ) : (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-[12px] font-medium transition-all duration-200 border border-transparent text-muted-foreground/60 hover:text-destructive hover:bg-destructive/5">
+                  <Archive className="w-3.5 h-3.5" />
+                  Archive employee
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Archive {emp.name}?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will deactivate {emp.name} and stop all running tasks. Archived employees won't process new events or incur costs. You can restore them anytime.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className="text-[12px]">Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleArchive}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90 text-[12px]"
+                  >
+                    Archive
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
         </div>
       </div>
     </div>
