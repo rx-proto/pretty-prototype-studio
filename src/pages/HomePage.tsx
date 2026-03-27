@@ -16,6 +16,7 @@ export default function HomePage() {
   const activeCount = employees.filter(e => e.state === "working" || e.state === "warning" || e.state === "ready").length;
   const actionItems = attentionItems.filter(item => item.tone === "warning" || item.tone === "blocked");
   const [selectedItem, setSelectedItem] = useState<AttentionItem | null>(null);
+  const [selectedActivity, setSelectedActivity] = useState<RecentActivity | null>(null);
 
   const maxSpend = Math.max(...dailySpend.map(d => d.amount));
 
