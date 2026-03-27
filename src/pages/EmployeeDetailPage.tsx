@@ -88,9 +88,9 @@ export default function EmployeeDetailPage() {
       </div>
 
       {/* Main content */}
-      <div className="grid grid-cols-3 gap-5">
+      <div className="grid grid-cols-3 gap-5 items-stretch">
         {/* Left: Tab content */}
-        <div className="col-span-2 animate-stagger flex flex-col" style={{ height: "calc(100vh - 260px)", minHeight: "400px" }}>
+        <div className="col-span-2 animate-stagger flex flex-col">
           {/* Tab switcher */}
           <div className="flex gap-1 p-1 rounded-lg bg-muted mb-4 w-fit flex-shrink-0">
             <button
