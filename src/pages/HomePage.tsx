@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { employees, attentionItems, dailySpend, weeklySpend, todaySpend, recentActivity, AttentionItem } from "@/lib/data";
+import { employees, attentionItems, dailySpend, weeklySpend, todaySpend, recentActivity, AttentionItem, RecentActivity } from "@/lib/data";
 import { StateDot, EmployeeAvatar } from "@/components/StateBadge";
 import { useNavigate } from "react-router-dom";
 import { Users, TrendingUp, ChevronRight, AlertTriangle, Clock } from "lucide-react";
