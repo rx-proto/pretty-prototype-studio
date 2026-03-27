@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getEmployeeById } from "@/lib/data";
 import { getActivityLogs, getConnectorDetails } from "@/lib/employee-detail-data";
@@ -31,6 +31,8 @@ export default function EmployeeDetailPage() {
   const emp = getEmployeeById(id || "");
   const [isArchived, setIsArchived] = useState(emp?.archived ?? false);
   const [activeTab, setActiveTab] = useState<"activity" | "messages">("activity");
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const [panelHeight, setPanelHeight] = useState<number | null>(null);
 
   if (!emp) {
     return (
@@ -52,6 +54,24 @@ export default function EmployeeDetailPage() {
     setIsArchived(false);
     toast.success(`${emp.name} has been restored`);
   };
+
+  useLayoutEffect(() => {
+    const updateHeight = () => {
+      if (sidebarRef.current) {
+        setPanelHeight(sidebarRef.current.offsetHeight);
+      }
+    };
+
+    updateHeight();
+    const observer = new ResizeObserver(updateHeight);
+    if (sidebarRef.current) observer.observe(sidebarRef.current);
+    window.addEventListener("resize", updateHeight);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateHeight);
+    };
+  }, [activeTab, isArchived, emp.id]);
 
   return (
     <div className="p-8 max-w-[960px] mx-auto">
