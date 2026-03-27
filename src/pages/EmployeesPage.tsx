@@ -21,6 +21,14 @@ export default function EmployeesPage() {
 
   const archivedCount = employees.filter(e => e.archived).length;
   const activeEmployees = employees.filter(e => !e.archived);
+  const runningCount = activeEmployees.filter(e => e.state === "running").length;
+  const sleepingCount = activeEmployees.filter(e => e.state === "sleeping").length;
+
+  const filterLabels = [
+    `All (${activeEmployees.length})`,
+    `Running (${runningCount})`,
+    `Sleeping (${sleepingCount})`,
+  ];
 
   return (
     <div className="p-8 max-w-[960px] mx-auto space-y-6">
