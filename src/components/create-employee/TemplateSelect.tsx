@@ -12,7 +12,7 @@ const templateIcons: Record<string, { icon: LucideIcon; color: string; bg: strin
 
 interface Props {
   onSelectTemplate: (id: string) => void;
-  onStartWithMessage: (message: string) => void;
+  onStartWithMessage: (text: string) => void;
   onBack: () => void;
 }
 
@@ -25,46 +25,48 @@ export default function TemplateSelect({ onSelectTemplate, onStartWithMessage, o
   };
 
   return (
-    <div className="h-full flex flex-col bg-background">
-      <div className="flex-1 overflow-y-auto">
-        <div className="max-w-2xl mx-auto px-8 py-10">
-          <button onClick={onBack} className="flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground transition-colors mb-6 opacity-0 animate-fade-in">
-            <ArrowLeft className="w-3.5 h-3.5" />
-            Back
-          </button>
+    <div className="min-h-screen bg-background">
+      <div className="max-w-2xl mx-auto px-8 py-10">
+        <button onClick={onBack} className="flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground transition-colors mb-6 opacity-0 animate-fade-in">
+          <ArrowLeft className="w-3.5 h-3.5" />
+          Back
+        </button>
 
-          <div className="mb-8 opacity-0 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
-            <h1 className="text-[24px] font-bold text-foreground tracking-tight mb-1">Create a new employee</h1>
-            <p className="text-[13px] text-muted-foreground">Pick a template or describe the role you need.</p>
-          </div>
+        <div className="mb-8 opacity-0 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
+          <h1 className="text-[24px] font-bold text-foreground tracking-tight mb-1">Create a new employee</h1>
+          <p className="text-[13px] text-muted-foreground">Pick a template or describe the role you need.</p>
+        </div>
 
-          <div className="mb-8 opacity-0 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
-            <div className="grid grid-cols-2 gap-3">
-              {roleTemplates.map((tpl) => {
-                const entry = templateIcons[tpl.icon] || { icon: Search, color: "text-violet-600", bg: "bg-violet-50" };
-                const TplIcon = entry.icon;
-                return (
-                  <button
-                    key={tpl.id}
-                    onClick={() => onSelectTemplate(tpl.id)}
-                    className="text-left rounded-xl border border-border p-4 transition-all duration-200 hover:border-border/80 card-interactive"
-                  >
-                    <div className={`w-8 h-8 rounded-lg ${entry.bg} flex items-center justify-center mb-2.5`}>
-                      <TplIcon className={`w-4 h-4 ${entry.color}`} />
-                    </div>
-                    <h3 className="text-[13px] font-semibold text-foreground mb-0.5">{tpl.name}</h3>
-                    <p className="text-[11px] text-muted-foreground leading-relaxed">{tpl.description}</p>
-                  </button>
-                );
-              })}
-            </div>
+        <div className="mb-8 opacity-0 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+          <p className="section-label mb-3">Start from a template</p>
+          <div className="grid grid-cols-2 gap-3">
+            {roleTemplates.map((tpl) => {
+              const entry = templateIcons[tpl.icon] || { icon: Search, color: "text-violet-600", bg: "bg-violet-50" };
+              const TplIcon = entry.icon;
+              return (
+                <button
+                  key={tpl.id}
+                  onClick={() => onSelectTemplate(tpl.id)}
+                  className="text-left rounded-xl border border-border p-4 transition-all duration-200 hover:border-border/80 card-interactive"
+                >
+                  <div className={`w-8 h-8 rounded-lg ${entry.bg} flex items-center justify-center mb-2.5`}>
+                    <TplIcon className={`w-4 h-4 ${entry.color}`} />
+                  </div>
+                  <h3 className="text-[13px] font-semibold text-foreground mb-0.5">{tpl.name}</h3>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">{tpl.description}</p>
+                </button>
+              );
+            })}
           </div>
         </div>
-      </div>
 
-      {/* Input bar pinned to bottom */}
-      <div className="px-6 py-4 border-t border-border opacity-0 animate-fade-in" style={{ animationDelay: "0.3s" }}>
-        <div className="max-w-2xl mx-auto">
+        <div className="flex items-center gap-3 mb-5 opacity-0 animate-fade-in" style={{ animationDelay: "0.3s" }}>
+          <div className="flex-1 h-px bg-border" />
+          <span className="text-[11px] text-muted-foreground">or describe from scratch</span>
+          <div className="flex-1 h-px bg-border" />
+        </div>
+
+        <div className="opacity-0 animate-fade-in" style={{ animationDelay: "0.35s" }}>
           <div className="relative">
             <textarea
               value={input}
@@ -75,14 +77,14 @@ export default function TemplateSelect({ onSelectTemplate, onStartWithMessage, o
                   handleSend();
                 }
               }}
-              placeholder="Or describe the role you need…"
-              rows={1}
+              placeholder="e.g. I need someone to monitor our competitors' pricing pages and alert me when anything changes…"
+              rows={2}
               className="w-full bg-muted/60 border border-border rounded-2xl pl-4 pr-12 py-3 text-[13.5px] text-foreground placeholder:text-muted-foreground outline-none focus:border-foreground/20 focus:bg-muted/80 transition-all resize-none"
             />
             <button
               onClick={handleSend}
               disabled={!input.trim()}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-xl bg-foreground text-background flex items-center justify-center hover:bg-foreground/90 transition-colors disabled:opacity-30"
+              className="absolute right-2.5 bottom-2.5 w-8 h-8 rounded-xl bg-foreground text-background flex items-center justify-center hover:bg-foreground/90 transition-colors disabled:opacity-30"
             >
               <ArrowUp className="w-4 h-4" />
             </button>
