@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Home, Users, Zap, Link2, CreditCard, Settings, Sparkles, UserPlus } from "lucide-react";
 import { workspace } from "@/lib/data";
@@ -9,12 +9,12 @@ const navItems = [
   { to: "/preview/skills", label: "Skills", icon: Zap },
   { to: "/preview/connections", label: "Connections", icon: Link2 },
   { to: "/preview/billing", label: "Billing", icon: CreditCard },
-  { to: "/preview/create-employee", label: "Create Employee", icon: UserPlus },
   { to: "/preview/settings", label: "Settings", icon: Settings },
 ];
 
 export default function AppLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -35,6 +35,17 @@ export default function AppLayout() {
 
         {/* Divider */}
         <div className="mx-4 h-px bg-sidebar-border/60" />
+
+        {/* CTA Button */}
+        <div className="px-3 pt-4 pb-1">
+          <button
+            onClick={() => navigate("/preview/create-employee")}
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-[12px] font-semibold bg-primary text-primary-foreground shadow-md shadow-primary/25 hover:brightness-110 transition-all duration-150"
+          >
+            <UserPlus className="w-3.5 h-3.5" />
+            Create Employee
+          </button>
+        </div>
 
         {/* Nav */}
         <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto scrollbar-thin">
