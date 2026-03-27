@@ -17,6 +17,8 @@ export default function BillingPage() {
   const [customAmount, setCustomAmount] = useState("");
   const [fundStep, setFundStep] = useState<"amount" | "payment" | "success">("amount");
   const [showDateDropdown, setShowDateDropdown] = useState(false);
+  const [showAllEmployees, setShowAllEmployees] = useState(false);
+  const VISIBLE_COUNT = 5;
 
   const filteredSpend = employeeFilter
     ? employeeSpend.filter(e => e.name === employeeFilter)
@@ -130,7 +132,7 @@ export default function BillingPage() {
           >
             All employees
           </button>
-          {employeeSpend.map(e => (
+          {(showAllEmployees ? employeeSpend : employeeSpend.slice(0, VISIBLE_COUNT)).map(e => (
             <button
               key={e.name}
               onClick={() => setEmployeeFilter(employeeFilter === e.name ? null : e.name)}
@@ -139,31 +141,60 @@ export default function BillingPage() {
               {e.name}
             </button>
           ))}
+          {employeeSpend.length > VISIBLE_COUNT && (
+            <button
+              onClick={() => setShowAllEmployees(!showAllEmployees)}
+              className="px-3 py-1.5 rounded-lg text-[11px] font-medium bg-muted text-muted-foreground hover:text-foreground transition-all"
+            >
+              {showAllEmployees ? "Show less" : `+${employeeSpend.length - VISIBLE_COUNT} more`}
+            </button>
+          )}
         </div>
       </div>
 
       {/* Spend chart */}
       <div className="card-premium rounded-xl border border-border p-5 opacity-0 animate-fade-in" style={{ animationDelay: "0.15s" }}>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-[13px] font-semibold text-foreground">Daily spend — {dateRange.toLowerCase()}</h2>
+          <div className="flex items-center gap-4">
+            <h2 className="text-[13px] font-semibold text-foreground">Daily spend — {dateRange.toLowerCase()}</h2>
+            <div className="flex items-center gap-3">
+              <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                <span className="w-2.5 h-2.5 rounded-[3px] bg-primary/[0.15]" />
+                LLM Inference
+              </span>
+              <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                <span className="w-2.5 h-2.5 rounded-[3px] bg-primary/30" />
+                Tool calls
+              </span>
+            </div>
+          </div>
           <span className="text-[12px] font-medium text-muted-foreground">${weeklyTotal.toFixed(2)} total</span>
         </div>
         <div className="flex items-end gap-2 h-[140px]">
-          {dailySpend.map((d) => (
-            <div key={d.day} className="flex-1 flex flex-col items-center gap-1.5 group cursor-default">
-              <span className="text-[10px] font-medium text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">${d.amount.toFixed(2)}</span>
-              <div
-                className="w-full rounded-t-md bg-primary/[0.15] relative overflow-hidden group-hover:bg-primary/[0.25] transition-colors duration-200"
-                style={{ height: `${(d.amount / maxSpend) * 100 + 8}px` }}
-              >
-                <div className="absolute bottom-0 inset-x-0 h-1/2 bg-primary/[0.1] rounded-t-md" />
+          {dailySpend.map((d) => {
+            const totalH = (d.amount / maxSpend) * 100 + 8;
+            const toolH = (d.toolCalls / d.amount) * totalH;
+            const inferH = totalH - toolH;
+            return (
+              <div key={d.day} className="flex-1 flex flex-col items-center gap-1.5 group cursor-default">
+                <span className="text-[10px] font-medium text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">${d.amount.toFixed(2)}</span>
+                <div className="w-full flex flex-col" style={{ height: `${totalH}px` }}>
+                  <div
+                    className="w-full rounded-t-md bg-primary/[0.15] group-hover:bg-primary/[0.25] transition-colors duration-200"
+                    style={{ height: `${inferH}px` }}
+                  />
+                  <div
+                    className="w-full bg-primary/30 group-hover:bg-primary/40 transition-colors duration-200"
+                    style={{ height: `${toolH}px` }}
+                  />
+                </div>
+                <div className="text-center">
+                  <span className="text-[10px] font-medium text-muted-foreground block">{d.day}</span>
+                  <span className="text-[9px] text-muted-foreground/60">{d.date}</span>
+                </div>
               </div>
-              <div className="text-center">
-                <span className="text-[10px] font-medium text-muted-foreground block">{d.day}</span>
-                <span className="text-[9px] text-muted-foreground/60">{d.date}</span>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
