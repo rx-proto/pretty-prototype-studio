@@ -1,5 +1,16 @@
 import { connectors } from "@/lib/data";
-import { Plus } from "lucide-react";
+import { Plus, MessageSquare, MessageCircle, Mail, Webhook, Database, BookOpen, Github } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+
+const connectorIcons: Record<string, LucideIcon> = {
+  Slack: MessageSquare,
+  Lark: MessageCircle,
+  Email: Mail,
+  Webhook: Webhook,
+  Salesforce: Database,
+  Notion: BookOpen,
+  GitHub: Github,
+};
 
 export default function ConnectionsPage() {
   return (
@@ -16,28 +27,31 @@ export default function ConnectionsPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 animate-stagger">
-        {connectors.map((conn) => (
-          <div key={conn.id} className="card-interactive rounded-xl border border-border p-5 cursor-pointer group relative noise-overlay">
-            <div className="relative flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
-                <span className="text-[15px] font-bold text-foreground">{conn.name[0]}</span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-[14px] font-semibold text-foreground">{conn.name}</h3>
-                  <span className={`w-2 h-2 rounded-full flex-shrink-0 ${conn.connected ? "bg-state-working" : "bg-muted-foreground/25"}`} />
+        {connectors.map((conn) => {
+          const Icon = connectorIcons[conn.name] || MessageSquare;
+          return (
+            <div key={conn.id} className="card-interactive rounded-xl border border-border p-5 cursor-pointer group relative noise-overlay">
+              <div className="relative flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
+                  <Icon className="w-[18px] h-[18px] text-foreground" />
                 </div>
-                <p className="text-[11px] text-muted-foreground">
-                  {conn.connected ? "Connected" : "Not connected"}
-                </p>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-[14px] font-semibold text-foreground">{conn.name}</h3>
+                    <span className={`w-2 h-2 rounded-full flex-shrink-0 ${conn.connected ? "bg-state-working" : "bg-muted-foreground/25"}`} />
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    {conn.connected ? "Connected" : "Not connected"}
+                  </p>
+                </div>
               </div>
+              <p className="text-[12px] text-muted-foreground leading-relaxed mb-2">{conn.summary}</p>
+              {conn.employeesUsing > 0 && (
+                <p className="text-[11px] text-muted-foreground">{conn.employeesUsing} employee{conn.employeesUsing > 1 ? "s" : ""} using</p>
+              )}
             </div>
-            <p className="text-[12px] text-muted-foreground leading-relaxed mb-2">{conn.summary}</p>
-            {conn.employeesUsing > 0 && (
-              <p className="text-[11px] text-muted-foreground">{conn.employeesUsing} employee{conn.employeesUsing > 1 ? "s" : ""} using</p>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

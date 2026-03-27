@@ -6,19 +6,19 @@ import { workspace } from "@/lib/data";
 import sarahAvatar from "@/assets/avatars/sarah-chen.jpg";
 
 const mainNav = [
-  { to: "/preview/workspace", label: "Home", icon: Home },
-  { to: "/preview/employees", label: "Employees", icon: Users },
+  { to: "/app/home", label: "Home", icon: Home },
+  { to: "/app/employees", label: "Employees", icon: Users },
 ];
 
 const catalogNav = [
-  { to: "/preview/skills", label: "Skills", icon: Zap },
-  { to: "/preview/tools", label: "Tools", icon: Wrench },
-  { to: "/preview/connectors", label: "Connectors", icon: Plug },
+  { to: "/app/skills", label: "Skills", icon: Zap },
+  { to: "/app/tools", label: "Tools", icon: Wrench },
+  { to: "/app/connectors", label: "Connectors", icon: Plug },
 ];
 
 const manageNav = [
-  { to: "/preview/billing", label: "Billing", icon: CreditCard },
-  { to: "/preview/settings", label: "Settings", icon: Settings },
+  { to: "/app/billing", label: "Billing", icon: CreditCard },
+  { to: "/app/settings", label: "Settings", icon: Settings },
 ];
 
 export default function AppLayout() {
@@ -36,7 +36,7 @@ export default function AppLayout() {
   };
 
   const renderNavItem = ({ to, label, icon: Icon }: { to: string; label: string; icon: typeof Home }) => {
-    const isActive = location.pathname === to || (to !== "/preview/workspace" && location.pathname.startsWith(to));
+    const isActive = location.pathname === to || (to !== "/app/home" && location.pathname.startsWith(to));
     return (
       <NavLink
         key={to}
@@ -97,7 +97,7 @@ export default function AppLayout() {
 
         <div className="relative px-3 pt-4 pb-2">
           <button
-            onClick={() => navigate("/preview/create-employee")}
+            onClick={() => navigate("/app/create-employee")}
             className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-[12px] font-semibold bg-primary text-primary-foreground shadow-md shadow-primary/25 hover:brightness-110 transition-all duration-200"
           >
             <UserPlus className="w-3.5 h-3.5" />

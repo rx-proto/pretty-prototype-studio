@@ -7,6 +7,10 @@ import nikoAvatar from "@/assets/avatars/niko.jpg";
 import irisAvatar from "@/assets/avatars/iris.jpg";
 import junAvatar from "@/assets/avatars/jun.jpg";
 import linaAvatar from "@/assets/avatars/lina.jpg";
+import alexAvatar from "@/assets/avatars/alex.jpg";
+import kaiAvatar from "@/assets/avatars/kai.jpg";
+import veraAvatar from "@/assets/avatars/vera.jpg";
+import reoAvatar from "@/assets/avatars/reo.jpg";
 import sarahAvatar from "@/assets/avatars/sarah-chen.jpg";
 
 const stateConfig: Record<EmployeeState, { label: string; dotClass: string; bgClass: string; textClass: string; ringClass: string }> = {
@@ -45,6 +49,10 @@ const avatarMap: Record<string, string> = {
   Iris: irisAvatar,
   Jun: junAvatar,
   Lina: linaAvatar,
+  Alex: alexAvatar,
+  Kai: kaiAvatar,
+  Vera: veraAvatar,
+  Reo: reoAvatar,
   "Sarah Chen": sarahAvatar,
 };
 

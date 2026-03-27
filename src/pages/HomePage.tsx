@@ -9,13 +9,11 @@ export default function HomePage() {
 
   return (
     <div className="p-8 max-w-[960px] mx-auto space-y-8">
-      {/* Header */}
       <div className="pt-2 opacity-0 animate-fade-in">
         <h1 className="text-[24px] font-bold text-foreground tracking-tight">Welcome back</h1>
         <p className="text-muted-foreground text-[13px] mt-1">Here's what's happening in your workspace.</p>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-3 gap-3 animate-stagger">
         <div className="card-premium rounded-xl border border-border p-5 relative noise-overlay">
           <div className="flex items-center gap-2 mb-3">
@@ -45,7 +43,6 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Needs attention */}
       {attentionItems.length > 0 && (
         <div className="opacity-0 animate-fade-in" style={{ animationDelay: "0.2s" }}>
           <div className="flex items-center gap-2 mb-3">
@@ -72,11 +69,10 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Employee status */}
       <div className="opacity-0 animate-fade-in" style={{ animationDelay: "0.3s" }}>
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-[13px] font-semibold text-foreground">Your employees</h2>
-          <button onClick={() => navigate("/preview/employees")} className="text-[11px] font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-0.5">
+          <button onClick={() => navigate("/app/employees")} className="text-[11px] font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-0.5">
             View all <ChevronRight className="w-3 h-3" />
           </button>
         </div>
@@ -84,7 +80,7 @@ export default function HomePage() {
           {employees.map((emp, i) => (
             <button
               key={emp.id}
-              onClick={() => navigate(`/preview/employees/${emp.id}`)}
+              onClick={() => navigate(`/app/employees/${emp.id}`)}
               className={`w-full flex items-center gap-3.5 px-5 py-3.5 text-left hover:bg-muted/30 transition-colors duration-200 ${
                 i < employees.length - 1 ? "border-b border-border" : ""
               }`}

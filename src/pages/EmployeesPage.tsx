@@ -24,7 +24,6 @@ export default function EmployeesPage() {
         <p className="text-muted-foreground text-[13px] mt-1">{employees.length} AI employees in your workspace</p>
       </div>
 
-      {/* Filter tabs */}
       <div className="flex gap-1 p-1 rounded-xl bg-muted w-fit opacity-0 animate-fade-in" style={{ animationDelay: "0.1s" }}>
         {filters.map((f, i) => (
           <button
@@ -39,12 +38,11 @@ export default function EmployeesPage() {
         ))}
       </div>
 
-      {/* Employee cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 animate-stagger">
         {filtered.map((emp) => (
           <button
             key={emp.id}
-            onClick={() => navigate(`/preview/employees/${emp.id}`)}
+            onClick={() => navigate(`/app/employees/${emp.id}`)}
             className="card-interactive rounded-xl border border-border p-5 text-left group"
           >
             <div className="flex items-center gap-3 mb-3">

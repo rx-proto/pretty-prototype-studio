@@ -18,13 +18,11 @@ export default function EmployeeDetailPage() {
 
   return (
     <div className="p-8 max-w-[960px] mx-auto">
-      {/* Back */}
-      <button onClick={() => navigate("/preview/employees")} className="flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground transition-colors mb-6 opacity-0 animate-fade-in">
+      <button onClick={() => navigate("/app/employees")} className="flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground transition-colors mb-6 opacity-0 animate-fade-in">
         <ArrowLeft className="w-3.5 h-3.5" />
         Employees
       </button>
 
-      {/* Hero */}
       <div className="card-premium rounded-xl border border-border p-6 mb-6 relative noise-overlay opacity-0 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
         <div className="relative flex items-start gap-4">
           <EmployeeAvatar name={emp.name} size="lg" />
@@ -40,24 +38,18 @@ export default function EmployeeDetailPage() {
       </div>
 
       <div className="grid grid-cols-3 gap-5">
-        {/* Main column */}
         <div className="col-span-2 space-y-5 animate-stagger">
-          {/* Current status */}
           <div className="card-premium rounded-xl border border-border p-5">
             <h2 className="text-[13px] font-semibold text-foreground mb-2">What they're doing now</h2>
             <p className="text-[13px] text-muted-foreground leading-relaxed">{emp.statusMessage}</p>
           </div>
-
-          {/* Recent work */}
           <div className="card-premium rounded-xl border border-border p-5">
             <h2 className="text-[13px] font-semibold text-foreground mb-2">Recent work</h2>
             <p className="text-[13px] text-muted-foreground leading-relaxed">{emp.lastWork}</p>
           </div>
         </div>
 
-        {/* Side column */}
         <div className="space-y-4 animate-stagger">
-          {/* Skills */}
           <div className="card-premium rounded-xl border border-border p-5">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
@@ -75,7 +67,6 @@ export default function EmployeeDetailPage() {
             </div>
           </div>
 
-          {/* Tools */}
           <div className="card-premium rounded-xl border border-border p-5">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
@@ -93,7 +84,6 @@ export default function EmployeeDetailPage() {
             </div>
           </div>
 
-          {/* Connectors */}
           <div className="card-premium rounded-xl border border-border p-5">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
