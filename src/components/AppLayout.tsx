@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Home, Users, Zap, Link2, CreditCard, Settings, Sparkles } from "lucide-react";
+import { Home, Users, Zap, Link2, CreditCard, Settings, Sparkles, UserPlus } from "lucide-react";
 import { workspace } from "@/lib/data";
 
 const navItems = [
@@ -9,6 +9,7 @@ const navItems = [
   { to: "/preview/skills", label: "Skills", icon: Zap },
   { to: "/preview/connections", label: "Connections", icon: Link2 },
   { to: "/preview/billing", label: "Billing", icon: CreditCard },
+  { to: "/preview/create-employee", label: "Create Employee", icon: UserPlus },
   { to: "/preview/settings", label: "Settings", icon: Settings },
 ];
 
