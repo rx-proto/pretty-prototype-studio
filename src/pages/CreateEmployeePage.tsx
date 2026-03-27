@@ -77,8 +77,8 @@ export default function CreateEmployeePage() {
   if (step === "templates") {
     return (
       <TemplateSelect
-        onSelectTemplate={(id) => startSession(id)}
-        onStartBlank={() => startSession()}
+        onSelectTemplate={(id) => startSession()}
+        onStartWithMessage={(text) => startSession(text)}
         onBack={() => navigate(-1)}
       />
     );
