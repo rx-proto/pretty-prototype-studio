@@ -1,15 +1,14 @@
 import { settingsGroups } from "@/lib/data";
-import { ChevronRight } from "lucide-react";
 
 export default function SettingsPage() {
   return (
     <div className="p-8 max-w-[680px] mx-auto space-y-6">
-      <div className="pt-2">
-        <h1 className="text-[22px] font-bold text-foreground tracking-tight">Settings</h1>
+      <div className="pt-2 opacity-0 animate-fade-in">
+        <h1 className="text-[24px] font-bold text-foreground tracking-tight">Settings</h1>
         <p className="text-muted-foreground text-[13px] mt-1">Workspace configuration and preferences</p>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-3 animate-stagger">
         {settingsGroups.map((group) => (
           <div key={group.id} className="card-premium rounded-xl border border-border p-5">
             <h2 className="text-[13px] font-semibold text-foreground mb-0.5">{group.name}</h2>
