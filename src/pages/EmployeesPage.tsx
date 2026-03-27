@@ -47,7 +47,7 @@ export default function EmployeesPage() {
                 !showArchived && i === activeFilter ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              {f.label}
+              {filterLabels[i]}
             </button>
           ))}
         </div>
