@@ -90,9 +90,9 @@ export default function EmployeeDetailPage() {
       {/* Main content */}
       <div className="grid grid-cols-3 gap-5">
         {/* Left: Tab content */}
-        <div className="col-span-2 animate-stagger flex flex-col">
+        <div className="col-span-2 animate-stagger flex flex-col" style={{ height: "calc(100vh - 260px)", minHeight: "400px" }}>
           {/* Tab switcher */}
-          <div className="flex gap-1 p-1 rounded-lg bg-muted mb-4 w-fit">
+          <div className="flex gap-1 p-1 rounded-lg bg-muted mb-4 w-fit flex-shrink-0">
             <button
               onClick={() => setActiveTab("activity")}
               className={cn(
@@ -119,11 +119,13 @@ export default function EmployeeDetailPage() {
             </button>
           </div>
 
-          {activeTab === "activity" ? (
-            <ActivityLog entries={logs} />
-          ) : (
-            <MessagesPanel employeeId={emp.id} employeeName={emp.name} />
-          )}
+          <div className="flex-1 min-h-0">
+            {activeTab === "activity" ? (
+              <ActivityLog entries={logs} />
+            ) : (
+              <MessagesPanel employeeId={emp.id} employeeName={emp.name} />
+            )}
+          </div>
         </div>
 
         {/* Right sidebar */}
