@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Check, ArrowRight, Plug } from "lucide-react";
 import type { EmployeeDraft } from "./types";
+import mayaAvatar from "@/assets/avatars/maya.jpg";
 
 interface Props {
   draft: EmployeeDraft;

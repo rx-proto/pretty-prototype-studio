@@ -1,4 +1,5 @@
 import type { EmployeeDraft } from "./types";
+import mayaAvatar from "@/assets/avatars/maya.jpg";
 
 interface Props {
   draft: Partial<EmployeeDraft>;
