@@ -77,7 +77,10 @@ export default function SkillsPage() {
                   <Icon className={`w-4 h-4 ${entry.color} transition-colors duration-200`} />
                 </div>
                 <h3 className="text-[14px] font-semibold text-foreground mb-1">{skill.name}</h3>
-                <p className="text-[12px] text-muted-foreground leading-relaxed">{skill.summary}</p>
+                <p className="text-[12px] text-muted-foreground leading-relaxed mb-3">{skill.summary}</p>
+                <p className="text-[11px] text-muted-foreground">
+                  {skill.usedBy > 0 ? `${skill.usedBy} employee${skill.usedBy > 1 ? "s" : ""} using` : "Not in use yet"}
+                </p>
               </div>
             </div>
           );
