@@ -128,7 +128,7 @@ export default function AppLayout() {
             <img src={sarahAvatar} alt="Sarah Chen" className="w-7 h-7 rounded-full object-cover" />
             <div className="min-w-0">
               <span className="text-[12px] font-medium text-sidebar-accent-foreground truncate block">Sarah Chen</span>
-              <span className="text-[10px] text-sidebar-muted">Owner</span>
+              <span className="text-[10px] text-sidebar-muted">sarah@acme.com</span>
             </div>
           </div>
         </div>
