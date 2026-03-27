@@ -1,63 +1,72 @@
 import { employees } from "@/lib/data";
-import { StateBadge } from "@/components/StateBadge";
+import { StateBadge, EmployeeAvatar } from "@/components/StateBadge";
 import { useNavigate } from "react-router-dom";
-import { Progress } from "@/components/ui/progress";
+import { ChevronRight } from "lucide-react";
 
 export default function EmployeesPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="p-8 max-w-5xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Employees</h1>
-        <p className="text-muted-foreground text-sm mt-1">{employees.length} AI employees in your workspace</p>
+    <div className="p-8 max-w-[960px] mx-auto space-y-6">
+      <div className="pt-2">
+        <h1 className="text-[22px] font-bold text-foreground tracking-tight">Employees</h1>
+        <p className="text-muted-foreground text-[13px] mt-1">{employees.length} AI employees in your workspace</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {employees.map((emp) => (
           <button
             key={emp.id}
             onClick={() => navigate(`/preview/employees/${emp.id}`)}
-            className="bg-card rounded-xl border border-border p-5 text-left hover:border-primary/30 hover:shadow-sm transition-all group"
+            className="card-interactive rounded-xl border border-border p-5 text-left group"
           >
             {/* Header */}
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
-                  <span className="text-sm font-bold text-foreground">{emp.name[0]}</span>
-                </div>
+                <EmployeeAvatar name={emp.name} size="md" />
                 <div>
-                  <p className="text-sm font-semibold text-foreground">{emp.name}</p>
-                  <p className="text-xs text-muted-foreground">{emp.title}</p>
+                  <p className="text-[13px] font-semibold text-foreground">{emp.name}</p>
+                  <p className="text-[11px] text-muted-foreground">{emp.title}</p>
                 </div>
               </div>
               <StateBadge state={emp.state} />
             </div>
 
             {/* Summary */}
-            <p className="text-xs text-muted-foreground mb-4 line-clamp-2">{emp.summary}</p>
+            <p className="text-[12px] text-muted-foreground mb-4 line-clamp-2 leading-relaxed">{emp.summary}</p>
 
             {/* Latest work */}
-            <div className="bg-surface-sunken rounded-lg px-3 py-2 mb-4">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-0.5">Latest work</p>
-              <p className="text-xs text-foreground">{emp.lastWork}</p>
+            <div className="gradient-mesh rounded-lg px-3.5 py-2.5 mb-4 border border-border/50">
+              <p className="section-label mb-1">Latest work</p>
+              <p className="text-[12px] text-foreground leading-relaxed">{emp.lastWork}</p>
             </div>
 
-            {/* Footer stats */}
-            <div className="flex items-center justify-between text-xs">
-              <div className="flex items-center gap-4">
-                <span className="text-muted-foreground">
-                  <span className="font-medium text-foreground">{emp.weeklySpend}</span> credits/wk
-                </span>
-                <span className="text-muted-foreground">{emp.channels.length} channels</span>
-                <span className="text-muted-foreground">{emp.skills.length} skills</span>
+            {/* Footer */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
+                <span><span className="font-semibold text-foreground">{emp.weeklySpend}</span> credits/wk</span>
+                <span className="w-px h-3 bg-border" />
+                <span>{emp.channels.length} channels</span>
+                <span className="w-px h-3 bg-border" />
+                <span>{emp.skills.length} skills</span>
               </div>
+              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/30 group-hover:text-primary transition-colors" />
             </div>
 
             {/* Budget bar */}
             <div className="mt-3">
-              <Progress value={emp.budgetUsedPercent} className="h-1" />
-              <p className="text-[10px] text-muted-foreground mt-1">{emp.budgetUsedPercent}% of weekly budget</p>
+              <div className="h-1 rounded-full bg-muted overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-500"
+                  style={{
+                    width: `${emp.budgetUsedPercent}%`,
+                    background: emp.budgetUsedPercent > 75
+                      ? `hsl(var(--state-warning))`
+                      : `hsl(var(--primary))`,
+                  }}
+                />
+              </div>
+              <p className="text-[10px] text-muted-foreground mt-1.5">{emp.budgetUsedPercent}% of weekly budget used</p>
             </div>
           </button>
         ))}
