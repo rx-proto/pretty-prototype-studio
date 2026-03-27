@@ -19,18 +19,18 @@ export default function EmployeesPage() {
 
   return (
     <div className="p-8 max-w-[960px] mx-auto space-y-6">
-      <div className="pt-2">
-        <h1 className="text-[22px] font-bold text-foreground tracking-tight">Employees</h1>
+      <div className="pt-2 opacity-0 animate-fade-in">
+        <h1 className="text-[24px] font-bold text-foreground tracking-tight">Employees</h1>
         <p className="text-muted-foreground text-[13px] mt-1">{employees.length} AI employees in your workspace</p>
       </div>
 
       {/* Filter tabs */}
-      <div className="flex gap-1 p-1 rounded-xl bg-muted w-fit">
+      <div className="flex gap-1 p-1 rounded-xl bg-muted w-fit opacity-0 animate-fade-in" style={{ animationDelay: "0.1s" }}>
         {filters.map((f, i) => (
           <button
             key={f.label}
             onClick={() => setActiveFilter(i)}
-            className={`px-3.5 py-1.5 rounded-lg text-[12px] font-medium transition-all ${
+            className={`px-3.5 py-1.5 rounded-lg text-[12px] font-medium transition-all duration-200 ${
               i === activeFilter ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -40,7 +40,7 @@ export default function EmployeesPage() {
       </div>
 
       {/* Employee cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 animate-stagger">
         {filtered.map((emp) => (
           <button
             key={emp.id}
@@ -56,7 +56,7 @@ export default function EmployeesPage() {
                 </div>
                 <p className="text-[12px] text-muted-foreground">{emp.title}</p>
               </div>
-              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/30 group-hover:text-primary transition-colors" />
+              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/20 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200" />
             </div>
             <p className="text-[12px] text-muted-foreground leading-relaxed">{emp.statusMessage}</p>
           </button>

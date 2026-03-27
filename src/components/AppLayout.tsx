@@ -42,13 +42,13 @@ export default function AppLayout() {
         key={to}
         to={to}
         className={cn(
-          "flex items-center gap-2.5 px-3 py-[9px] rounded-lg text-[13px] font-medium transition-all duration-150",
+          "flex items-center gap-2.5 px-3 py-[9px] rounded-lg text-[13px] font-medium transition-all duration-200",
           isActive
             ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-sm"
             : "text-sidebar-foreground hover:bg-sidebar-accent/40 hover:text-sidebar-accent-foreground"
         )}
       >
-        <Icon className={cn("w-[15px] h-[15px] flex-shrink-0", isActive && "text-primary")} />
+        <Icon className={cn("w-[15px] h-[15px] flex-shrink-0 transition-colors duration-200", isActive && "text-primary")} />
         {label}
       </NavLink>
     );
@@ -57,9 +57,12 @@ export default function AppLayout() {
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-[220px] flex-shrink-0 sidebar-gradient flex flex-col">
+      <aside className="w-[220px] flex-shrink-0 sidebar-gradient flex flex-col relative overflow-hidden">
+        {/* Decorative glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] h-[200px] rounded-full bg-primary/[0.04] blur-[80px] pointer-events-none" />
+
         {/* Workspace header */}
-        <div className="px-4 pt-5 pb-4">
+        <div className="relative px-4 pt-5 pb-4">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-state-accent flex items-center justify-center shadow-lg shadow-primary/20 flex-shrink-0">
               <Sparkles className="w-4 h-4 text-primary-foreground" />
@@ -75,7 +78,7 @@ export default function AppLayout() {
                     autoFocus
                     className="text-[13px] font-semibold text-sidebar-primary bg-transparent border-b border-sidebar-muted/40 outline-none w-full"
                   />
-                  <button onClick={handleRename} className="text-sidebar-muted hover:text-sidebar-primary">
+                  <button onClick={handleRename} className="text-sidebar-muted hover:text-sidebar-primary transition-colors">
                     <Check className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -96,10 +99,10 @@ export default function AppLayout() {
         <div className="mx-4 h-px bg-sidebar-border/60" />
 
         {/* CTA */}
-        <div className="px-3 pt-4 pb-2">
+        <div className="relative px-3 pt-4 pb-2">
           <button
             onClick={() => navigate("/preview/create-employee")}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-[12px] font-semibold bg-primary text-primary-foreground shadow-md shadow-primary/25 hover:brightness-110 transition-all duration-150"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-[12px] font-semibold bg-primary text-primary-foreground shadow-md shadow-primary/25 hover:brightness-110 transition-all duration-200"
           >
             <UserPlus className="w-3.5 h-3.5" />
             Create Employee
@@ -107,13 +110,11 @@ export default function AppLayout() {
         </div>
 
         {/* Nav groups */}
-        <nav className="flex-1 px-3 py-3 overflow-y-auto scrollbar-thin space-y-4">
-          {/* Main */}
+        <nav className="relative flex-1 px-3 py-3 overflow-y-auto scrollbar-thin space-y-4">
           <div className="space-y-0.5">
             {mainNav.map(renderNavItem)}
           </div>
 
-          {/* Catalog */}
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-sidebar-muted px-3 mb-1.5">Catalog</p>
             <div className="space-y-0.5">
@@ -121,7 +122,6 @@ export default function AppLayout() {
             </div>
           </div>
 
-          {/* Manage */}
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-sidebar-muted px-3 mb-1.5">Manage</p>
             <div className="space-y-0.5">
@@ -131,7 +131,7 @@ export default function AppLayout() {
         </nav>
 
         {/* Footer */}
-        <div className="px-4 py-3 border-t border-sidebar-border/60">
+        <div className="relative px-4 py-3 border-t border-sidebar-border/60">
           <div className="flex items-center gap-2.5">
             <img src={sarahAvatar} alt="Sarah Chen" className="w-7 h-7 rounded-full object-cover" />
             <div className="min-w-0">

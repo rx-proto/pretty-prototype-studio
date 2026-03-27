@@ -12,9 +12,9 @@ export default function SkillsPage() {
 
   return (
     <div className="p-8 max-w-[960px] mx-auto space-y-6">
-      <div className="pt-2 flex items-start justify-between">
+      <div className="pt-2 flex items-start justify-between opacity-0 animate-fade-in">
         <div>
-          <h1 className="text-[22px] font-bold text-foreground tracking-tight">Skills</h1>
+          <h1 className="text-[24px] font-bold text-foreground tracking-tight">Skills</h1>
           <p className="text-muted-foreground text-[13px] mt-1">Capabilities your AI employees can use</p>
         </div>
         <button className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-[12px] font-semibold bg-primary text-primary-foreground shadow-md shadow-primary/20 hover:brightness-110 transition-all">
@@ -24,7 +24,7 @@ export default function SkillsPage() {
       </div>
 
       {/* Search */}
-      <div className="relative">
+      <div className="relative opacity-0 animate-fade-in" style={{ animationDelay: "0.1s" }}>
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input
           value={search}
@@ -35,15 +35,17 @@ export default function SkillsPage() {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 animate-stagger">
         {filtered.map((skill) => (
-          <div key={skill.id} className="card-interactive rounded-xl border border-border p-5 cursor-pointer">
-            <div className="text-2xl mb-3">{skill.icon}</div>
-            <h3 className="text-[14px] font-semibold text-foreground mb-1">{skill.name}</h3>
-            <p className="text-[12px] text-muted-foreground leading-relaxed mb-3">{skill.summary}</p>
-            <p className="text-[11px] text-muted-foreground">
-              {skill.usedBy > 0 ? `${skill.usedBy} employee${skill.usedBy > 1 ? "s" : ""} using` : "Not in use yet"}
-            </p>
+          <div key={skill.id} className="card-interactive rounded-xl border border-border p-5 cursor-pointer group relative noise-overlay">
+            <div className="relative">
+              <div className="text-2xl mb-3 group-hover:scale-110 transition-transform duration-300 inline-block">{skill.icon}</div>
+              <h3 className="text-[14px] font-semibold text-foreground mb-1">{skill.name}</h3>
+              <p className="text-[12px] text-muted-foreground leading-relaxed mb-3">{skill.summary}</p>
+              <p className="text-[11px] text-muted-foreground">
+                {skill.usedBy > 0 ? `${skill.usedBy} employee${skill.usedBy > 1 ? "s" : ""} using` : "Not in use yet"}
+              </p>
+            </div>
           </div>
         ))}
       </div>
