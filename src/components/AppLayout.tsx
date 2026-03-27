@@ -73,9 +73,7 @@ export default function AppLayout() {
         {/* Footer */}
         <div className="px-4 py-3 border-t border-sidebar-border/60">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-sidebar-accent to-sidebar-border flex items-center justify-center">
-              <span className="text-[10px] font-semibold text-sidebar-accent-foreground">SC</span>
-            </div>
+            <img src={sarahAvatar} alt="Sarah Chen" className="w-7 h-7 rounded-full object-cover" />
             <div className="min-w-0">
               <span className="text-[12px] font-medium text-sidebar-accent-foreground truncate block">Sarah Chen</span>
               <span className="text-[10px] text-sidebar-muted">Owner</span>
