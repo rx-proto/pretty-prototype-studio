@@ -130,7 +130,7 @@ export default function BillingPage() {
           >
             All employees
           </button>
-          {employeeSpend.slice(0, 5).map(e => (
+          {employeeSpend.map(e => (
             <button
               key={e.name}
               onClick={() => setEmployeeFilter(employeeFilter === e.name ? null : e.name)}
@@ -139,9 +139,6 @@ export default function BillingPage() {
               {e.name}
             </button>
           ))}
-          {employeeSpend.length > 5 && (
-            <span className="text-[11px] text-muted-foreground">+{employeeSpend.length - 5} more</span>
-          )}
         </div>
       </div>
 
