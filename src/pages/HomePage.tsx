@@ -1,11 +1,18 @@
-import { workspace, employees, attentionItems } from "@/lib/data";
+import { employees, attentionItems, dailySpend, weeklySpend, todaySpend, recentActivity } from "@/lib/data";
 import { StateDot, EmployeeAvatar } from "@/components/StateBadge";
 import { useNavigate } from "react-router-dom";
-import { Users, Plug, ChevronRight, AlertCircle, ArrowRight, DollarSign } from "lucide-react";
+import { Users, TrendingUp, ChevronRight, AlertTriangle, Clock } from "lucide-react";
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const workingCount = employees.filter(e => e.state === "working" || e.state === "warning").length;
+  const activeCount = employees.filter(e => e.state === "working" || e.state === "warning" || e.state === "ready").length;
+  const actionItems = attentionItems.filter(item => item.tone === "warning" || item.tone === "blocked");
+
+  // Find employee id by name for navigation
+  const getEmployeeId = (name: string) => employees.find(e => e.name === name)?.id;
+
+  // Sparkline bar chart inline
+  const maxSpend = Math.max(...dailySpend.map(d => d.amount));
 
   return (
     <div className="p-8 max-w-[960px] mx-auto space-y-8">
@@ -14,84 +21,107 @@ export default function HomePage() {
         <p className="text-muted-foreground text-[13px] mt-1">Here's what's happening in your workspace.</p>
       </div>
 
-      <div className="grid grid-cols-3 gap-3 animate-stagger">
-        <div className="card-premium rounded-xl border border-border p-5 relative noise-overlay">
+      {/* Top row: 2 cards */}
+      <div className="grid grid-cols-2 gap-3 animate-stagger">
+        <button
+          onClick={() => navigate("/app/employees")}
+          className="card-interactive rounded-xl border border-border p-5 text-left relative noise-overlay"
+        >
           <div className="flex items-center gap-2 mb-3">
             <Users className="w-4 h-4 text-blue-500" />
             <p className="section-label">Employees</p>
           </div>
-          <p className="text-[22px] font-bold text-foreground tracking-tight">{workingCount} <span className="text-[13px] font-medium text-muted-foreground">working</span></p>
-          <p className="text-[12px] text-muted-foreground mt-1">{workspace.totalEmployees} total in workspace</p>
-        </div>
-
-        <div className="card-premium rounded-xl border border-border p-5 relative noise-overlay">
-          <div className="flex items-center gap-2 mb-3">
-            <DollarSign className="w-4 h-4 text-emerald-500" />
-            <p className="section-label">Balance</p>
+          <p className="text-[22px] font-bold text-foreground tracking-tight">
+            {activeCount} <span className="text-[13px] font-medium text-muted-foreground">active</span>
+          </p>
+          <div className="flex items-center gap-1 mt-2">
+            {employees.slice(0, 5).map(emp => (
+              <EmployeeAvatar key={emp.id} name={emp.name} size="sm" />
+            ))}
+            {employees.length > 5 && (
+              <span className="text-[11px] text-muted-foreground ml-1">+{employees.length - 5}</span>
+            )}
           </div>
-          <p className="text-[22px] font-bold text-foreground tracking-tight">${workspace.balance.toFixed(2)}</p>
-          <p className="text-[12px] text-state-working font-medium mt-1">{workspace.balanceStatus}</p>
-        </div>
+        </button>
 
-        <div className="card-premium rounded-xl border border-border p-5 relative noise-overlay">
+        <button
+          onClick={() => navigate("/app/billing")}
+          className="card-interactive rounded-xl border border-border p-5 text-left relative noise-overlay"
+        >
           <div className="flex items-center gap-2 mb-3">
-            <Plug className="w-4 h-4 text-violet-500" />
-            <p className="section-label">Connectors</p>
+            <TrendingUp className="w-4 h-4 text-emerald-500" />
+            <p className="section-label">Spend</p>
           </div>
-          <p className="text-[22px] font-bold text-foreground tracking-tight">{workspace.connectorsActive} <span className="text-[13px] font-medium text-muted-foreground">active</span></p>
-          <p className="text-[12px] text-muted-foreground mt-1">All systems operational</p>
-        </div>
+          <p className="text-[22px] font-bold text-foreground tracking-tight">
+            ${todaySpend.toFixed(2)} <span className="text-[13px] font-medium text-muted-foreground">today</span>
+          </p>
+          <div className="flex items-end gap-[3px] mt-2 h-[24px]">
+            {dailySpend.map((d, i) => (
+              <div
+                key={i}
+                className="flex-1 rounded-sm bg-emerald-500/60"
+                style={{ height: `${Math.max((d.amount / maxSpend) * 100, 8)}%` }}
+                title={`${d.day}: $${d.amount.toFixed(2)}`}
+              />
+            ))}
+          </div>
+          <p className="text-[12px] text-muted-foreground mt-1.5">${weeklySpend.toFixed(2)} this week</p>
+        </button>
       </div>
 
-      {attentionItems.length > 0 && (
+      {/* Action required */}
+      {actionItems.length > 0 && (
         <div className="opacity-0 animate-fade-in" style={{ animationDelay: "0.2s" }}>
           <div className="flex items-center gap-2 mb-3">
-            <AlertCircle className="w-3.5 h-3.5 text-state-warning" />
-            <h2 className="text-[13px] font-semibold text-foreground">Needs your attention</h2>
+            <AlertTriangle className="w-3.5 h-3.5 text-state-warning" />
+            <h2 className="text-[13px] font-semibold text-foreground">Action required</h2>
           </div>
           <div className="space-y-2">
-            {attentionItems.map((item, i) => (
-              <div key={i} className="card-interactive rounded-xl border border-border px-5 py-3.5 flex items-center gap-4 cursor-pointer">
-                <EmployeeAvatar name={item.title} size="sm" />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="text-[13px] font-medium text-foreground">{item.title}</p>
-                    <StateDot state={item.tone} />
+            {actionItems.map((item, i) => {
+              const empId = getEmployeeId(item.title);
+              return (
+                <button
+                  key={i}
+                  onClick={() => empId && navigate(`/app/employees/${empId}`)}
+                  className="w-full card-interactive rounded-xl border border-border px-5 py-3.5 flex items-center gap-4 text-left"
+                >
+                  <EmployeeAvatar name={item.title} size="sm" />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="text-[13px] font-medium text-foreground">{item.title}</p>
+                      <StateDot state={item.tone} />
+                    </div>
+                    <p className="text-[12px] text-muted-foreground mt-0.5">{item.detail}</p>
                   </div>
-                  <p className="text-[12px] text-muted-foreground mt-0.5">{item.detail}</p>
-                </div>
-                <button className="flex items-center gap-1 text-[11px] font-medium text-primary hover:text-primary/80 transition-colors flex-shrink-0 px-3 py-1.5 rounded-lg bg-primary/[0.05] hover:bg-primary/[0.08]">
-                  {item.action} <ArrowRight className="w-3 h-3" />
+                  <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/30 flex-shrink-0" />
                 </button>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
 
+      {/* Recent activity */}
       <div className="opacity-0 animate-fade-in" style={{ animationDelay: "0.3s" }}>
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-[13px] font-semibold text-foreground">Your employees</h2>
-          <button onClick={() => navigate("/app/employees")} className="text-[11px] font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-0.5">
-            View all <ChevronRight className="w-3 h-3" />
-          </button>
+        <div className="flex items-center gap-2 mb-3">
+          <Clock className="w-3.5 h-3.5 text-muted-foreground" />
+          <h2 className="text-[13px] font-semibold text-foreground">Recent activity</h2>
         </div>
         <div className="card-premium rounded-xl border border-border overflow-hidden">
-          {employees.map((emp, i) => (
+          {recentActivity.map((activity, i) => (
             <button
-              key={emp.id}
-              onClick={() => navigate(`/app/employees/${emp.id}`)}
+              key={i}
+              onClick={() => navigate(`/app/employees/${activity.employeeId}`)}
               className={`w-full flex items-center gap-3.5 px-5 py-3.5 text-left hover:bg-muted/30 transition-colors duration-200 ${
-                i < employees.length - 1 ? "border-b border-border" : ""
+                i < recentActivity.length - 1 ? "border-b border-border" : ""
               }`}
             >
-              <EmployeeAvatar name={emp.name} size="sm" />
+              <EmployeeAvatar name={activity.employeeName} size="sm" />
               <div className="flex-1 min-w-0">
-                <span className="text-[13px] font-medium text-foreground">{emp.name}</span>
-                <p className="text-[12px] text-muted-foreground truncate">{emp.statusMessage}</p>
+                <span className="text-[13px] font-medium text-foreground">{activity.employeeName}</span>
+                <p className="text-[12px] text-muted-foreground truncate">{activity.summary}</p>
               </div>
-              <StateDot state={emp.state} />
-              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/30" />
+              <span className="text-[11px] text-muted-foreground/60 flex-shrink-0">{activity.timeAgo}</span>
             </button>
           ))}
         </div>
