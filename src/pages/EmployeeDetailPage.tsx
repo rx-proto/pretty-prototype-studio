@@ -7,7 +7,21 @@ import { ActivityLog } from "@/components/employee-detail/ActivityLog";
 import { EditableTagList } from "@/components/employee-detail/EditableTagList";
 import { ConnectorsPanel } from "@/components/employee-detail/ConnectorsPanel";
 import { CostPanel } from "@/components/employee-detail/CostPanel";
-import { ArrowLeft, Zap, Wrench, Archive, RotateCcw, AlertTriangle } from "lucide-react";
+import { MessagesPanel } from "@/components/employee-detail/MessagesPanel";
+import { ArrowLeft, Zap, Wrench, Archive, RotateCcw, AlertTriangle, Clock, MessageSquare } from "lucide-react";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import {
   AlertDialog,
