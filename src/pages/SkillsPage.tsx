@@ -64,10 +64,6 @@ export default function SkillsPage() {
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<SkillPreview | null>(null);
   const [showCreate, setShowCreate] = useState(false);
-  const [showDelete, setShowDelete] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editName, setEditName] = useState("");
-  const [editSummary, setEditSummary] = useState("");
   const navigate = useNavigate();
 
   // Create form state
@@ -91,28 +87,6 @@ export default function SkillsPage() {
     setCreateName("");
     setCreateSummary("");
     setCreateIcon("eye");
-  };
-
-  const handleSaveEdit = () => {
-    if (!editName.trim()) return;
-    toast.success(`Skill "${editName}" updated`);
-    setIsEditing(false);
-  };
-
-  const handleDelete = () => {
-    if (selected) {
-      toast.success(`Skill "${selected.name}" deleted`);
-      setShowDelete(false);
-      setSelected(null);
-    }
-  };
-
-  const startEdit = () => {
-    if (selected) {
-      setEditName(selected.name);
-      setEditSummary(selected.summary);
-      setIsEditing(true);
-    }
   };
 
   return (
@@ -143,7 +117,7 @@ export default function SkillsPage() {
           return (
             <div
               key={skill.id}
-              onClick={() => { setSelected(skill); setIsEditing(false); }}
+              onClick={() => setSelected(skill)}
               className="card-interactive rounded-xl border border-border p-5 cursor-pointer group relative noise-overlay"
             >
               <div className="relative">
