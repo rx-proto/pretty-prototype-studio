@@ -328,6 +328,25 @@ export const employeeSpend: { name: string; amount: number }[] = [
   { name: "Jun", amount: 5.40 },
 ];
 
+export const weeklySpend = dailySpend.reduce((sum, d) => sum + d.amount, 0);
+export const todaySpend = dailySpend[dailySpend.length - 1]?.amount ?? 0;
+
+export interface RecentActivity {
+  employeeId: string;
+  employeeName: string;
+  summary: string;
+  timeAgo: string;
+}
+
+export const recentActivity: RecentActivity[] = [
+  { employeeId: "maya-competitive-intel", employeeName: "Maya", summary: "Completed Q1 competitor pricing analysis", timeAgo: "2h ago" },
+  { employeeId: "kai-ai-pm", employeeName: "Kai", summary: "Resolved 4 stalled issues by identifying owners and escalating 2 to leads", timeAgo: "3h ago" },
+  { employeeId: "vera-analyst", employeeName: "Vera", summary: "Updated 3 portfolio memos with Q4 earnings data", timeAgo: "5h ago" },
+  { employeeId: "alex-gtm", employeeName: "Alex", summary: "Published 3 channel-adapted posts across LinkedIn & blog", timeAgo: "6h ago" },
+  { employeeId: "niko-launch-ops", employeeName: "Niko", summary: "Sent launch readiness brief for Feature X", timeAgo: "8h ago" },
+  { employeeId: "reo-devops", employeeName: "Reo", summary: "Drafted postmortem for API latency spike", timeAgo: "1d ago" },
+];
+
 // Helpers
 export function getEmployeeById(id: string): EmployeePreview | undefined {
   return employees.find((e) => e.id === id);
