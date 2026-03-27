@@ -148,7 +148,7 @@ export function ActivityLog({ entries }: { entries: ActivityLogEntry[] }) {
         </div>
       </div>
 
-      <div className="relative">
+      <div className="relative flex-1 overflow-y-auto">
         {filtered.length === 0 ? (
           <div className="px-5 py-8 text-center">
             <p className="text-[12px] text-muted-foreground">
