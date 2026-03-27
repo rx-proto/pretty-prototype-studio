@@ -251,10 +251,10 @@ export const connectors: ConnectorPreview[] = [
 ];
 
 export const roleTemplates: RoleTemplate[] = [
-  { id: "tpl-1", name: "Competitive Analyst", description: "Monitors competitors, tracks pricing changes, and delivers market briefs.", icon: "search" },
-  { id: "tpl-2", name: "Support Triage Agent", description: "Categorizes and routes support tickets to the right team automatically.", icon: "headphones" },
-  { id: "tpl-3", name: "Launch Coordinator", description: "Tracks launch readiness across teams and sends go/no-go summaries.", icon: "rocket" },
-  { id: "tpl-4", name: "Deal Risk Monitor", description: "Watches your sales pipeline and flags deals that need attention.", icon: "shield" },
+  { id: "tpl-gtm", name: "GTM Content Operator", description: "Discovers trending topics, produces channel-adapted content, publishes within guardrails, reads early engagement signals, and follows up — a full content-to-distribution loop.", icon: "megaphone" },
+  { id: "tpl-aipm", name: "AI Project Manager", description: "Continuously triages docs and issue queues, identifies blockers worth pushing, locates the right owner, sends follow-ups or escalations, and persists state across runs until resolution.", icon: "clipboard" },
+  { id: "tpl-analyst", name: "Investment Analyst", description: "Surfaces new market signals, refreshes memo views with latest evidence, highlights gaps in your thesis, and queues next-step follow-ups — a persistent research loop for PE, VC, or family offices.", icon: "trending" },
+  { id: "tpl-competitive", name: "Competitive Intelligence", description: "Monitors competitor pricing, feature launches, and positioning changes across your tracked companies. Delivers weekly briefs and real-time alerts.", icon: "search" },
 ];
 
 export const attentionItems: AttentionItem[] = [
