@@ -1,9 +1,17 @@
 import { useState, useMemo } from "react";
+import { format } from "date-fns";
 import type { ActivityLogEntry } from "@/lib/employee-detail-data";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, Info, AlertTriangle, XCircle, Clock } from "lucide-react";
+import { CheckCircle2, Info, AlertTriangle, XCircle, Clock, Search, CalendarIcon } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
-type TimeFilter = "5m" | "1h" | "24h" | "7d" | "all";
+type TimeFilter = "5m" | "1h" | "24h" | "7d" | "all" | "custom";
 
 const timeFilters: { label: string; value: TimeFilter }[] = [
   { label: "5m", value: "5m" },
@@ -13,7 +21,7 @@ const timeFilters: { label: string; value: TimeFilter }[] = [
   { label: "All", value: "all" },
 ];
 
-const filterMs: Record<TimeFilter, number> = {
+const filterMs: Record<string, number> = {
   "5m": 5 * 60 * 1000,
   "1h": 60 * 60 * 1000,
   "24h": 24 * 60 * 60 * 1000,
@@ -38,11 +46,40 @@ function formatTimeAgo(date: Date): string {
 
 export function ActivityLog({ entries }: { entries: ActivityLogEntry[] }) {
   const [activeFilter, setActiveFilter] = useState<TimeFilter>("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [customDate, setCustomDate] = useState<Date | undefined>();
 
   const filtered = useMemo(() => {
-    const cutoff = Date.now() - filterMs[activeFilter];
-    return entries.filter(e => e.timestamp.getTime() >= cutoff);
-  }, [entries, activeFilter]);
+    let result = entries;
+
+    // Time filter
+    if (activeFilter === "custom" && customDate) {
+      const dayStart = new Date(customDate);
+      dayStart.setHours(0, 0, 0, 0);
+      const dayEnd = new Date(customDate);
+      dayEnd.setHours(23, 59, 59, 999);
+      result = result.filter(e => e.timestamp >= dayStart && e.timestamp <= dayEnd);
+    } else if (activeFilter !== "custom") {
+      const cutoff = Date.now() - filterMs[activeFilter];
+      result = result.filter(e => e.timestamp.getTime() >= cutoff);
+    }
+
+    // Search filter
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(e =>
+        e.message.toLowerCase().includes(q) ||
+        (e.detail && e.detail.toLowerCase().includes(q))
+      );
+    }
+
+    return result;
+  }, [entries, activeFilter, searchQuery, customDate]);
+
+  const handleDateSelect = (date: Date | undefined) => {
+    setCustomDate(date);
+    if (date) setActiveFilter("custom");
+  };
 
   return (
     <div className="card-premium rounded-xl border border-border overflow-hidden">
@@ -51,28 +88,72 @@ export function ActivityLog({ entries }: { entries: ActivityLogEntry[] }) {
           <Clock className="w-3.5 h-3.5 text-muted-foreground" />
           <h2 className="text-[13px] font-semibold text-foreground">Activity</h2>
         </div>
-        <div className="flex gap-0.5 p-0.5 rounded-lg bg-muted">
-          {timeFilters.map(f => (
-            <button
-              key={f.value}
-              onClick={() => setActiveFilter(f.value)}
-              className={cn(
-                "px-2.5 py-1 rounded-md text-[11px] font-medium transition-all duration-200",
-                f.value === activeFilter
-                  ? "bg-card text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {f.label}
-            </button>
-          ))}
+        <div className="flex items-center gap-2">
+          <div className="flex gap-0.5 p-0.5 rounded-lg bg-muted">
+            {timeFilters.map(f => (
+              <button
+                key={f.value}
+                onClick={() => { setActiveFilter(f.value); setCustomDate(undefined); }}
+                className={cn(
+                  "px-2.5 py-1 rounded-md text-[11px] font-medium transition-all duration-200",
+                  f.value === activeFilter
+                    ? "bg-card text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+
+          <Popover>
+            <PopoverTrigger asChild>
+              <button
+                className={cn(
+                  "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all duration-200 border",
+                  activeFilter === "custom"
+                    ? "border-primary/30 bg-primary/5 text-primary"
+                    : "border-border text-muted-foreground hover:text-foreground hover:bg-muted"
+                )}
+              >
+                <CalendarIcon className="w-3 h-3" />
+                {activeFilter === "custom" && customDate
+                  ? format(customDate, "MMM d")
+                  : "Date"}
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="end">
+              <Calendar
+                mode="single"
+                selected={customDate}
+                onSelect={handleDateSelect}
+                initialFocus
+                className={cn("p-3 pointer-events-auto")}
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+      </div>
+
+      {/* Search bar */}
+      <div className="px-5 py-2.5 border-b border-border">
+        <div className="relative">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+          <Input
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder="Search activity..."
+            className="pl-8 h-8 text-[12px] border-0 bg-muted/40 focus-visible:ring-1"
+          />
         </div>
       </div>
 
       <div className="relative">
         {filtered.length === 0 ? (
           <div className="px-5 py-8 text-center">
-            <p className="text-[12px] text-muted-foreground">No activity in this time range.</p>
+            <p className="text-[12px] text-muted-foreground">
+              {searchQuery ? "No matching activity." : "No activity in this time range."}
+            </p>
           </div>
         ) : (
           <div className="divide-y divide-border">
