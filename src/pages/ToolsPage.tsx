@@ -14,24 +14,21 @@ export default function ToolsPage() {
     <div className="p-8 max-w-[960px] mx-auto space-y-6">
       <div className="pt-2 opacity-0 animate-fade-in">
         <h1 className="text-[24px] font-bold text-foreground tracking-tight">Tools</h1>
-        <p className="text-muted-foreground text-[13px] mt-1">External tools your AI employees can use to get work done</p>
+        <p className="text-muted-foreground text-[13px] mt-1">External tools your employees can use to get work done</p>
       </div>
 
       <div className="relative opacity-0 animate-fade-in" style={{ animationDelay: "0.1s" }}>
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-        <Input
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder="Search tools..."
-          className="pl-10 h-10 text-[13px]"
-        />
+        <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search tools..." className="pl-10 h-10 text-[13px]" />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 animate-stagger">
         {filtered.map((tool) => (
           <div key={tool.id} className="card-interactive rounded-xl border border-border p-5 cursor-pointer group relative noise-overlay">
             <div className="relative">
-              <div className="text-2xl mb-3 group-hover:scale-110 transition-transform duration-300 inline-block">{tool.icon}</div>
+              <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center mb-3 text-[11px] font-bold text-muted-foreground tracking-wide group-hover:bg-primary/[0.08] group-hover:text-primary transition-colors duration-200">
+                {tool.icon}
+              </div>
               <h3 className="text-[14px] font-semibold text-foreground mb-1">{tool.name}</h3>
               <p className="text-[12px] text-muted-foreground leading-relaxed mb-3">{tool.summary}</p>
               <p className="text-[11px] text-muted-foreground">

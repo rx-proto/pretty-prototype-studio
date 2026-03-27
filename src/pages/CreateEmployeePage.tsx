@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Sparkles, Send, Check, ArrowRight, Plug } from "lucide-react";
+import { ArrowLeft, Send, Check, ArrowRight, Plug } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { roleTemplates } from "@/lib/data";
 import { toast } from "sonner";
@@ -82,7 +82,7 @@ export default function CreateEmployeePage() {
           </div>
 
           <div className="card-premium rounded-xl border border-border p-6 space-y-5 mb-6 relative noise-overlay opacity-0 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
-            <div className="relative">
+            <div className="relative space-y-5">
               <div>
                 <p className="section-label mb-1">Name</p>
                 <p className="text-[17px] font-semibold text-foreground">{mockDraft.name}</p>
@@ -119,7 +119,6 @@ export default function CreateEmployeePage() {
               Let me adjust
             </button>
             <button onClick={handleActivate} className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-semibold bg-primary text-primary-foreground shadow-md shadow-primary/20 hover:brightness-110 transition-all">
-              <Sparkles className="w-4 h-4" />
               Looks good, activate
             </button>
           </div>
@@ -141,7 +140,6 @@ export default function CreateEmployeePage() {
           <p className="text-[13px] text-muted-foreground">Pick a template or describe what you need in your own words.</p>
         </div>
 
-        {/* Templates */}
         <div className="mb-8 opacity-0 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
           <p className="section-label mb-3">Start from a template</p>
           <div className="grid grid-cols-2 gap-3">
@@ -155,7 +153,9 @@ export default function CreateEmployeePage() {
                     : "border-border hover:border-border/80 card-interactive"
                 }`}
               >
-                <div className="text-xl mb-2 group-hover:scale-110 transition-transform duration-300 inline-block">{tpl.icon}</div>
+                <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center mb-2.5 text-[10px] font-bold text-muted-foreground tracking-wide group-hover:bg-primary/[0.08] group-hover:text-primary transition-colors duration-200">
+                  {tpl.icon}
+                </div>
                 <h3 className="text-[13px] font-semibold text-foreground mb-0.5">{tpl.name}</h3>
                 <p className="text-[11px] text-muted-foreground leading-relaxed">{tpl.description}</p>
               </button>
@@ -163,14 +163,12 @@ export default function CreateEmployeePage() {
           </div>
         </div>
 
-        {/* Divider */}
         <div className="flex items-center gap-3 mb-6 opacity-0 animate-fade-in" style={{ animationDelay: "0.3s" }}>
           <div className="flex-1 h-px bg-border" />
           <span className="text-[11px] text-muted-foreground">or describe what you need</span>
           <div className="flex-1 h-px bg-border" />
         </div>
 
-        {/* Free-form */}
         <div className="mb-6 opacity-0 animate-fade-in" style={{ animationDelay: "0.35s" }}>
           <Textarea
             value={description}

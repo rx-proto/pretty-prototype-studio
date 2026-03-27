@@ -1,7 +1,7 @@
 import { workspace, employees, attentionItems } from "@/lib/data";
 import { StateDot, EmployeeAvatar } from "@/components/StateBadge";
 import { useNavigate } from "react-router-dom";
-import { Users, Plug, ChevronRight, AlertCircle, ArrowRight, Wallet } from "lucide-react";
+import { Users, Plug, ChevronRight, AlertCircle, ArrowRight, DollarSign } from "lucide-react";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -28,11 +28,11 @@ export default function HomePage() {
 
         <div className="card-premium rounded-xl border border-border p-5 relative noise-overlay">
           <div className="flex items-center gap-2 mb-3">
-            <Wallet className="w-4 h-4 text-muted-foreground" />
-            <p className="section-label">Credits</p>
+            <DollarSign className="w-4 h-4 text-muted-foreground" />
+            <p className="section-label">Balance</p>
           </div>
-          <p className="text-[22px] font-bold text-foreground tracking-tight">{workspace.creditsLeft.toLocaleString()}</p>
-          <p className="text-[12px] text-state-working font-medium mt-1">{workspace.creditStatus}</p>
+          <p className="text-[22px] font-bold text-foreground tracking-tight">${workspace.balance.toFixed(2)}</p>
+          <p className="text-[12px] text-state-working font-medium mt-1">{workspace.balanceStatus}</p>
         </div>
 
         <div className="card-premium rounded-xl border border-border p-5 relative noise-overlay">
