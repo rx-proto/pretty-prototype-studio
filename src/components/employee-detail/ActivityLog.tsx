@@ -82,7 +82,7 @@ export function ActivityLog({ entries }: { entries: ActivityLogEntry[] }) {
   };
 
   return (
-    <div className="card-premium rounded-xl border border-border overflow-hidden">
+    <div className="card-premium rounded-xl border border-border overflow-hidden flex flex-col">
       <div className="flex items-center justify-between px-5 py-3.5 border-b border-border">
         <div className="flex items-center gap-2">
           <Clock className="w-3.5 h-3.5 text-muted-foreground" />
