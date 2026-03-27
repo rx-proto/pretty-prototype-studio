@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getEmployeeById } from "@/lib/data";
 import { getActivityLogs, getConnectorDetails } from "@/lib/employee-detail-data";
