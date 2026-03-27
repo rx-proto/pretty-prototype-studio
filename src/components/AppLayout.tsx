@@ -98,7 +98,7 @@ export default function AppLayout() {
         <div className="relative px-3 pt-4 pb-2">
           <button
             onClick={() => navigate("/app/create-employee")}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-[12px] font-semibold bg-foreground text-background shadow-sm hover:bg-foreground/90 transition-all duration-200"
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[12px] font-semibold bg-foreground text-background shadow-sm hover:bg-foreground/90 transition-all duration-200"
           >
             <UserPlus className="w-3.5 h-3.5" />
             Create Employee
