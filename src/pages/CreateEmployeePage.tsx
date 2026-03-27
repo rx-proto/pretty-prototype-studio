@@ -32,7 +32,7 @@ export default function CreateEmployeePage() {
     }
   }, []);
 
-  const startSession = useCallback((_templateId?: string) => {
+  const startSession = useCallback((initialMessage?: string) => {
     setStep("session");
     setMessages([]);
     setChatIndex(0);
@@ -43,6 +43,11 @@ export default function CreateEmployeePage() {
       setMessages([firstMsg]);
       setIsTyping(false);
       setChatIndex(1);
+
+      // If user typed a message on the template page, auto-send it
+      if (initialMessage) {
+        setTimeout(() => handleSendMessage(initialMessage), 400);
+      }
     }, 800);
   }, []);
 
@@ -72,8 +77,8 @@ export default function CreateEmployeePage() {
   if (step === "templates") {
     return (
       <TemplateSelect
-        onSelectTemplate={(id) => startSession(id)}
-        onStartBlank={() => startSession()}
+        onSelectTemplate={(id) => startSession()}
+        onStartWithMessage={(text) => startSession(text)}
         onBack={() => navigate(-1)}
       />
     );
