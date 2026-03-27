@@ -31,6 +31,8 @@ export default function EmployeeDetailPage() {
   const emp = getEmployeeById(id || "");
   const [isArchived, setIsArchived] = useState(emp?.archived ?? false);
   const [activeTab, setActiveTab] = useState<"activity" | "messages">("activity");
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const [panelHeight, setPanelHeight] = useState<number | null>(null);
 
   if (!emp) {
     return (
