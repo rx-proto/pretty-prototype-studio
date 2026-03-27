@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { skills, employees, type SkillPreview } from "@/lib/data";
-import { Search, Plus, Eye, FileText, AlertTriangle, ClipboardCheck, ShieldAlert, RefreshCw, Heart, BarChart3, PenTool, Send, Users, Pencil, Trash2, Clock, Zap } from "lucide-react";
+import { Search, Plus, Eye, FileText, AlertTriangle, ClipboardCheck, ShieldAlert, RefreshCw, Heart, BarChart3, PenTool, Send, Users } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { EmployeeAvatar, StateDot } from "@/components/StateBadge";
@@ -13,16 +13,6 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import type { LucideIcon } from "lucide-react";
 
 const iconMap: Record<string, { icon: LucideIcon; color: string; bg: string }> = {
@@ -64,10 +54,6 @@ export default function SkillsPage() {
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<SkillPreview | null>(null);
   const [showCreate, setShowCreate] = useState(false);
-  const [showDelete, setShowDelete] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editName, setEditName] = useState("");
-  const [editSummary, setEditSummary] = useState("");
   const navigate = useNavigate();
 
   // Create form state
@@ -91,28 +77,6 @@ export default function SkillsPage() {
     setCreateName("");
     setCreateSummary("");
     setCreateIcon("eye");
-  };
-
-  const handleSaveEdit = () => {
-    if (!editName.trim()) return;
-    toast.success(`Skill "${editName}" updated`);
-    setIsEditing(false);
-  };
-
-  const handleDelete = () => {
-    if (selected) {
-      toast.success(`Skill "${selected.name}" deleted`);
-      setShowDelete(false);
-      setSelected(null);
-    }
-  };
-
-  const startEdit = () => {
-    if (selected) {
-      setEditName(selected.name);
-      setEditSummary(selected.summary);
-      setIsEditing(true);
-    }
   };
 
   return (
@@ -143,7 +107,7 @@ export default function SkillsPage() {
           return (
             <div
               key={skill.id}
-              onClick={() => { setSelected(skill); setIsEditing(false); }}
+              onClick={() => setSelected(skill)}
               className="card-interactive rounded-xl border border-border p-5 cursor-pointer group relative noise-overlay"
             >
               <div className="relative">
@@ -239,8 +203,8 @@ export default function SkillsPage() {
       </Dialog>
 
       {/* ===== Skill Detail Dialog ===== */}
-      <Dialog open={!!selected} onOpenChange={(open) => { if (!open) { setSelected(null); setIsEditing(false); } }}>
-        <DialogContent className="sm:max-w-[480px]" onPointerDownOutside={(e) => e.preventDefault()}>
+      <Dialog open={!!selected} onOpenChange={(open) => { if (!open) setSelected(null); }}>
+        <DialogContent className="sm:max-w-[480px]">
           <DialogHeader>
             {selected && selectedEntry && (
               <div className="flex items-center gap-3 mb-1">
@@ -248,145 +212,69 @@ export default function SkillsPage() {
                   <selectedEntry.icon className={`w-5 h-5 ${selectedEntry.color}`} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  {isEditing ? (
-                    <Input
-                      value={editName}
-                      onChange={e => setEditName(e.target.value)}
-                      className="h-8 text-[15px] font-semibold"
-                      autoFocus
-                    />
-                  ) : (
-                    <DialogTitle className="text-[16px]">{selected.name}</DialogTitle>
-                  )}
+                  <DialogTitle className="text-[16px]">{selected.name}</DialogTitle>
                 </div>
-                {!isEditing && (
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    <button
-                      onClick={startEdit}
-                      className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                    >
-                      <Pencil className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={() => setShowDelete(true)}
-                      className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                )}
               </div>
             )}
-            {isEditing ? (
-              <Textarea
-                value={editSummary}
-                onChange={e => setEditSummary(e.target.value)}
-                className="text-[13px] min-h-[60px] resize-none mt-1"
-              />
-            ) : (
-              <DialogDescription className="text-[13px] leading-relaxed pt-1">
-                {selected?.summary}
-              </DialogDescription>
-            )}
+            <DialogDescription className="text-[13px] leading-relaxed pt-1">
+              {selected?.summary}
+            </DialogDescription>
           </DialogHeader>
 
-          {isEditing ? (
-            <div className="flex gap-2 mt-1">
-              <button
-                onClick={() => setIsEditing(false)}
-                className="flex-1 px-4 py-2 rounded-lg text-[12px] font-medium border border-border text-foreground hover:bg-muted transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSaveEdit}
-                disabled={!editName.trim()}
-                className="flex-1 px-4 py-2 rounded-lg text-[12px] font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-40"
-              >
-                Save
-              </button>
+          {/* Stats */}
+          <div className="grid grid-cols-4 gap-3 py-3 border-y border-border">
+            <div>
+              <p className="text-[10px] text-muted-foreground">Created</p>
+              <p className="text-[12px] font-medium text-foreground mt-0.5">{selectedMeta.createdAt}</p>
             </div>
-          ) : (
-            <>
-              {/* Stats */}
-              <div className="grid grid-cols-4 gap-3 py-3 border-y border-border">
-                <div>
-                  <p className="text-[10px] text-muted-foreground">Created</p>
-                  <p className="text-[12px] font-medium text-foreground mt-0.5">{selectedMeta.createdAt}</p>
-                </div>
-                <div>
-                  <p className="text-[10px] text-muted-foreground">Last run</p>
-                  <p className="text-[12px] font-medium text-foreground mt-0.5">{selectedMeta.lastTriggered}</p>
-                </div>
-                <div>
-                  <p className="text-[10px] text-muted-foreground">Avg time</p>
-                  <p className="text-[12px] font-medium text-foreground mt-0.5">{selectedMeta.avgDuration}</p>
-                </div>
-                <div>
-                  <p className="text-[10px] text-muted-foreground">Total runs</p>
-                  <p className="text-[12px] font-medium text-foreground tabular-nums mt-0.5">{selectedMeta.totalRuns.toLocaleString()}</p>
-                </div>
-              </div>
+            <div>
+              <p className="text-[10px] text-muted-foreground">Last run</p>
+              <p className="text-[12px] font-medium text-foreground mt-0.5">{selectedMeta.lastTriggered}</p>
+            </div>
+            <div>
+              <p className="text-[10px] text-muted-foreground">Avg time</p>
+              <p className="text-[12px] font-medium text-foreground mt-0.5">{selectedMeta.avgDuration}</p>
+            </div>
+            <div>
+              <p className="text-[10px] text-muted-foreground">Total runs</p>
+              <p className="text-[12px] font-medium text-foreground tabular-nums mt-0.5">{selectedMeta.totalRuns.toLocaleString()}</p>
+            </div>
+          </div>
 
-              {/* Employees using this skill */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Users className="w-3.5 h-3.5 text-muted-foreground" />
-                  <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
-                    Employees using this skill
-                  </p>
-                </div>
-                {selectedEmployees.length === 0 ? (
-                  <p className="text-[12px] text-muted-foreground py-2">No employees are using this skill yet.</p>
-                ) : (
-                  <div className="space-y-0.5">
-                    {selectedEmployees.map(emp => (
-                      <button
-                        key={emp.id}
-                        onClick={() => { setSelected(null); navigate(`/app/employees/${emp.id}`); }}
-                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted/50 transition-colors duration-150 group/emp text-left"
-                      >
-                        <EmployeeAvatar name={emp.name} size="sm" />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <p className="text-[13px] font-medium text-foreground">{emp.name}</p>
-                            <StateDot state={emp.state} />
-                          </div>
-                          <p className="text-[11px] text-muted-foreground truncate">{emp.title}</p>
-                        </div>
-                        <span className="text-[11px] text-muted-foreground/40 group-hover/emp:text-primary transition-colors">→</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
+          {/* Employees using this skill */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Users className="w-3.5 h-3.5 text-muted-foreground" />
+              <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+                Employees using this skill
+              </p>
+            </div>
+            {selectedEmployees.length === 0 ? (
+              <p className="text-[12px] text-muted-foreground py-2">No employees are using this skill yet.</p>
+            ) : (
+              <div className="space-y-0.5">
+                {selectedEmployees.map(emp => (
+                  <button
+                    key={emp.id}
+                    onClick={() => { setSelected(null); navigate(`/app/employees/${emp.id}`); }}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted/50 transition-colors duration-150 group/emp text-left"
+                  >
+                    <EmployeeAvatar name={emp.name} size="sm" />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="text-[13px] font-medium text-foreground">{emp.name}</p>
+                        <StateDot state={emp.state} />
+                      </div>
+                      <p className="text-[11px] text-muted-foreground truncate">{emp.title}</p>
+                    </div>
+                    <span className="text-[11px] text-muted-foreground/40 group-hover/emp:text-primary transition-colors">→</span>
+                  </button>
+                ))}
               </div>
-            </>
-          )}
+            )}
+          </div>
         </DialogContent>
       </Dialog>
-
-      {/* ===== Delete Confirmation ===== */}
-      <AlertDialog open={showDelete} onOpenChange={setShowDelete}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-[15px]">Delete {selected?.name}?</AlertDialogTitle>
-            <AlertDialogDescription className="text-[13px]">
-              This will permanently remove this skill. {selectedEmployees.length > 0
-                ? `${selectedEmployees.length} employee${selectedEmployees.length > 1 ? "s" : ""} currently using it will lose access.`
-                : "No employees are currently using it."}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="text-[12px]">Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 text-[12px]"
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }

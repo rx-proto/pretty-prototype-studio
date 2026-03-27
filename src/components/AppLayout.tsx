@@ -1,9 +1,14 @@
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Home, Users, Zap, Wrench, Plug, CreditCard, Settings, Layers, UserPlus, Check, Pencil } from "lucide-react";
+import { Home, Users, Zap, Wrench, Plug, CreditCard, Settings, Layers, UserPlus, Check, Pencil, LogOut, User, ChevronUp } from "lucide-react";
 import { workspace } from "@/lib/data";
 import sarahAvatar from "@/assets/avatars/sarah-chen.jpg";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const mainNav = [
   { to: "/app/home", label: "Home", icon: Home },
