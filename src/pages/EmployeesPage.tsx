@@ -21,6 +21,14 @@ export default function EmployeesPage() {
 
   const archivedCount = employees.filter(e => e.archived).length;
   const activeEmployees = employees.filter(e => !e.archived);
+  const runningCount = activeEmployees.filter(e => e.state === "running").length;
+  const sleepingCount = activeEmployees.filter(e => e.state === "sleeping").length;
+
+  const filterLabels = [
+    `All (${activeEmployees.length})`,
+    `Running (${runningCount})`,
+    `Sleeping (${sleepingCount})`,
+  ];
 
   return (
     <div className="p-8 max-w-[960px] mx-auto space-y-6">
@@ -39,7 +47,7 @@ export default function EmployeesPage() {
                 !showArchived && i === activeFilter ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              {f.label}
+              {filterLabels[i]}
             </button>
           ))}
         </div>
