@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import type { EmployeeState } from "@/lib/data";
+import type { EmployeeState, AttentionTone } from "@/lib/data";
 
 import mayaAvatar from "@/assets/avatars/maya.jpg";
 import soraAvatar from "@/assets/avatars/sora.jpg";
@@ -11,34 +11,36 @@ import alexAvatar from "@/assets/avatars/alex.jpg";
 import kaiAvatar from "@/assets/avatars/kai.jpg";
 import veraAvatar from "@/assets/avatars/vera.jpg";
 import reoAvatar from "@/assets/avatars/reo.jpg";
+import danaAvatar from "@/assets/avatars/dana.jpg";
 import sarahAvatar from "@/assets/avatars/sarah-chen.jpg";
 
-const stateConfig: Record<EmployeeState, { label: string; dotClass: string; bgClass: string; textClass: string; ringClass: string }> = {
-  working: { label: "Working", dotClass: "bg-state-working", bgClass: "bg-state-working/8", textClass: "text-state-working", ringClass: "ring-state-working/20" },
+type DotState = EmployeeState | AttentionTone;
+
+const stateConfig: Record<DotState, { label: string; dotClass: string; bgClass: string; textClass: string; ringClass: string }> = {
+  running: { label: "Running", dotClass: "bg-state-working", bgClass: "bg-state-working/8", textClass: "text-state-working", ringClass: "ring-state-working/20" },
+  sleeping: { label: "Sleeping", dotClass: "bg-state-quiet", bgClass: "bg-state-quiet/8", textClass: "text-state-quiet", ringClass: "ring-state-quiet/20" },
+  accent: { label: "Review", dotClass: "bg-state-accent", bgClass: "bg-state-accent/8", textClass: "text-state-accent", ringClass: "ring-state-accent/20" },
   warning: { label: "Warning", dotClass: "bg-state-warning", bgClass: "bg-state-warning/8", textClass: "text-state-warning", ringClass: "ring-state-warning/20" },
   blocked: { label: "Blocked", dotClass: "bg-state-blocked", bgClass: "bg-state-blocked/8", textClass: "text-state-blocked", ringClass: "ring-state-blocked/20" },
-  idle: { label: "Idle", dotClass: "bg-state-quiet", bgClass: "bg-state-quiet/8", textClass: "text-state-quiet", ringClass: "ring-state-quiet/20" },
-  ready: { label: "Ready", dotClass: "bg-state-ready", bgClass: "bg-state-ready/8", textClass: "text-state-ready", ringClass: "ring-state-ready/20" },
-  accent: { label: "Review", dotClass: "bg-state-accent", bgClass: "bg-state-accent/8", textClass: "text-state-accent", ringClass: "ring-state-accent/20" },
 };
 
-export function StateBadge({ state, className }: { state: EmployeeState; className?: string }) {
+export function StateBadge({ state, className }: { state: DotState; className?: string }) {
   const config = stateConfig[state];
   return (
     <span className={cn(
       "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium ring-1 ring-inset",
       config.bgClass, config.textClass, config.ringClass, className
     )}>
-      <span className={cn("w-[5px] h-[5px] rounded-full", config.dotClass, state === "working" && "animate-pulse-dot")} />
+      <span className={cn("w-[5px] h-[5px] rounded-full", config.dotClass, state === "running" && "animate-pulse-dot")} />
       {config.label}
     </span>
   );
 }
 
-export function StateDot({ state, className }: { state: EmployeeState; className?: string }) {
+export function StateDot({ state, className }: { state: DotState; className?: string }) {
   const config = stateConfig[state];
   return (
-    <span className={cn("w-2 h-2 rounded-full", config.dotClass, state === "working" && "animate-pulse-dot", className)} />
+    <span className={cn("w-2 h-2 rounded-full", config.dotClass, state === "running" && "animate-pulse-dot", className)} />
   );
 }
 
@@ -53,6 +55,7 @@ const avatarMap: Record<string, string> = {
   Kai: kaiAvatar,
   Vera: veraAvatar,
   Reo: reoAvatar,
+  Dana: danaAvatar,
   "Sarah Chen": sarahAvatar,
 };
 
