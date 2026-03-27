@@ -192,7 +192,7 @@ export default function ConnectionsPage() {
                 {selectedEmployees.length === 0 ? (
                   <p className="text-[12px] text-muted-foreground py-2">No employees are using this connector.</p>
                 ) : (
-                  <div className="space-y-0.5">
+                  <div className="space-y-0.5 max-h-[200px] overflow-y-auto">
                     {selectedEmployees.map(emp => (
                       <button
                         key={emp.id}
