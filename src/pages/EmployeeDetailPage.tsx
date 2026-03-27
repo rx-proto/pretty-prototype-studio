@@ -7,8 +7,10 @@ import { ActivityLog } from "@/components/employee-detail/ActivityLog";
 import { EditableTagList } from "@/components/employee-detail/EditableTagList";
 import { ConnectorsPanel } from "@/components/employee-detail/ConnectorsPanel";
 import { CostPanel } from "@/components/employee-detail/CostPanel";
-import { ArrowLeft, Zap, Wrench, Archive, RotateCcw, AlertTriangle } from "lucide-react";
+import { MessagesPanel } from "@/components/employee-detail/MessagesPanel";
+import { ArrowLeft, Zap, Wrench, Archive, RotateCcw, AlertTriangle, Clock, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,11 +23,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
+
+
 export default function EmployeeDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const emp = getEmployeeById(id || "");
   const [isArchived, setIsArchived] = useState(emp?.archived ?? false);
+  const [activeTab, setActiveTab] = useState<"activity" | "messages">("activity");
 
   if (!emp) {
     return (
@@ -84,9 +89,41 @@ export default function EmployeeDetailPage() {
 
       {/* Main content */}
       <div className="grid grid-cols-3 gap-5">
-        {/* Left: Activity log */}
+        {/* Left: Tab content */}
         <div className="col-span-2 animate-stagger flex flex-col">
-          <ActivityLog entries={logs} />
+          {/* Tab switcher */}
+          <div className="flex gap-1 p-1 rounded-lg bg-muted mb-4 w-fit">
+            <button
+              onClick={() => setActiveTab("activity")}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-medium transition-all duration-200",
+                activeTab === "activity"
+                  ? "bg-card text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Clock className="w-3.5 h-3.5" />
+              Activity
+            </button>
+            <button
+              onClick={() => setActiveTab("messages")}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-medium transition-all duration-200",
+                activeTab === "messages"
+                  ? "bg-card text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <MessageSquare className="w-3.5 h-3.5" />
+              Messages
+            </button>
+          </div>
+
+          {activeTab === "activity" ? (
+            <ActivityLog entries={logs} />
+          ) : (
+            <MessagesPanel employeeId={emp.id} employeeName={emp.name} />
+          )}
         </div>
 
         {/* Right sidebar */}
