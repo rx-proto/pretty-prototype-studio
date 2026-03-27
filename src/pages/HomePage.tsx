@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { employees, attentionItems, dailySpend, weeklySpend, todaySpend, recentActivity, AttentionItem } from "@/lib/data";
+import { employees, attentionItems, dailySpend, weeklySpend, todaySpend, recentActivity, AttentionItem, RecentActivity } from "@/lib/data";
 import { StateDot, EmployeeAvatar } from "@/components/StateBadge";
 import { useNavigate } from "react-router-dom";
 import { Users, TrendingUp, ChevronRight, AlertTriangle, Clock } from "lucide-react";
@@ -16,6 +16,7 @@ export default function HomePage() {
   const activeCount = employees.filter(e => e.state === "working" || e.state === "warning" || e.state === "ready").length;
   const actionItems = attentionItems.filter(item => item.tone === "warning" || item.tone === "blocked");
   const [selectedItem, setSelectedItem] = useState<AttentionItem | null>(null);
+  const [selectedActivity, setSelectedActivity] = useState<RecentActivity | null>(null);
 
   const maxSpend = Math.max(...dailySpend.map(d => d.amount));
 
@@ -139,7 +140,7 @@ export default function HomePage() {
           {recentActivity.map((activity, i) => (
             <button
               key={i}
-              onClick={() => navigate(`/app/employees/${activity.employeeId}`)}
+              onClick={() => setSelectedActivity(activity)}
               className={`w-full flex items-center gap-3.5 px-5 py-3.5 text-left hover:bg-muted/30 transition-colors duration-200 ${
                 i < recentActivity.length - 1 ? "border-b border-border" : ""
               }`}
@@ -154,6 +155,47 @@ export default function HomePage() {
           ))}
         </div>
       </div>
+
+      {/* Activity detail dialog */}
+      <Dialog open={!!selectedActivity} onOpenChange={(open) => !open && setSelectedActivity(null)}>
+        <DialogContent className="sm:max-w-[420px]">
+          {selectedActivity && (
+            <>
+              <DialogHeader>
+                <div className="flex items-center gap-3 mb-1">
+                  <button
+                    onClick={() => {
+                      setSelectedActivity(null);
+                      navigate(`/app/employees/${selectedActivity.employeeId}`);
+                    }}
+                    className="hover:opacity-80 transition-opacity"
+                    title={`View ${selectedActivity.employeeName}'s profile`}
+                  >
+                    <EmployeeAvatar name={selectedActivity.employeeName} size="sm" />
+                  </button>
+                  <div>
+                    <DialogTitle className="text-[15px]">
+                      <button
+                        onClick={() => {
+                          setSelectedActivity(null);
+                          navigate(`/app/employees/${selectedActivity.employeeId}`);
+                        }}
+                        className="hover:underline"
+                      >
+                        {selectedActivity.employeeName}
+                      </button>
+                    </DialogTitle>
+                    <p className="text-[11px] text-muted-foreground">{selectedActivity.timeAgo}</p>
+                  </div>
+                </div>
+                <DialogDescription className="text-[13px] pt-1">
+                  {selectedActivity.summary}
+                </DialogDescription>
+              </DialogHeader>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
