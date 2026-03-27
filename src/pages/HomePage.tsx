@@ -13,7 +13,7 @@ import {
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const activeCount = employees.filter(e => e.state === "working" || e.state === "warning" || e.state === "ready").length;
+  const activeCount = employees.filter(e => !e.archived && e.state === "running").length;
   const actionItems = attentionItems.filter(item => item.tone === "warning" || item.tone === "blocked");
   const [selectedItem, setSelectedItem] = useState<AttentionItem | null>(null);
   const [selectedActivity, setSelectedActivity] = useState<RecentActivity | null>(null);
@@ -93,7 +93,7 @@ export default function HomePage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <p className="text-[13px] font-medium text-foreground">{item.title}</p>
-                    <StateDot state={item.tone} />
+                    <StateDot state={item.tone as any} />
                   </div>
                   <p className="text-[12px] text-muted-foreground mt-0.5">{item.detail}</p>
                 </div>
@@ -114,7 +114,7 @@ export default function HomePage() {
                   <EmployeeAvatar name={selectedItem.title} size="sm" />
                   <div className="flex items-center gap-2">
                     <DialogTitle className="text-[15px]">{selectedItem.title}</DialogTitle>
-                    <StateDot state={selectedItem.tone} />
+                    <StateDot state={selectedItem.tone as any} />
                   </div>
                 </div>
                 <DialogDescription className="text-[13px] pt-1">
