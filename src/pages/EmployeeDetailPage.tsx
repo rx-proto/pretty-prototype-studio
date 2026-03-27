@@ -30,6 +30,7 @@ export default function EmployeeDetailPage() {
   const navigate = useNavigate();
   const emp = getEmployeeById(id || "");
   const [isArchived, setIsArchived] = useState(emp?.archived ?? false);
+  const [activeTab, setActiveTab] = useState<"activity" | "messages">("activity");
 
   if (!emp) {
     return (
