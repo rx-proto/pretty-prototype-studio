@@ -7,57 +7,65 @@
 @layer base {
   :root {
     --background: 40 20% 98%;
-    --foreground: 220 20% 10%;
+    --foreground: 228 16% 14%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 20% 10%;
+    --card-foreground: 228 16% 14%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 10%;
+    --popover-foreground: 228 16% 14%;
 
-    --primary: 220 70% 50%;
+    --primary: 228 68% 52%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 94%;
-    --secondary-foreground: 220 20% 10%;
+    --secondary: 225 14% 95%;
+    --secondary-foreground: 228 16% 14%;
 
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 10% 46%;
+    --muted: 225 14% 96%;
+    --muted-foreground: 225 8% 52%;
 
-    --accent: 220 14% 94%;
-    --accent-foreground: 220 20% 10%;
+    --accent: 225 14% 94%;
+    --accent-foreground: 228 16% 14%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 220 70% 50%;
+    --border: 225 12% 92%;
+    --input: 225 12% 92%;
+    --ring: 228 68% 52%;
 
-    --radius: 0.625rem;
+    --radius: 0.75rem;
 
-    /* Sidebar - dark */
-    --sidebar-background: 225 25% 8%;
-    --sidebar-foreground: 220 14% 70%;
-    --sidebar-primary: 0 0% 100%;
-    --sidebar-primary-foreground: 225 25% 8%;
-    --sidebar-accent: 225 20% 14%;
-    --sidebar-accent-foreground: 220 14% 90%;
-    --sidebar-border: 225 20% 16%;
-    --sidebar-ring: 220 70% 50%;
-    --sidebar-muted: 220 14% 46%;
+    /* Sidebar */
+    --sidebar-background: 228 22% 7%;
+    --sidebar-foreground: 225 10% 58%;
+    --sidebar-primary: 0 0% 96%;
+    --sidebar-primary-foreground: 228 22% 7%;
+    --sidebar-accent: 228 18% 13%;
+    --sidebar-accent-foreground: 225 10% 88%;
+    --sidebar-border: 228 16% 14%;
+    --sidebar-ring: 228 68% 52%;
+    --sidebar-muted: 225 8% 42%;
 
     /* State colors */
-    --state-working: 152 60% 42%;
+    --state-working: 158 64% 40%;
     --state-warning: 38 92% 50%;
     --state-blocked: 0 72% 51%;
-    --state-quiet: 220 10% 58%;
-    --state-ready: 220 70% 55%;
-    --state-accent: 262 60% 58%;
+    --state-quiet: 225 8% 62%;
+    --state-ready: 210 80% 52%;
+    --state-accent: 265 60% 58%;
 
     /* Surfaces */
     --surface-raised: 0 0% 100%;
-    --surface-sunken: 220 14% 96%;
+    --surface-sunken: 225 14% 96.5%;
+
+    /* Premium design tokens */
+    --shadow-card: 0 1px 3px 0 rgba(0,0,0,0.04), 0 1px 2px -1px rgba(0,0,0,0.03);
+    --shadow-card-hover: 0 4px 12px -2px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.04);
+    --shadow-elevated: 0 8px 24px -4px rgba(0,0,0,0.1), 0 4px 8px -4px rgba(0,0,0,0.06);
+    --gradient-subtle: linear-gradient(135deg, hsl(228 68% 52% / 0.04), hsl(265 60% 58% / 0.04));
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(225 14% 98%));
+    --gradient-sidebar: linear-gradient(180deg, hsl(228 22% 9%), hsl(228 22% 6%));
   }
 }
 
@@ -68,9 +76,44 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   }
   code, .font-mono {
     font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer components {
+  .card-premium {
+    background: var(--gradient-card);
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .card-premium:hover {
+    box-shadow: var(--shadow-card-hover);
+  }
+  .card-interactive {
+    background: var(--gradient-card);
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+  }
+  .card-interactive:hover {
+    box-shadow: var(--shadow-card-hover);
+    border-color: hsl(var(--primary) / 0.2);
+    transform: translateY(-1px);
+  }
+  .gradient-mesh {
+    background: var(--gradient-subtle);
+  }
+  .stat-number {
+    @apply text-3xl font-bold tracking-tight;
+    letter-spacing: -0.02em;
+  }
+  .section-label {
+    @apply text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground;
+  }
+  .sidebar-gradient {
+    background: var(--gradient-sidebar);
   }
 }
 

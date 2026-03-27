@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Home, Users, Zap, Link2, CreditCard, Settings } from "lucide-react";
+import { Home, Users, Zap, Link2, CreditCard, Settings, Sparkles } from "lucide-react";
 import { workspace } from "@/lib/data";
 
 const navItems = [
@@ -18,36 +18,39 @@ export default function AppLayout() {
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-56 flex-shrink-0 bg-sidebar flex flex-col border-r border-sidebar-border">
+      <aside className="w-[220px] flex-shrink-0 sidebar-gradient flex flex-col">
         {/* Workspace header */}
-        <div className="px-4 py-5 border-b border-sidebar-border">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground text-sm font-bold">A</span>
+        <div className="px-4 pt-5 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-state-accent flex items-center justify-center shadow-lg shadow-primary/20">
+              <Sparkles className="w-4 h-4 text-primary-foreground" />
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-semibold text-sidebar-primary truncate">{workspace.name}</p>
-              <p className="text-xs text-sidebar-muted">{workspace.workspaceCountLabel}</p>
+              <p className="text-[13px] font-semibold text-sidebar-primary truncate">{workspace.name}</p>
+              <p className="text-[11px] text-sidebar-muted">{workspace.workspaceCountLabel}</p>
             </div>
           </div>
         </div>
 
+        {/* Divider */}
+        <div className="mx-4 h-px bg-sidebar-border/60" />
+
         {/* Nav */}
         <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto scrollbar-thin">
           {navItems.map(({ to, label, icon: Icon }) => {
-            const isActive = location.pathname.startsWith(to);
+            const isActive = location.pathname === to || (to !== "/preview/workspace" && location.pathname.startsWith(to));
             return (
               <NavLink
                 key={to}
                 to={to}
                 className={cn(
-                  "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                  "flex items-center gap-2.5 px-3 py-[9px] rounded-lg text-[13px] font-medium transition-all duration-150",
                   isActive
-                    ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                    : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
+                    ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-sm"
+                    : "text-sidebar-foreground hover:bg-sidebar-accent/40 hover:text-sidebar-accent-foreground"
                 )}
               >
-                <Icon className="w-4 h-4 flex-shrink-0" />
+                <Icon className={cn("w-[15px] h-[15px] flex-shrink-0", isActive && "text-primary")} />
                 {label}
               </NavLink>
             );
@@ -55,18 +58,21 @@ export default function AppLayout() {
         </nav>
 
         {/* Footer */}
-        <div className="px-4 py-3 border-t border-sidebar-border">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full bg-sidebar-accent flex items-center justify-center">
-              <span className="text-[10px] font-medium text-sidebar-accent-foreground">SC</span>
+        <div className="px-4 py-3 border-t border-sidebar-border/60">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-sidebar-accent to-sidebar-border flex items-center justify-center">
+              <span className="text-[10px] font-semibold text-sidebar-accent-foreground">SC</span>
             </div>
-            <span className="text-xs text-sidebar-foreground truncate">Sarah Chen</span>
+            <div className="min-w-0">
+              <span className="text-[12px] font-medium text-sidebar-accent-foreground truncate block">Sarah Chen</span>
+              <span className="text-[10px] text-sidebar-muted">Owner</span>
+            </div>
           </div>
         </div>
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 overflow-y-auto scrollbar-thin">
+      <main className="flex-1 overflow-y-auto scrollbar-thin bg-background">
         <Outlet />
       </main>
     </div>
