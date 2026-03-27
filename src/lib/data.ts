@@ -1,6 +1,7 @@
 // Synthetic data for the Agens.run workspace prototype
 
-export type EmployeeState = "working" | "warning" | "blocked" | "idle" | "ready" | "accent";
+export type EmployeeState = "running" | "sleeping" | "accent";
+export type AttentionTone = "warning" | "blocked" | "accent";
 
 export interface WorkspacePreview {
   name: string;
@@ -17,6 +18,8 @@ export interface EmployeePreview {
   title: string;
   summary: string;
   state: EmployeeState;
+  archived: boolean;
+  lastRunFailed?: boolean;
   statusMessage: string;
   lastWork: string;
   skills: string[];
@@ -58,7 +61,7 @@ export interface RoleTemplate {
 export interface AttentionItem {
   title: string;
   detail: string;
-  tone: EmployeeState;
+  tone: AttentionTone;
   action: string;
   suggestion: string;
 }
@@ -101,7 +104,8 @@ export const employees: EmployeePreview[] = [
     name: "Maya",
     title: "Competitive intelligence lead",
     summary: "Monitors competitor pricing, feature releases, and market positioning.",
-    state: "working",
+    state: "running",
+    archived: false,
     statusMessage: "Tracking 3 competitors' spring campaign launches",
     lastWork: "Completed Q1 competitor pricing analysis",
     skills: ["Market Watch", "Research Briefs"],
@@ -113,7 +117,9 @@ export const employees: EmployeePreview[] = [
     name: "Sora",
     title: "Support triage coordinator",
     summary: "Categorizes and routes incoming support tickets based on urgency and topic.",
-    state: "warning",
+    state: "running",
+    archived: false,
+    lastRunFailed: true,
     statusMessage: "Handling elevated ticket volume — approaching spend limit",
     lastWork: "Triaged 47 tickets in the last 24h",
     skills: ["Escalation Triage"],
@@ -125,7 +131,8 @@ export const employees: EmployeePreview[] = [
     name: "Niko",
     title: "Launch operations partner",
     summary: "Coordinates cross-functional launch readiness and tracks blockers.",
-    state: "working",
+    state: "running",
+    archived: false,
     statusMessage: "Preparing Feature X launch checklist — all items green",
     lastWork: "Sent launch readiness brief for Feature X",
     skills: ["Launch Checklist", "Follow-through"],
@@ -137,7 +144,9 @@ export const employees: EmployeePreview[] = [
     name: "Iris",
     title: "Deal risk monitor",
     summary: "Scans deal pipelines for risk signals like stalled deals or declining engagement.",
-    state: "blocked",
+    state: "sleeping",
+    archived: false,
+    lastRunFailed: true,
     statusMessage: "Waiting for Salesforce connection to resume work",
     lastWork: "Flagged 3 at-risk deals in Enterprise pipeline",
     skills: ["Deal Risk Radar"],
@@ -149,7 +158,8 @@ export const employees: EmployeePreview[] = [
     name: "Jun",
     title: "Research editor",
     summary: "Reviews and refines research drafts, checks citations, and formats deliverables.",
-    state: "idle",
+    state: "sleeping",
+    archived: false,
     statusMessage: "Waiting for new research assignments",
     lastWork: "Edited market landscape report",
     skills: ["Market Watch", "Research Briefs"],
@@ -161,7 +171,8 @@ export const employees: EmployeePreview[] = [
     name: "Lina",
     title: "Customer onboarding watcher",
     summary: "Tracks new customer onboarding milestones and flags accounts falling behind.",
-    state: "ready",
+    state: "sleeping",
+    archived: false,
     statusMessage: "Monitoring 8 active onboarding journeys",
     lastWork: "Onboarding summary sent for 5 new accounts",
     skills: ["Follow-through"],
@@ -173,7 +184,8 @@ export const employees: EmployeePreview[] = [
     name: "Alex",
     title: "Go-to-market content operator",
     summary: "Runs a full content-to-distribution loop: discovers actionable topics, produces channel-adapted content, publishes within defined guardrails, reads early engagement signals, and follows up — not just reporting, but actually shipping and iterating.",
-    state: "working",
+    state: "running",
+    archived: false,
     statusMessage: "Drafting a LinkedIn post on Q1 competitive landscape — awaiting approval to publish",
     lastWork: "Published 3 channel-adapted posts across LinkedIn & blog, drove 2.4k impressions in 48h",
     skills: ["Market Watch", "Content Generation", "Channel Publishing"],
@@ -185,7 +197,8 @@ export const employees: EmployeePreview[] = [
     name: "Kai",
     title: "Issue driver & blocker resolver",
     summary: "Continuously reads docs, issue trackers, and chat threads to identify which problems are worth pushing forward. Finds the right owner, sends follow-ups, escalates on timeout, and persists state across runs — not stopping at analysis, but driving issues to resolution.",
-    state: "working",
+    state: "running",
+    archived: false,
     statusMessage: "Following up with backend team on auth migration blocker — 2nd ping sent, awaiting response",
     lastWork: "Resolved 4 stalled issues this week by identifying owners and escalating 2 to leads",
     skills: ["Follow-through", "Escalation Triage"],
@@ -197,7 +210,8 @@ export const employees: EmployeePreview[] = [
     name: "Vera",
     title: "Investment research analyst",
     summary: "Maintains and refreshes investment memos for portfolio companies and prospects. Continuously scans for new signals, updates evidence maps, highlights gaps, and surfaces next-step actions — a persistent analyst, not a one-off research assistant.",
-    state: "working",
+    state: "running",
+    archived: false,
     statusMessage: "Refreshing Series B prospect memo — new revenue data surfaced from 10-K filing",
     lastWork: "Updated 3 portfolio memos with Q4 earnings data, flagged 2 evidence gaps for follow-up",
     skills: ["Market Watch", "Research Briefs", "Data Summarization"],
@@ -209,12 +223,26 @@ export const employees: EmployeePreview[] = [
     name: "Reo",
     title: "Infrastructure & incident monitor",
     summary: "Watches deployment pipelines, uptime dashboards, and alert channels. Correlates incidents with recent changes, drafts postmortems, and pings on-call engineers when thresholds are breached.",
-    state: "ready",
+    state: "sleeping",
+    archived: false,
     statusMessage: "All systems green — last incident was 4 days ago",
     lastWork: "Drafted postmortem for API latency spike, linked root cause to DB migration",
     skills: ["Escalation Triage", "Follow-through"],
     tools: ["Web Search", "Code Interpreter"],
     connectors: ["Slack", "GitHub", "Webhook"],
+  },
+  {
+    id: "dana-legacy",
+    name: "Dana",
+    title: "Legacy data migrator",
+    summary: "Was responsible for migrating legacy CRM data. Project completed.",
+    state: "sleeping",
+    archived: true,
+    statusMessage: "Archived — CRM migration project completed",
+    lastWork: "Finished migrating 12k records from legacy CRM",
+    skills: ["Data Summarization"],
+    tools: ["Spreadsheet"],
+    connectors: ["Email"],
   },
 ];
 
