@@ -55,6 +55,24 @@ export default function EmployeeDetailPage() {
     toast.success(`${emp.name} has been restored`);
   };
 
+  useLayoutEffect(() => {
+    const updateHeight = () => {
+      if (sidebarRef.current) {
+        setPanelHeight(sidebarRef.current.offsetHeight);
+      }
+    };
+
+    updateHeight();
+    const observer = new ResizeObserver(updateHeight);
+    if (sidebarRef.current) observer.observe(sidebarRef.current);
+    window.addEventListener("resize", updateHeight);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateHeight);
+    };
+  }, [activeTab, isArchived, emp.id]);
+
   return (
     <div className="p-8 max-w-[960px] mx-auto">
       <button onClick={() => navigate("/app/employees")} className="flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground transition-colors mb-6 opacity-0 animate-fade-in">
