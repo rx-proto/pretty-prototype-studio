@@ -1,203 +1,135 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Send, Check, ArrowRight, Plug, Search, Megaphone, ClipboardList, TrendingUp } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
-import { roleTemplates } from "@/lib/data";
+import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
-import type { LucideIcon } from "lucide-react";
-
-type Step = "describe" | "review" | "activated";
-
-const templateIcons: Record<string, { icon: LucideIcon; color: string; bg: string }> = {
-  megaphone: { icon: Megaphone, color: "text-orange-600", bg: "bg-orange-50" },
-  clipboard: { icon: ClipboardList, color: "text-blue-600", bg: "bg-blue-50" },
-  trending: { icon: TrendingUp, color: "text-emerald-600", bg: "bg-emerald-50" },
-  search: { icon: Search, color: "text-violet-600", bg: "bg-violet-50" },
-};
-
-const mockDraft = {
-  name: "Maya",
-  title: "Competitive intelligence lead",
-  summary: "Monitors competitor pricing, feature releases, and market positioning across your tracked companies. Delivers weekly briefs and real-time alerts when something changes.",
-  skills: ["Market Watch", "Research Briefs"],
-  tools: ["Web Search", "PDF Reader"],
-};
+import type { CreatorStep, ChatMessage, EmployeeDraft } from "@/components/create-employee/types";
+import { syntheticChat, draftSnapshots, finalDraft } from "@/components/create-employee/syntheticSession";
+import TemplateSelect from "@/components/create-employee/TemplateSelect";
+import CreatorChat from "@/components/create-employee/CreatorChat";
+import EmployeePreviewPanel from "@/components/create-employee/EmployeePreviewPanel";
+import ActivatedView from "@/components/create-employee/ActivatedView";
 
 export default function CreateEmployeePage() {
   const navigate = useNavigate();
-  const [step, setStep] = useState<Step>("describe");
-  const [description, setDescription] = useState("");
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [step, setStep] = useState<CreatorStep>("templates");
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [currentDraft, setCurrentDraft] = useState<Partial<EmployeeDraft>>({});
+  const [chatIndex, setChatIndex] = useState(0);
+  const [isTyping, setIsTyping] = useState(false);
 
-  const handleGenerate = () => {
-    if (!description && !selectedTemplate) {
-      toast.error("Describe what you need or pick a template");
-      return;
+  const advanceChat = useCallback((fromIndex: number) => {
+    // Find next assistant message to show
+    const nextMessages: ChatMessage[] = [];
+    let idx = fromIndex;
+
+    // Add the next assistant message(s) with typing delay
+    if (idx < syntheticChat.length && syntheticChat[idx].role === "assistant") {
+      setIsTyping(true);
+      setTimeout(() => {
+        const msg = syntheticChat[idx];
+        nextMessages.push(msg);
+        setMessages((prev) => [...prev, msg]);
+        setIsTyping(false);
+
+        // Update draft based on snapshots
+        const snapshot = draftSnapshots.find((s) => s.afterMessageId === msg.id);
+        if (snapshot) setCurrentDraft(snapshot.draft);
+
+        setChatIndex(idx + 1);
+      }, 1200);
     }
-    setStep("review");
-  };
+  }, []);
 
-  const handleActivate = () => {
+  const startSession = useCallback((templateId?: string) => {
+    setStep("session");
+    setMessages([]);
+    setChatIndex(0);
+    setCurrentDraft({});
+
+    // Show first assistant message after a beat
+    setIsTyping(true);
+    setTimeout(() => {
+      const firstMsg = syntheticChat[0];
+      setMessages([firstMsg]);
+      setIsTyping(false);
+      setChatIndex(1);
+    }, 800);
+  }, []);
+
+  const handleSendMessage = useCallback((text: string) => {
+    // Find the next user message in synthetic chat to match
+    const nextUserIdx = chatIndex;
+    if (nextUserIdx < syntheticChat.length && syntheticChat[nextUserIdx].role === "user") {
+      const userMsg: ChatMessage = {
+        ...syntheticChat[nextUserIdx],
+        content: text, // Use actual user text but advance synthetic flow
+      };
+      setMessages((prev) => [...prev, userMsg]);
+
+      // Update draft if snapshot exists for this message
+      const snapshot = draftSnapshots.find((s) => s.afterMessageId === userMsg.id);
+      if (snapshot) setCurrentDraft(snapshot.draft);
+
+      setChatIndex(nextUserIdx + 1);
+      // Trigger assistant response
+      setTimeout(() => advanceChat(nextUserIdx + 1), 300);
+    } else {
+      // Past synthetic data — just echo
+      const echoMsg: ChatMessage = {
+        id: `user-${Date.now()}`,
+        role: "user",
+        content: text,
+      };
+      setMessages((prev) => [...prev, echoMsg]);
+    }
+  }, [chatIndex, advanceChat]);
+
+  const handleConfirm = () => {
     setStep("activated");
     toast.success("Employee created and activated!");
   };
 
+  // Check if chat has reached the final state (all synthetic messages shown)
+  const isSessionComplete = chatIndex >= syntheticChat.length && !isTyping;
+
   if (step === "activated") {
+    return <ActivatedView draft={finalDraft} />;
+  }
+
+  if (step === "templates") {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-8 relative">
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-state-working/[0.04] blur-[100px]" />
-        </div>
-        <div className="max-w-md text-center relative z-10">
-          <div className="w-16 h-16 rounded-2xl bg-state-working/[0.08] flex items-center justify-center mx-auto mb-6 opacity-0 animate-scale-in">
-            <Check className="w-8 h-8 text-state-working" />
-          </div>
-          <h1 className="text-[24px] font-bold text-foreground tracking-tight mb-2 opacity-0 animate-fade-in-up" style={{ animationDelay: "0.15s" }}>
-            {mockDraft.name} is now working
-          </h1>
-          <p className="text-[14px] text-muted-foreground leading-relaxed mb-8 opacity-0 animate-fade-in-up" style={{ animationDelay: "0.25s" }}>
-            She's getting familiar with your workspace. You'll see her first work results soon.
-          </p>
-          <div className="flex flex-col gap-3 opacity-0 animate-fade-in-up" style={{ animationDelay: "0.35s" }}>
-            <button
-              onClick={() => navigate("/app/employees/maya-competitive-intel")}
-              className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-semibold bg-foreground text-background shadow-sm hover:bg-foreground/90 transition-all"
-            >
-              Go see {mockDraft.name} <ArrowRight className="w-4 h-4" />
-            </button>
-            <button className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-medium text-foreground border border-border hover:bg-muted/40 transition-colors duration-200">
-              <Plug className="w-4 h-4" />
-              Connect Slack (optional)
-            </button>
-          </div>
-        </div>
-      </div>
+      <TemplateSelect
+        onSelectTemplate={(id) => startSession(id)}
+        onStartBlank={() => startSession()}
+        onBack={() => navigate(-1)}
+      />
     );
   }
 
-  if (step === "review") {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="max-w-2xl mx-auto px-8 py-10">
-          <button onClick={() => setStep("describe")} className="flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground transition-colors mb-6 opacity-0 animate-fade-in">
-            <ArrowLeft className="w-3.5 h-3.5" />
-            Back
-          </button>
-
-          <div className="mb-6 opacity-0 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
-            <h1 className="text-[24px] font-bold text-foreground tracking-tight mb-1">Review your new employee</h1>
-            <p className="text-[13px] text-muted-foreground">Here's what we've put together. Adjust anything before activating.</p>
-          </div>
-
-          <div className="card-premium rounded-xl border border-border p-6 space-y-5 mb-6 relative noise-overlay opacity-0 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
-            <div className="relative space-y-5">
-              <div>
-                <p className="section-label mb-1">Name</p>
-                <p className="text-[17px] font-semibold text-foreground">{mockDraft.name}</p>
-              </div>
-              <div>
-                <p className="section-label mb-1">Role</p>
-                <p className="text-[14px] text-foreground">{mockDraft.title}</p>
-              </div>
-              <div>
-                <p className="section-label mb-1">What they'll do</p>
-                <p className="text-[13px] text-muted-foreground leading-relaxed">{mockDraft.summary}</p>
-              </div>
-              <div>
-                <p className="section-label mb-2">Auto-equipped skills</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {mockDraft.skills.map(s => (
-                    <span key={s} className="px-2.5 py-1 text-[11px] font-medium bg-primary/[0.06] text-primary rounded-lg ring-1 ring-inset ring-primary/10">{s}</span>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <p className="section-label mb-2">Auto-equipped tools</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {mockDraft.tools.map(t => (
-                    <span key={t} className="px-2.5 py-1 text-[11px] font-medium bg-muted rounded-lg text-foreground">{t}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 opacity-0 animate-fade-in" style={{ animationDelay: "0.3s" }}>
-            <button onClick={() => setStep("describe")} className="px-5 py-2.5 rounded-xl text-[13px] font-medium text-foreground border border-border hover:bg-muted/40 transition-colors duration-200">
-              Let me adjust
-            </button>
-            <button onClick={handleActivate} className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-semibold bg-foreground text-background shadow-sm hover:bg-foreground/90 transition-all">
-              Looks good, activate
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
+  // Session step — split view: chat left, preview right
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-2xl mx-auto px-8 py-10">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground transition-colors mb-6 opacity-0 animate-fade-in">
+    <div className="h-full flex flex-col">
+      {/* Header */}
+      <div className="flex items-center gap-3 px-6 py-3 border-b border-border bg-background">
+        <button onClick={() => setStep("templates")} className="flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="w-3.5 h-3.5" />
           Back
         </button>
+        <div className="w-px h-4 bg-border" />
+        <h2 className="text-[13px] font-semibold text-foreground">Creator session</h2>
+      </div>
 
-        <div className="mb-8 opacity-0 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
-          <h1 className="text-[24px] font-bold text-foreground tracking-tight mb-1">Create a new employee</h1>
-          <p className="text-[13px] text-muted-foreground">Pick a template or describe what you need in your own words.</p>
+      {/* Split pane */}
+      <div className="flex-1 flex overflow-hidden">
+        <div className="flex-1 min-w-0 border-r border-border">
+          <CreatorChat messages={messages} onSendMessage={handleSendMessage} isTyping={isTyping} />
         </div>
-
-        <div className="mb-8 opacity-0 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
-          <p className="section-label mb-3">Start from a template</p>
-          <div className="grid grid-cols-2 gap-3">
-            {roleTemplates.map((tpl) => {
-              const entry = templateIcons[tpl.icon] || { icon: Search, color: "text-violet-600", bg: "bg-violet-50" };
-              const TplIcon = entry.icon;
-              return (
-                <button
-                  key={tpl.id}
-                  onClick={() => { setSelectedTemplate(tpl.id); setDescription(""); }}
-                  className={`text-left rounded-xl border p-4 transition-all duration-200 group ${
-                    selectedTemplate === tpl.id
-                      ? "border-primary/30 bg-primary/[0.03] ring-1 ring-primary/15 shadow-sm"
-                      : "border-border hover:border-border/80 card-interactive"
-                  }`}
-                >
-                  <div className={`w-8 h-8 rounded-lg ${entry.bg} flex items-center justify-center mb-2.5 transition-colors duration-200`}>
-                    <TplIcon className={`w-4 h-4 ${entry.color} transition-colors duration-200`} />
-                  </div>
-                  <h3 className="text-[13px] font-semibold text-foreground mb-0.5">{tpl.name}</h3>
-                  <p className="text-[11px] text-muted-foreground leading-relaxed">{tpl.description}</p>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3 mb-6 opacity-0 animate-fade-in" style={{ animationDelay: "0.3s" }}>
-          <div className="flex-1 h-px bg-border" />
-          <span className="text-[11px] text-muted-foreground">or describe what you need</span>
-          <div className="flex-1 h-px bg-border" />
-        </div>
-
-        <div className="mb-6 opacity-0 animate-fade-in" style={{ animationDelay: "0.35s" }}>
-          <Textarea
-            value={description}
-            onChange={e => { setDescription(e.target.value); setSelectedTemplate(null); }}
-            placeholder="e.g. I need someone to monitor our competitors' pricing pages and alert me when anything changes..."
-            className="text-[13px] min-h-[120px] resize-none"
+        <div className="w-[340px] flex-shrink-0">
+          <EmployeePreviewPanel
+            draft={currentDraft}
+            onConfirm={handleConfirm}
+            showConfirm={isSessionComplete}
           />
-        </div>
-
-        <div className="opacity-0 animate-fade-in" style={{ animationDelay: "0.4s" }}>
-          <button
-            onClick={handleGenerate}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-semibold bg-foreground text-background shadow-sm hover:bg-foreground/90 transition-all"
-          >
-            <Send className="w-4 h-4" />
-            Generate employee
-          </button>
         </div>
       </div>
     </div>
