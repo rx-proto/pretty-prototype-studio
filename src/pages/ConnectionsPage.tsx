@@ -2,14 +2,14 @@ import { connectors } from "@/lib/data";
 import { Plus, MessageSquare, MessageCircle, Mail, Webhook, Database, BookOpen, Github } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-const connectorIcons: Record<string, LucideIcon> = {
-  Slack: MessageSquare,
-  Lark: MessageCircle,
-  Email: Mail,
-  Webhook: Webhook,
-  Salesforce: Database,
-  Notion: BookOpen,
-  GitHub: Github,
+const connectorIcons: Record<string, { icon: LucideIcon; color: string; bg: string }> = {
+  Slack: { icon: MessageSquare, color: "text-[#E01E5A]", bg: "bg-[#E01E5A]/10" },
+  Lark: { icon: MessageCircle, color: "text-[#3370FF]", bg: "bg-[#3370FF]/10" },
+  Email: { icon: Mail, color: "text-amber-600", bg: "bg-amber-50" },
+  Webhook: { icon: Webhook, color: "text-emerald-600", bg: "bg-emerald-50" },
+  Salesforce: { icon: Database, color: "text-[#00A1E0]", bg: "bg-[#00A1E0]/10" },
+  Notion: { icon: BookOpen, color: "text-foreground", bg: "bg-muted" },
+  GitHub: { icon: Github, color: "text-foreground", bg: "bg-muted" },
 };
 
 export default function ConnectionsPage() {
@@ -28,12 +28,13 @@ export default function ConnectionsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 animate-stagger">
         {connectors.map((conn) => {
-          const Icon = connectorIcons[conn.name] || MessageSquare;
+          const entry = connectorIcons[conn.name] || { icon: MessageSquare, color: "text-muted-foreground", bg: "bg-muted" };
+          const Icon = entry.icon;
           return (
             <div key={conn.id} className="card-interactive rounded-xl border border-border p-5 cursor-pointer group relative noise-overlay">
               <div className="relative flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
-                  <Icon className="w-[18px] h-[18px] text-foreground" />
+                <div className={`w-10 h-10 rounded-xl ${entry.bg} flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-300`}>
+                  <Icon className={`w-[18px] h-[18px] ${entry.color}`} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">

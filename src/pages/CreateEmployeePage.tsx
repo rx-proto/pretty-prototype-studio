@@ -8,11 +8,11 @@ import type { LucideIcon } from "lucide-react";
 
 type Step = "describe" | "review" | "activated";
 
-const templateIcons: Record<string, LucideIcon> = {
-  megaphone: Megaphone,
-  clipboard: ClipboardList,
-  trending: TrendingUp,
-  search: Search,
+const templateIcons: Record<string, { icon: LucideIcon; color: string; bg: string }> = {
+  megaphone: { icon: Megaphone, color: "text-orange-600", bg: "bg-orange-50" },
+  clipboard: { icon: ClipboardList, color: "text-blue-600", bg: "bg-blue-50" },
+  trending: { icon: TrendingUp, color: "text-emerald-600", bg: "bg-emerald-50" },
+  search: { icon: Search, color: "text-violet-600", bg: "bg-violet-50" },
 };
 
 const mockDraft = {
@@ -152,7 +152,8 @@ export default function CreateEmployeePage() {
           <p className="section-label mb-3">Start from a template</p>
           <div className="grid grid-cols-2 gap-3">
             {roleTemplates.map((tpl) => {
-              const Icon = templateIcons[tpl.icon] || Search;
+              const entry = templateIcons[tpl.icon] || { icon: Search, color: "text-violet-600", bg: "bg-violet-50" };
+              const TplIcon = entry.icon;
               return (
                 <button
                   key={tpl.id}
@@ -163,8 +164,8 @@ export default function CreateEmployeePage() {
                       : "border-border hover:border-border/80 card-interactive"
                   }`}
                 >
-                  <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center mb-2.5 group-hover:bg-primary/[0.08] transition-colors duration-200">
-                    <Icon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors duration-200" />
+                  <div className={`w-8 h-8 rounded-lg ${entry.bg} flex items-center justify-center mb-2.5 transition-colors duration-200`}>
+                    <TplIcon className={`w-4 h-4 ${entry.color} transition-colors duration-200`} />
                   </div>
                   <h3 className="text-[13px] font-semibold text-foreground mb-0.5">{tpl.name}</h3>
                   <p className="text-[11px] text-muted-foreground leading-relaxed">{tpl.description}</p>
