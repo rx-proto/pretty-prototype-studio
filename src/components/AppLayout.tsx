@@ -2,6 +2,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Home, Users, Zap, Link2, CreditCard, Settings, Sparkles, UserPlus } from "lucide-react";
 import { workspace } from "@/lib/data";
+import sarahAvatar from "@/assets/avatars/sarah-chen.jpg";
 
 const navItems = [
   { to: "/preview/workspace", label: "Home", icon: Home },

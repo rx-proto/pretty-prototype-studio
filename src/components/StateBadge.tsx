@@ -1,6 +1,14 @@
 import { cn } from "@/lib/utils";
 import type { EmployeeState } from "@/lib/data";
 
+import mayaAvatar from "@/assets/avatars/maya.jpg";
+import soraAvatar from "@/assets/avatars/sora.jpg";
+import nikoAvatar from "@/assets/avatars/niko.jpg";
+import irisAvatar from "@/assets/avatars/iris.jpg";
+import junAvatar from "@/assets/avatars/jun.jpg";
+import linaAvatar from "@/assets/avatars/lina.jpg";
+import sarahAvatar from "@/assets/avatars/sarah-chen.jpg";
+
 const stateConfig: Record<EmployeeState, { label: string; dotClass: string; bgClass: string; textClass: string; ringClass: string }> = {
   working: { label: "Working", dotClass: "bg-state-working", bgClass: "bg-state-working/8", textClass: "text-state-working", ringClass: "ring-state-working/20" },
   warning: { label: "Warning", dotClass: "bg-state-warning", bgClass: "bg-state-warning/8", textClass: "text-state-warning", ringClass: "ring-state-warning/20" },
@@ -30,24 +38,27 @@ export function StateDot({ state, className }: { state: EmployeeState; className
   );
 }
 
-const avatarColors: Record<string, string> = {
-  M: "from-primary to-state-accent",
-  S: "from-state-warning to-state-blocked",
-  N: "from-state-working to-state-ready",
-  I: "from-state-blocked to-state-warning",
-  J: "from-state-quiet to-primary",
-  L: "from-state-ready to-state-working",
+const avatarMap: Record<string, string> = {
+  Maya: mayaAvatar,
+  Sora: soraAvatar,
+  Niko: nikoAvatar,
+  Iris: irisAvatar,
+  Jun: junAvatar,
+  Lina: linaAvatar,
+  "Sarah Chen": sarahAvatar,
 };
 
+export { avatarMap };
+
 export function EmployeeAvatar({ name, size = "md" }: { name: string; size?: "sm" | "md" | "lg" }) {
-  const sizeClasses = { sm: "w-8 h-8 text-xs", md: "w-10 h-10 text-sm", lg: "w-14 h-14 text-lg" };
-  const gradient = avatarColors[name[0]] || "from-primary to-state-accent";
+  const sizeClasses = { sm: "w-8 h-8", md: "w-10 h-10", lg: "w-14 h-14" };
+  const src = avatarMap[name];
   return (
-    <div className={cn(
-      "rounded-full bg-gradient-to-br flex items-center justify-center flex-shrink-0 font-semibold text-primary-foreground shadow-sm",
-      gradient, sizeClasses[size]
-    )}>
-      {name[0]}
-    </div>
+    <img
+      src={src || mayaAvatar}
+      alt={name}
+      loading="lazy"
+      className={cn("rounded-full object-cover flex-shrink-0 shadow-sm", sizeClasses[size])}
+    />
   );
 }
