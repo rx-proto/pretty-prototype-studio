@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
-import { Pencil, X, Plus, Check } from "lucide-react";
+import { Pencil, X, Plus, Check, Search } from "lucide-react";
 import { skills as allSkills, tools as allTools } from "@/lib/data";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -20,12 +21,20 @@ interface EditableTagListProps {
 export function EditableTagList({ items: initialItems, type, icon, label }: EditableTagListProps) {
   const [items, setItems] = useState(initialItems);
   const [isEditing, setIsEditing] = useState(false);
+  const [search, setSearch] = useState("");
 
   const allOptions = type === "skills"
     ? allSkills.map(s => ({ name: s.name, summary: s.summary }))
     : allTools.map(t => ({ name: t.name, summary: t.summary }));
 
-  const available = allOptions.filter(o => !items.includes(o.name));
+  const available = useMemo(() => {
+    const opts = allOptions.filter(o => !items.includes(o.name));
+    if (!search.trim()) return opts;
+    const q = search.toLowerCase();
+    return opts.filter(o =>
+      o.name.toLowerCase().includes(q) || o.summary.toLowerCase().includes(q)
+    );
+  }, [items, search, allOptions]);
 
   const handleRemove = (item: string) => {
     setItems(items.filter(i => i !== item));
@@ -48,7 +57,7 @@ export function EditableTagList({ items: initialItems, type, icon, label }: Edit
             <h3 className="section-label">{label}</h3>
           </div>
           <button
-            onClick={() => setIsEditing(true)}
+            onClick={() => { setSearch(""); setIsEditing(true); }}
             className="text-muted-foreground hover:text-primary transition-colors duration-200"
           >
             <Pencil className="w-3.5 h-3.5" />
@@ -67,7 +76,7 @@ export function EditableTagList({ items: initialItems, type, icon, label }: Edit
       </div>
 
       <Dialog open={isEditing} onOpenChange={setIsEditing}>
-        <DialogContent className="sm:max-w-[420px]">
+        <DialogContent className="sm:max-w-[420px]" onPointerDownOutside={(e) => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle className="text-[15px]">Edit {label}</DialogTitle>
             <DialogDescription className="text-[13px]">
@@ -99,12 +108,25 @@ export function EditableTagList({ items: initialItems, type, icon, label }: Edit
             )}
           </div>
 
-          {/* Available items */}
-          {available.length > 0 && (
-            <div className="space-y-2 mt-2">
-              <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Available</p>
-              <div className="space-y-1 max-h-[200px] overflow-y-auto">
-                {available.map(option => (
+          {/* Available items with search */}
+          <div className="space-y-2 mt-2">
+            <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Available</p>
+            <div className="relative">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+              <Input
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                placeholder={`Search ${label.toLowerCase()}...`}
+                className="pl-8 h-8 text-[12px]"
+              />
+            </div>
+            <div className="space-y-0.5 max-h-[200px] overflow-y-auto">
+              {available.length === 0 ? (
+                <p className="text-[12px] text-muted-foreground py-3 text-center">
+                  {search ? "No matches found" : `All ${label.toLowerCase()} assigned`}
+                </p>
+              ) : (
+                available.map(option => (
                   <button
                     key={option.name}
                     onClick={() => handleAdd(option.name)}
@@ -116,10 +138,10 @@ export function EditableTagList({ items: initialItems, type, icon, label }: Edit
                       <p className="text-[11px] text-muted-foreground truncate">{option.summary}</p>
                     </div>
                   </button>
-                ))}
-              </div>
+                ))
+              )}
             </div>
-          )}
+          </div>
 
           <button
             onClick={() => setIsEditing(false)}
