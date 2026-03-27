@@ -7,7 +7,6 @@ import { toast } from "sonner";
 
 type Step = "describe" | "review" | "activated";
 
-// Simulated generated draft
 const mockDraft = {
   name: "Maya",
   title: "Competitive intelligence lead",
@@ -37,25 +36,28 @@ export default function CreateEmployeePage() {
 
   if (step === "activated") {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-8">
-        <div className="max-w-md text-center">
-          <div className="w-16 h-16 rounded-2xl bg-state-working/10 flex items-center justify-center mx-auto mb-6">
+      <div className="min-h-screen bg-background flex items-center justify-center p-8 relative">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-state-working/[0.04] blur-[100px]" />
+        </div>
+        <div className="max-w-md text-center relative z-10">
+          <div className="w-16 h-16 rounded-2xl bg-state-working/[0.08] flex items-center justify-center mx-auto mb-6 opacity-0 animate-scale-in">
             <Check className="w-8 h-8 text-state-working" />
           </div>
-          <h1 className="text-[22px] font-bold text-foreground tracking-tight mb-2">{mockDraft.name} is now working</h1>
-          <p className="text-[14px] text-muted-foreground leading-relaxed mb-8">
+          <h1 className="text-[24px] font-bold text-foreground tracking-tight mb-2 opacity-0 animate-fade-in-up" style={{ animationDelay: "0.15s" }}>
+            {mockDraft.name} is now working
+          </h1>
+          <p className="text-[14px] text-muted-foreground leading-relaxed mb-8 opacity-0 animate-fade-in-up" style={{ animationDelay: "0.25s" }}>
             She's getting familiar with your workspace. You'll see her first work results soon.
           </p>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 opacity-0 animate-fade-in-up" style={{ animationDelay: "0.35s" }}>
             <button
               onClick={() => navigate("/preview/employees/maya-competitive-intel")}
               className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-semibold bg-primary text-primary-foreground shadow-md shadow-primary/20 hover:brightness-110 transition-all"
             >
               Go see {mockDraft.name} <ArrowRight className="w-4 h-4" />
             </button>
-            <button
-              className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-medium text-foreground border border-border hover:bg-muted/50 transition-colors"
-            >
+            <button className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-medium text-foreground border border-border hover:bg-muted/40 transition-colors duration-200">
               <Plug className="w-4 h-4" />
               Connect Slack (optional)
             </button>
@@ -69,49 +71,51 @@ export default function CreateEmployeePage() {
     return (
       <div className="min-h-screen bg-background">
         <div className="max-w-2xl mx-auto px-8 py-10">
-          <button onClick={() => setStep("describe")} className="flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground transition-colors mb-6">
+          <button onClick={() => setStep("describe")} className="flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground transition-colors mb-6 opacity-0 animate-fade-in">
             <ArrowLeft className="w-3.5 h-3.5" />
             Back
           </button>
 
-          <div className="mb-6">
-            <h1 className="text-[22px] font-bold text-foreground tracking-tight mb-1">Review your new employee</h1>
-            <p className="text-[13px] text-muted-foreground">Here's what we've put together. You can adjust anything before activating.</p>
+          <div className="mb-6 opacity-0 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
+            <h1 className="text-[24px] font-bold text-foreground tracking-tight mb-1">Review your new employee</h1>
+            <p className="text-[13px] text-muted-foreground">Here's what we've put together. Adjust anything before activating.</p>
           </div>
 
-          <div className="card-premium rounded-xl border border-border p-6 space-y-5 mb-6">
-            <div>
-              <p className="section-label mb-1">Name</p>
-              <p className="text-[16px] font-semibold text-foreground">{mockDraft.name}</p>
-            </div>
-            <div>
-              <p className="section-label mb-1">Role</p>
-              <p className="text-[14px] text-foreground">{mockDraft.title}</p>
-            </div>
-            <div>
-              <p className="section-label mb-1">What they'll do</p>
-              <p className="text-[13px] text-muted-foreground leading-relaxed">{mockDraft.summary}</p>
-            </div>
-            <div>
-              <p className="section-label mb-2">Auto-equipped skills</p>
-              <div className="flex flex-wrap gap-1.5">
-                {mockDraft.skills.map(s => (
-                  <span key={s} className="px-2.5 py-1 text-[11px] font-medium bg-primary/6 text-primary rounded-lg ring-1 ring-inset ring-primary/10">{s}</span>
-                ))}
+          <div className="card-premium rounded-xl border border-border p-6 space-y-5 mb-6 relative noise-overlay opacity-0 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+            <div className="relative">
+              <div>
+                <p className="section-label mb-1">Name</p>
+                <p className="text-[17px] font-semibold text-foreground">{mockDraft.name}</p>
               </div>
-            </div>
-            <div>
-              <p className="section-label mb-2">Auto-equipped tools</p>
-              <div className="flex flex-wrap gap-1.5">
-                {mockDraft.tools.map(t => (
-                  <span key={t} className="px-2.5 py-1 text-[11px] font-medium bg-muted rounded-lg text-foreground">{t}</span>
-                ))}
+              <div>
+                <p className="section-label mb-1">Role</p>
+                <p className="text-[14px] text-foreground">{mockDraft.title}</p>
+              </div>
+              <div>
+                <p className="section-label mb-1">What they'll do</p>
+                <p className="text-[13px] text-muted-foreground leading-relaxed">{mockDraft.summary}</p>
+              </div>
+              <div>
+                <p className="section-label mb-2">Auto-equipped skills</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {mockDraft.skills.map(s => (
+                    <span key={s} className="px-2.5 py-1 text-[11px] font-medium bg-primary/[0.06] text-primary rounded-lg ring-1 ring-inset ring-primary/10">{s}</span>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <p className="section-label mb-2">Auto-equipped tools</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {mockDraft.tools.map(t => (
+                    <span key={t} className="px-2.5 py-1 text-[11px] font-medium bg-muted rounded-lg text-foreground">{t}</span>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <button onClick={() => setStep("describe")} className="px-5 py-2.5 rounded-xl text-[13px] font-medium text-foreground border border-border hover:bg-muted/50 transition-colors">
+          <div className="flex items-center gap-3 opacity-0 animate-fade-in" style={{ animationDelay: "0.3s" }}>
+            <button onClick={() => setStep("describe")} className="px-5 py-2.5 rounded-xl text-[13px] font-medium text-foreground border border-border hover:bg-muted/40 transition-colors duration-200">
               Let me adjust
             </button>
             <button onClick={handleActivate} className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-semibold bg-primary text-primary-foreground shadow-md shadow-primary/20 hover:brightness-110 transition-all">
@@ -127,31 +131,31 @@ export default function CreateEmployeePage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-2xl mx-auto px-8 py-10">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground transition-colors mb-6">
+        <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground transition-colors mb-6 opacity-0 animate-fade-in">
           <ArrowLeft className="w-3.5 h-3.5" />
           Back
         </button>
 
-        <div className="mb-8">
-          <h1 className="text-[22px] font-bold text-foreground tracking-tight mb-1">Create a new employee</h1>
+        <div className="mb-8 opacity-0 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
+          <h1 className="text-[24px] font-bold text-foreground tracking-tight mb-1">Create a new employee</h1>
           <p className="text-[13px] text-muted-foreground">Pick a template or describe what you need in your own words.</p>
         </div>
 
         {/* Templates */}
-        <div className="mb-8">
+        <div className="mb-8 opacity-0 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
           <p className="section-label mb-3">Start from a template</p>
           <div className="grid grid-cols-2 gap-3">
             {roleTemplates.map((tpl) => (
               <button
                 key={tpl.id}
                 onClick={() => { setSelectedTemplate(tpl.id); setDescription(""); }}
-                className={`text-left rounded-xl border p-4 transition-all ${
+                className={`text-left rounded-xl border p-4 transition-all duration-200 group ${
                   selectedTemplate === tpl.id
-                    ? "border-primary/40 bg-primary/4 ring-1 ring-primary/20"
+                    ? "border-primary/30 bg-primary/[0.03] ring-1 ring-primary/15 shadow-sm"
                     : "border-border hover:border-border/80 card-interactive"
                 }`}
               >
-                <div className="text-xl mb-2">{tpl.icon}</div>
+                <div className="text-xl mb-2 group-hover:scale-110 transition-transform duration-300 inline-block">{tpl.icon}</div>
                 <h3 className="text-[13px] font-semibold text-foreground mb-0.5">{tpl.name}</h3>
                 <p className="text-[11px] text-muted-foreground leading-relaxed">{tpl.description}</p>
               </button>
@@ -160,14 +164,14 @@ export default function CreateEmployeePage() {
         </div>
 
         {/* Divider */}
-        <div className="flex items-center gap-3 mb-6">
+        <div className="flex items-center gap-3 mb-6 opacity-0 animate-fade-in" style={{ animationDelay: "0.3s" }}>
           <div className="flex-1 h-px bg-border" />
           <span className="text-[11px] text-muted-foreground">or describe what you need</span>
           <div className="flex-1 h-px bg-border" />
         </div>
 
-        {/* Free-form description */}
-        <div className="mb-6">
+        {/* Free-form */}
+        <div className="mb-6 opacity-0 animate-fade-in" style={{ animationDelay: "0.35s" }}>
           <Textarea
             value={description}
             onChange={e => { setDescription(e.target.value); setSelectedTemplate(null); }}
@@ -176,13 +180,15 @@ export default function CreateEmployeePage() {
           />
         </div>
 
-        <button
-          onClick={handleGenerate}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-semibold bg-primary text-primary-foreground shadow-md shadow-primary/20 hover:brightness-110 transition-all"
-        >
-          <Send className="w-4 h-4" />
-          Generate employee
-        </button>
+        <div className="opacity-0 animate-fade-in" style={{ animationDelay: "0.4s" }}>
+          <button
+            onClick={handleGenerate}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-semibold bg-primary text-primary-foreground shadow-md shadow-primary/20 hover:brightness-110 transition-all"
+          >
+            <Send className="w-4 h-4" />
+            Generate employee
+          </button>
+        </div>
       </div>
     </div>
   );

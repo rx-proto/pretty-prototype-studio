@@ -19,14 +19,14 @@ export default function EmployeeDetailPage() {
   return (
     <div className="p-8 max-w-[960px] mx-auto">
       {/* Back */}
-      <button onClick={() => navigate("/preview/employees")} className="flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground transition-colors mb-6">
+      <button onClick={() => navigate("/preview/employees")} className="flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground transition-colors mb-6 opacity-0 animate-fade-in">
         <ArrowLeft className="w-3.5 h-3.5" />
         Employees
       </button>
 
       {/* Hero */}
-      <div className="card-premium rounded-xl border border-border p-6 mb-6">
-        <div className="flex items-start gap-4">
+      <div className="card-premium rounded-xl border border-border p-6 mb-6 relative noise-overlay opacity-0 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
+        <div className="relative flex items-start gap-4">
           <EmployeeAvatar name={emp.name} size="lg" />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2.5 mb-1">
@@ -41,7 +41,7 @@ export default function EmployeeDetailPage() {
 
       <div className="grid grid-cols-3 gap-5">
         {/* Main column */}
-        <div className="col-span-2 space-y-5">
+        <div className="col-span-2 space-y-5 animate-stagger">
           {/* Current status */}
           <div className="card-premium rounded-xl border border-border p-5">
             <h2 className="text-[13px] font-semibold text-foreground mb-2">What they're doing now</h2>
@@ -56,7 +56,7 @@ export default function EmployeeDetailPage() {
         </div>
 
         {/* Side column */}
-        <div className="space-y-4">
+        <div className="space-y-4 animate-stagger">
           {/* Skills */}
           <div className="card-premium rounded-xl border border-border p-5">
             <div className="flex items-center justify-between mb-3">
@@ -64,13 +64,13 @@ export default function EmployeeDetailPage() {
                 <Zap className="w-3.5 h-3.5 text-muted-foreground" />
                 <h3 className="section-label">Skills</h3>
               </div>
-              <button className="text-muted-foreground hover:text-primary transition-colors">
+              <button className="text-muted-foreground hover:text-primary transition-colors duration-200">
                 <Plus className="w-3.5 h-3.5" />
               </button>
             </div>
             <div className="flex flex-wrap gap-1.5">
               {emp.skills.map((s) => (
-                <span key={s} className="px-2.5 py-1 text-[11px] font-medium bg-primary/6 text-primary rounded-lg ring-1 ring-inset ring-primary/10">{s}</span>
+                <span key={s} className="px-2.5 py-1 text-[11px] font-medium bg-primary/[0.06] text-primary rounded-lg ring-1 ring-inset ring-primary/10">{s}</span>
               ))}
             </div>
           </div>
@@ -82,7 +82,7 @@ export default function EmployeeDetailPage() {
                 <Wrench className="w-3.5 h-3.5 text-muted-foreground" />
                 <h3 className="section-label">Tools</h3>
               </div>
-              <button className="text-muted-foreground hover:text-primary transition-colors">
+              <button className="text-muted-foreground hover:text-primary transition-colors duration-200">
                 <Plus className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -100,7 +100,7 @@ export default function EmployeeDetailPage() {
                 <Plug className="w-3.5 h-3.5 text-muted-foreground" />
                 <h3 className="section-label">Connectors</h3>
               </div>
-              <button className="text-muted-foreground hover:text-primary transition-colors">
+              <button className="text-muted-foreground hover:text-primary transition-colors duration-200">
                 <Plus className="w-3.5 h-3.5" />
               </button>
             </div>
