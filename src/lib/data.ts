@@ -1,83 +1,58 @@
-// Synthetic data for the AIE workspace prototype
+// Synthetic data for the Agens.run workspace prototype
 
-export type EmployeeState = "working" | "warning" | "blocked" | "quiet" | "ready" | "accent";
+export type EmployeeState = "working" | "warning" | "blocked" | "idle" | "ready" | "accent";
 
 export interface WorkspacePreview {
   name: string;
-  description: string;
-  workspaceCountLabel: string;
-  peopleAtWork: number;
-  itemsNeedingAttention: number;
+  employeesWorking: number;
+  totalEmployees: number;
   creditsLeft: number;
-  weeklySpend: number;
-  burnPerDay: number;
-  autoRefillEnabled: boolean;
-  skillsInstalled: number;
-  liveConnections: number;
+  creditStatus: string;
+  connectorsActive: number;
 }
 
 export interface EmployeePreview {
   id: string;
   name: string;
   title: string;
-  team: string;
   summary: string;
   state: EmployeeState;
+  statusMessage: string;
   lastWork: string;
-  budgetLabel: string;
-  budgetUsedPercent: number;
-  channels: string[];
   skills: string[];
-  weeklySpend: number;
-  weeklyBudget: number;
-  currentFocus: string;
-  owner: string;
-  defaultRoute: string;
-}
-
-export interface ActivityPreview {
-  id: string;
-  employeeId: string;
-  employeeName: string;
-  trigger: string;
-  channel: string;
-  headline: string;
-  summary: string;
-  outcome: string;
-  state: EmployeeState;
-  cost: number;
-  timeLabel: string;
-  nextStep: string;
+  tools: string[];
+  connectors: string[];
 }
 
 export interface SkillPreview {
   id: string;
   name: string;
-  category: string;
   summary: string;
-  state: EmployeeState;
-  adoptionLabel: string;
-  employeeNames: string[];
-  source: "Core" | "Custom";
+  usedBy: number;
+  icon: string;
 }
 
-export interface ConnectionPreview {
-  id: string;
-  name: string;
-  type: string;
-  state: EmployeeState;
-  summary: string;
-  routeLabel: string;
-  employees: string[];
-  lastDelivery: string;
-  note: string;
-}
-
-export interface SettingsGroupPreview {
+export interface ToolPreview {
   id: string;
   name: string;
   summary: string;
-  items: Array<{ label: string; value: string }>;
+  usedBy: number;
+  icon: string;
+}
+
+export interface ConnectorPreview {
+  id: string;
+  name: string;
+  summary: string;
+  connected: boolean;
+  employeesUsing: number;
+}
+
+export interface RoleTemplate {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
 }
 
 export interface AttentionItem {
@@ -87,20 +62,22 @@ export interface AttentionItem {
   action: string;
 }
 
+export interface SettingsGroupPreview {
+  id: string;
+  name: string;
+  summary: string;
+  items: Array<{ label: string; value: string }>;
+}
+
 // --- Data ---
 
 export const workspace: WorkspacePreview = {
   name: "Acme AI Workforce",
-  description: "Central workspace for managing AI employees across teams",
-  workspaceCountLabel: "6 employees",
-  peopleAtWork: 4,
-  itemsNeedingAttention: 3,
+  employeesWorking: 4,
+  totalEmployees: 6,
   creditsLeft: 12840,
-  weeklySpend: 418,
-  burnPerDay: 1240,
-  autoRefillEnabled: true,
-  skillsInstalled: 6,
-  liveConnections: 4,
+  creditStatus: "Healthy",
+  connectorsActive: 4,
 };
 
 export const employees: EmployeePreview[] = [
@@ -108,304 +85,117 @@ export const employees: EmployeePreview[] = [
     id: "maya-competitive-intel",
     name: "Maya",
     title: "Competitive intelligence lead",
-    team: "Growth",
-    summary: "Monitors competitor pricing, feature releases, and market positioning across 12 tracked companies.",
+    summary: "Monitors competitor pricing, feature releases, and market positioning.",
     state: "working",
+    statusMessage: "Tracking 3 competitors' spring campaign launches",
     lastWork: "Completed Q1 competitor pricing analysis",
-    budgetLabel: "On track",
-    budgetUsedPercent: 62,
-    channels: ["Slack", "Email"],
     skills: ["Market Watch", "Research Briefs"],
-    weeklySpend: 96,
-    weeklyBudget: 155,
-    currentFocus: "Tracking competitor spring campaign launches",
-    owner: "Sarah Chen",
-    defaultRoute: "Slack #intel-updates",
+    tools: ["Web Search", "PDF Reader"],
+    connectors: ["Slack", "Email"],
   },
   {
     id: "sora-support-triage",
     name: "Sora",
     title: "Support triage coordinator",
-    team: "Support Ops",
-    summary: "Categorizes and routes incoming support tickets based on urgency, topic, and team capacity.",
+    summary: "Categorizes and routes incoming support tickets based on urgency and topic.",
     state: "warning",
+    statusMessage: "Handling elevated ticket volume — approaching budget limit",
     lastWork: "Triaged 47 tickets in the last 24h",
-    budgetLabel: "Near limit",
-    budgetUsedPercent: 83,
-    channels: ["Slack", "Webhook"],
     skills: ["Escalation Triage"],
-    weeklySpend: 72,
-    weeklyBudget: 87,
-    currentFocus: "Handling elevated ticket volume from product update",
-    owner: "Mike Torres",
-    defaultRoute: "Slack #support-triage",
+    tools: ["Web Search"],
+    connectors: ["Slack", "Webhook"],
   },
   {
     id: "niko-launch-ops",
     name: "Niko",
     title: "Launch operations partner",
-    team: "Operations",
-    summary: "Coordinates cross-functional launch readiness, tracks blockers, and sends go/no-go summaries.",
+    summary: "Coordinates cross-functional launch readiness and tracks blockers.",
     state: "working",
+    statusMessage: "Preparing Feature X launch checklist — all items green",
     lastWork: "Sent launch readiness brief for Feature X",
-    budgetLabel: "Healthy",
-    budgetUsedPercent: 55,
-    channels: ["Slack", "Lark", "Email"],
     skills: ["Launch Checklist", "Follow-through"],
-    weeklySpend: 88,
-    weeklyBudget: 160,
-    currentFocus: "Preparing Feature X launch checklist",
-    owner: "Sarah Chen",
-    defaultRoute: "Slack #launch-room",
+    tools: ["Spreadsheet", "Calendar"],
+    connectors: ["Slack", "Lark", "Email"],
   },
   {
     id: "iris-deal-risk",
     name: "Iris",
     title: "Deal risk monitor",
-    team: "Revenue",
-    summary: "Scans deal pipelines for risk signals — stalled deals, missing contacts, declining engagement.",
+    summary: "Scans deal pipelines for risk signals like stalled deals or declining engagement.",
     state: "blocked",
+    statusMessage: "Waiting for Salesforce connection to resume work",
     lastWork: "Flagged 3 at-risk deals in Enterprise pipeline",
-    budgetLabel: "Under budget",
-    budgetUsedPercent: 29,
-    channels: ["Email"],
     skills: ["Deal Risk Radar"],
-    weeklySpend: 54,
-    weeklyBudget: 185,
-    currentFocus: "Waiting for Salesforce connection",
-    owner: "Lisa Park",
-    defaultRoute: "Email digest",
+    tools: ["Web Search", "Spreadsheet"],
+    connectors: ["Email"],
   },
   {
     id: "jun-research-editor",
     name: "Jun",
     title: "Research editor",
-    team: "Research",
-    summary: "Reviews and refines research drafts, checks citations, and formats final deliverables.",
-    state: "quiet",
+    summary: "Reviews and refines research drafts, checks citations, and formats deliverables.",
+    state: "idle",
+    statusMessage: "Waiting for new research assignments",
     lastWork: "Edited market landscape report",
-    budgetLabel: "Low usage",
-    budgetUsedPercent: 31,
-    channels: ["Slack"],
     skills: ["Market Watch", "Research Briefs"],
-    weeklySpend: 48,
-    weeklyBudget: 155,
-    currentFocus: "Idle — waiting for new research assignments",
-    owner: "Sarah Chen",
-    defaultRoute: "Slack #research",
+    tools: ["PDF Reader", "Web Search"],
+    connectors: ["Slack"],
   },
   {
     id: "lina-onboarding",
     name: "Lina",
     title: "Customer onboarding watcher",
-    team: "Customer Success",
-    summary: "Tracks new customer onboarding milestones and flags accounts falling behind schedule.",
+    summary: "Tracks new customer onboarding milestones and flags accounts falling behind.",
     state: "ready",
+    statusMessage: "Monitoring 8 active onboarding journeys",
     lastWork: "Onboarding summary sent for 5 new accounts",
-    budgetLabel: "On track",
-    budgetUsedPercent: 44,
-    channels: ["Slack", "Email"],
     skills: ["Follow-through"],
-    weeklySpend: 60,
-    weeklyBudget: 136,
-    currentFocus: "Monitoring 8 active onboarding journeys",
-    owner: "Mike Torres",
-    defaultRoute: "Slack #cs-updates",
-  },
-];
-
-export const activities: ActivityPreview[] = [
-  {
-    id: "act-1",
-    employeeId: "maya-competitive-intel",
-    employeeName: "Maya",
-    trigger: "Scheduled scan",
-    channel: "Slack",
-    headline: "Competitor pricing update detected",
-    summary: "Acme Corp reduced their Pro plan pricing by 15%. Updated comparison matrix and notified Growth team.",
-    outcome: "Brief delivered",
-    state: "working",
-    cost: 12,
-    timeLabel: "2 hours ago",
-    nextStep: "Review pricing brief",
-  },
-  {
-    id: "act-2",
-    employeeId: "maya-competitive-intel",
-    employeeName: "Maya",
-    trigger: "News alert",
-    channel: "Email",
-    headline: "New feature launch by CompetitorB",
-    summary: "CompetitorB announced AI-powered analytics. Drafted impact analysis for product team.",
-    outcome: "Analysis sent",
-    state: "working",
-    cost: 18,
-    timeLabel: "Yesterday",
-    nextStep: "Product team review",
-  },
-  {
-    id: "act-3",
-    employeeId: "sora-support-triage",
-    employeeName: "Sora",
-    trigger: "Webhook event",
-    channel: "Slack",
-    headline: "Escalation: billing dispute from Enterprise client",
-    summary: "Auto-escalated to finance team. Customer sentiment flagged as negative.",
-    outcome: "Escalated",
-    state: "warning",
-    cost: 4,
-    timeLabel: "30 min ago",
-    nextStep: "Finance review",
-  },
-  {
-    id: "act-4",
-    employeeId: "niko-launch-ops",
-    employeeName: "Niko",
-    trigger: "Checklist timer",
-    channel: "Lark",
-    headline: "Feature X readiness check completed",
-    summary: "All 8 checklist items green. Marketing assets confirmed. QA sign-off received.",
-    outcome: "Go status confirmed",
-    state: "working",
-    cost: 22,
-    timeLabel: "4 hours ago",
-    nextStep: "Final launch approval",
-  },
-  {
-    id: "act-5",
-    employeeId: "iris-deal-risk",
-    employeeName: "Iris",
-    trigger: "Pipeline scan",
-    channel: "Email",
-    headline: "3 deals flagged as at-risk",
-    summary: "Enterprise pipeline shows stalled engagement on Deals #1042, #1088, #1103.",
-    outcome: "Alert sent",
-    state: "blocked",
-    cost: 8,
-    timeLabel: "Yesterday",
-    nextStep: "Sales team follow-up",
+    tools: ["Spreadsheet", "Calendar"],
+    connectors: ["Slack", "Email"],
   },
 ];
 
 export const skills: SkillPreview[] = [
-  {
-    id: "skill-market-watch",
-    name: "Market Watch",
-    category: "Research",
-    summary: "Continuously scans competitive landscape, pricing changes, and market signals.",
-    state: "working",
-    adoptionLabel: "Used by 3 employees",
-    employeeNames: ["Maya", "Jun", "Niko"],
-    source: "Core",
-  },
-  {
-    id: "skill-research-briefs",
-    name: "Research Briefs",
-    category: "Writing",
-    summary: "Generates structured research summaries with citations and key takeaways.",
-    state: "working",
-    adoptionLabel: "Used by 2 employees",
-    employeeNames: ["Maya", "Jun"],
-    source: "Core",
-  },
-  {
-    id: "skill-escalation-triage",
-    name: "Escalation Triage",
-    category: "Support",
-    summary: "Classifies incoming tickets by urgency and routes to the right team.",
-    state: "warning",
-    adoptionLabel: "Used by 1 employee",
-    employeeNames: ["Sora"],
-    source: "Custom",
-  },
-  {
-    id: "skill-launch-checklist",
-    name: "Launch Checklist",
-    category: "Operations",
-    summary: "Tracks cross-functional launch readiness and sends go/no-go status.",
-    state: "working",
-    adoptionLabel: "Used by 1 employee",
-    employeeNames: ["Niko"],
-    source: "Core",
-  },
-  {
-    id: "skill-deal-risk-radar",
-    name: "Deal Risk Radar",
-    category: "Revenue",
-    summary: "Scans deal pipelines for risk signals like stalled engagement or missing contacts.",
-    state: "blocked",
-    adoptionLabel: "Used by 1 employee",
-    employeeNames: ["Iris"],
-    source: "Custom",
-  },
-  {
-    id: "skill-follow-through",
-    name: "Follow-through",
-    category: "Operations",
-    summary: "Monitors task completion and flags items that fall behind schedule.",
-    state: "ready",
-    adoptionLabel: "Used by 2 employees",
-    employeeNames: ["Niko", "Lina"],
-    source: "Core",
-  },
+  { id: "skill-1", name: "Market Watch", summary: "Continuously scans competitive landscape, pricing changes, and market signals.", usedBy: 3, icon: "📡" },
+  { id: "skill-2", name: "Research Briefs", summary: "Generates structured research summaries with citations and key takeaways.", usedBy: 2, icon: "📝" },
+  { id: "skill-3", name: "Escalation Triage", summary: "Classifies incoming tickets by urgency and routes to the right team.", usedBy: 1, icon: "🚨" },
+  { id: "skill-4", name: "Launch Checklist", summary: "Tracks cross-functional launch readiness and sends go/no-go status.", usedBy: 1, icon: "🚀" },
+  { id: "skill-5", name: "Deal Risk Radar", summary: "Scans deal pipelines for risk signals like stalled engagement.", usedBy: 1, icon: "🎯" },
+  { id: "skill-6", name: "Follow-through", summary: "Monitors task completion and flags items that fall behind schedule.", usedBy: 2, icon: "✅" },
+  { id: "skill-7", name: "Sentiment Analysis", summary: "Analyzes customer communications to detect sentiment trends.", usedBy: 0, icon: "💬" },
+  { id: "skill-8", name: "Data Summarization", summary: "Condenses large datasets into actionable insights and visual summaries.", usedBy: 0, icon: "📊" },
 ];
 
-export const connections: ConnectionPreview[] = [
-  {
-    id: "conn-slack",
-    name: "Slack",
-    type: "Messaging",
-    state: "working",
-    summary: "Primary communication channel for most employees.",
-    routeLabel: "Inbound mentions and outbound digests",
-    employees: ["Maya", "Sora", "Niko", "Jun", "Lina"],
-    lastDelivery: "2 min ago",
-    note: "All channels healthy",
-  },
-  {
-    id: "conn-lark",
-    name: "Lark",
-    type: "Messaging",
-    state: "ready",
-    summary: "Secondary messaging for operations updates.",
-    routeLabel: "Outbound room updates",
-    employees: ["Niko"],
-    lastDelivery: "4 hours ago",
-    note: "Connected and ready",
-  },
-  {
-    id: "conn-email",
-    name: "Email",
-    type: "Delivery",
-    state: "working",
-    summary: "Outbound delivery for digests and reports.",
-    routeLabel: "Outbound digests only",
-    employees: ["Maya", "Iris", "Niko", "Lina"],
-    lastDelivery: "1 hour ago",
-    note: "Delivery rate 99.2%",
-  },
-  {
-    id: "conn-webhook",
-    name: "Webhook",
-    type: "Intake",
-    state: "warning",
-    summary: "Receives events from product and support systems.",
-    routeLabel: "Inbound events from product and support systems",
-    employees: ["Sora"],
-    lastDelivery: "30 min ago",
-    note: "Intermittent delays on support webhook",
-  },
-  {
-    id: "conn-salesforce",
-    name: "Salesforce",
-    type: "CRM",
-    state: "blocked",
-    summary: "CRM integration for deal pipeline data.",
-    routeLabel: "Not active yet",
-    employees: ["Iris"],
-    lastDelivery: "Never",
-    note: "Awaiting admin authorization",
-  },
+export const tools: ToolPreview[] = [
+  { id: "tool-1", name: "Web Search", summary: "Search the web for real-time information, news, and data.", usedBy: 4, icon: "🔍" },
+  { id: "tool-2", name: "Image Generation", summary: "Create images and visual assets from text descriptions.", usedBy: 0, icon: "🎨" },
+  { id: "tool-3", name: "Code Interpreter", summary: "Run code to analyze data, create charts, and process files.", usedBy: 0, icon: "💻" },
+  { id: "tool-4", name: "PDF Reader", summary: "Extract and analyze content from PDF documents.", usedBy: 2, icon: "📄" },
+  { id: "tool-5", name: "Spreadsheet", summary: "Read, write, and analyze spreadsheet data.", usedBy: 3, icon: "📊" },
+  { id: "tool-6", name: "Calendar", summary: "Check schedules, create events, and manage time-based triggers.", usedBy: 2, icon: "📅" },
+];
+
+export const connectors: ConnectorPreview[] = [
+  { id: "conn-slack", name: "Slack", summary: "Send and receive messages across your Slack workspace.", connected: true, employeesUsing: 5 },
+  { id: "conn-lark", name: "Lark", summary: "Connect to Lark for team messaging and updates.", connected: true, employeesUsing: 1 },
+  { id: "conn-email", name: "Email", summary: "Send digests, reports, and notifications via email.", connected: true, employeesUsing: 4 },
+  { id: "conn-webhook", name: "Webhook", summary: "Receive events from external systems and services.", connected: true, employeesUsing: 1 },
+  { id: "conn-salesforce", name: "Salesforce", summary: "Connect to your CRM for deal and pipeline data.", connected: false, employeesUsing: 0 },
+  { id: "conn-notion", name: "Notion", summary: "Read and write pages in your Notion workspace.", connected: false, employeesUsing: 0 },
+  { id: "conn-github", name: "GitHub", summary: "Monitor repositories, PRs, and issues.", connected: false, employeesUsing: 0 },
+];
+
+export const roleTemplates: RoleTemplate[] = [
+  { id: "tpl-1", name: "Competitive Analyst", description: "Monitors competitors, tracks pricing changes, and delivers market briefs.", icon: "📡" },
+  { id: "tpl-2", name: "Support Triage Agent", description: "Categorizes and routes support tickets to the right team automatically.", icon: "🎫" },
+  { id: "tpl-3", name: "Launch Coordinator", description: "Tracks launch readiness across teams and sends go/no-go summaries.", icon: "🚀" },
+  { id: "tpl-4", name: "Deal Risk Monitor", description: "Watches your sales pipeline and flags deals that need attention.", icon: "📉" },
+];
+
+export const attentionItems: AttentionItem[] = [
+  { title: "Sora", detail: "Approaching weekly budget limit due to high ticket volume.", tone: "warning", action: "Review" },
+  { title: "Iris", detail: "Salesforce connector needs to be set up to resume work.", tone: "blocked", action: "Connect" },
+  { title: "Maya", detail: "New pricing brief is ready for your review.", tone: "accent", action: "Review" },
 ];
 
 export const settingsGroups: SettingsGroupPreview[] = [
@@ -451,40 +241,7 @@ export const settingsGroups: SettingsGroupPreview[] = [
   },
 ];
 
-export const attentionItems: AttentionItem[] = [
-  {
-    title: "Sora",
-    detail: "Budget is close to the weekly guardrail.",
-    tone: "warning",
-    action: "Budget",
-  },
-  {
-    title: "Iris",
-    detail: "Salesforce route is still missing.",
-    tone: "blocked",
-    action: "Connection",
-  },
-  {
-    title: "Maya",
-    detail: "Pricing brief is ready for review.",
-    tone: "accent",
-    action: "Review",
-  },
-];
-
 // Helpers
 export function getEmployeeById(id: string): EmployeePreview | undefined {
   return employees.find((e) => e.id === id);
-}
-
-export function getActivitiesByEmployee(employeeId: string): ActivityPreview[] {
-  return activities.filter((a) => a.employeeId === employeeId);
-}
-
-export function getSkillsByEmployee(employeeName: string): SkillPreview[] {
-  return skills.filter((s) => s.employeeNames.includes(employeeName));
-}
-
-export function getConnectionsByEmployee(employeeName: string): ConnectionPreview[] {
-  return connections.filter((c) => c.employees.includes(employeeName));
 }
