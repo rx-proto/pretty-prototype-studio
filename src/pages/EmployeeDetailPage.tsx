@@ -37,7 +37,6 @@ export default function EmployeeDetailPage() {
 
   const logs = getActivityLogs(emp.id);
   const connectorDetails = getConnectorDetails(emp.connectors);
-  const cost = costData[emp.id] || defaultCost;
 
   const handleArchive = () => {
     setIsArchived(true);
@@ -92,31 +91,7 @@ export default function EmployeeDetailPage() {
 
         {/* Right sidebar */}
         <div className="space-y-4 animate-stagger">
-          {/* Cost card */}
-          <div className="card-premium rounded-xl border border-border p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <DollarSign className="w-3.5 h-3.5 text-muted-foreground" />
-              <h3 className="section-label">Cost</h3>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <p className="text-[11px] text-muted-foreground">Today</p>
-                <p className="text-[15px] font-semibold text-foreground tabular-nums">${cost.today.toFixed(2)}</p>
-              </div>
-              <div>
-                <p className="text-[11px] text-muted-foreground">This week</p>
-                <p className="text-[15px] font-semibold text-foreground tabular-nums">${cost.week.toFixed(2)}</p>
-              </div>
-              <div>
-                <p className="text-[11px] text-muted-foreground">This month</p>
-                <p className="text-[15px] font-semibold text-foreground tabular-nums">${cost.month.toFixed(2)}</p>
-              </div>
-              <div>
-                <p className="text-[11px] text-muted-foreground">Avg / run</p>
-                <p className="text-[15px] font-semibold text-foreground tabular-nums">${cost.avgPerRun.toFixed(2)}</p>
-              </div>
-            </div>
-          </div>
+          <CostPanel employeeId={emp.id} />
 
           <EditableTagList
             items={emp.skills}
