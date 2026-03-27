@@ -337,13 +337,13 @@ export const invoices: InvoicePreview[] = [
 ];
 
 export const dailySpend: DailySpend[] = [
-  { day: "Mon", date: "Mar 17", amount: 42.40 },
-  { day: "Tue", date: "Mar 18", amount: 58.60 },
-  { day: "Wed", date: "Mar 19", amount: 45.20 },
-  { day: "Thu", date: "Mar 20", amount: 62.10 },
-  { day: "Fri", date: "Mar 21", amount: 39.80 },
-  { day: "Sat", date: "Mar 22", amount: 14.20 },
-  { day: "Sun", date: "Mar 23", amount: 8.50 },
+  { day: "Mon", date: "Mar 17", amount: 42.40, inference: 28.60, toolCalls: 13.80 },
+  { day: "Tue", date: "Mar 18", amount: 58.60, inference: 38.20, toolCalls: 20.40 },
+  { day: "Wed", date: "Mar 19", amount: 45.20, inference: 30.10, toolCalls: 15.10 },
+  { day: "Thu", date: "Mar 20", amount: 62.10, inference: 41.40, toolCalls: 20.70 },
+  { day: "Fri", date: "Mar 21", amount: 39.80, inference: 26.50, toolCalls: 13.30 },
+  { day: "Sat", date: "Mar 22", amount: 14.20, inference: 9.80, toolCalls: 4.40 },
+  { day: "Sun", date: "Mar 23", amount: 8.50, inference: 5.60, toolCalls: 2.90 },
 ];
 
 export const employeeSpend: { name: string; amount: number }[] = [
