@@ -110,7 +110,10 @@ export default function EmployeeDetailPage() {
       {/* Main content */}
       <div className="grid grid-cols-3 gap-5 items-stretch">
         {/* Left: Tab content */}
-        <div className="col-span-2 animate-stagger flex flex-col">
+        <div
+          className="col-span-2 animate-stagger flex flex-col min-h-0"
+          style={panelHeight ? { height: `${panelHeight}px` } : undefined}
+        >
           {/* Tab switcher */}
           <div className="flex gap-1 p-1 rounded-lg bg-muted mb-4 w-fit flex-shrink-0">
             <button
@@ -149,7 +152,7 @@ export default function EmployeeDetailPage() {
         </div>
 
         {/* Right sidebar */}
-        <div className="space-y-4 animate-stagger">
+        <div ref={sidebarRef} className="space-y-4 animate-stagger">
           <CostPanel employeeId={emp.id} />
 
           <EditableTagList
