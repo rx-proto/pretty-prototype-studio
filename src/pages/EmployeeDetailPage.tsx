@@ -31,8 +31,31 @@ export default function EmployeeDetailPage() {
   const emp = getEmployeeById(id || "");
   const [isArchived, setIsArchived] = useState(emp?.archived ?? false);
   const [activeTab, setActiveTab] = useState<"activity" | "messages">("activity");
+  const leftColumnRef = useRef<HTMLDivElement>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const [panelHeight, setPanelHeight] = useState<number | null>(null);
+  const [leftColumnHeight, setLeftColumnHeight] = useState<number | null>(null);
+
+  useLayoutEffect(() => {
+    if (!emp) return;
+
+    const updateHeight = () => {
+      if (sidebarRef.current && leftColumnRef.current) {
+        const sidebarBottom = sidebarRef.current.getBoundingClientRect().bottom;
+        const leftColumnTop = leftColumnRef.current.getBoundingClientRect().top;
+        setLeftColumnHeight(Math.max(Math.round(sidebarBottom - leftColumnTop), 0));
+      }
+    };
+
+    updateHeight();
+    const observer = new ResizeObserver(updateHeight);
+    if (sidebarRef.current) observer.observe(sidebarRef.current);
+    window.addEventListener("resize", updateHeight);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateHeight);
+    };
+  }, [activeTab, isArchived, emp]);
 
   if (!emp) {
     return (
@@ -54,24 +77,6 @@ export default function EmployeeDetailPage() {
     setIsArchived(false);
     toast.success(`${emp.name} has been restored`);
   };
-
-  useLayoutEffect(() => {
-    const updateHeight = () => {
-      if (sidebarRef.current) {
-        setPanelHeight(sidebarRef.current.offsetHeight);
-      }
-    };
-
-    updateHeight();
-    const observer = new ResizeObserver(updateHeight);
-    if (sidebarRef.current) observer.observe(sidebarRef.current);
-    window.addEventListener("resize", updateHeight);
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", updateHeight);
-    };
-  }, [activeTab, isArchived, emp.id]);
 
   return (
     <div className="p-8 max-w-[960px] mx-auto">
@@ -110,9 +115,13 @@ export default function EmployeeDetailPage() {
       {/* Main content */}
       <div className="grid grid-cols-3 gap-5 items-stretch">
         {/* Left: Tab content */}
-        <div className="col-span-2 animate-stagger flex flex-col">
+        <div
+          ref={leftColumnRef}
+          className="col-span-2 animate-stagger flex flex-col min-h-0 gap-4"
+          style={leftColumnHeight ? { height: `${leftColumnHeight}px` } : undefined}
+        >
           {/* Tab switcher */}
-          <div className="flex gap-1 p-1 rounded-lg bg-muted mb-4 w-fit flex-shrink-0">
+          <div className="flex gap-1 p-1 rounded-lg bg-muted w-fit flex-shrink-0">
             <button
               onClick={() => setActiveTab("activity")}
               className={cn(
@@ -149,7 +158,7 @@ export default function EmployeeDetailPage() {
         </div>
 
         {/* Right sidebar */}
-        <div className="space-y-4 animate-stagger">
+        <div ref={sidebarRef} className="space-y-4 animate-stagger">
           <CostPanel employeeId={emp.id} />
 
           <EditableTagList
