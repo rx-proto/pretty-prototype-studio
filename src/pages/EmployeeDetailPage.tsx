@@ -32,7 +32,9 @@ export default function EmployeeDetailPage() {
   const [isArchived, setIsArchived] = useState(emp?.archived ?? false);
   const [activeTab, setActiveTab] = useState<"activity" | "messages">("activity");
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const tabBarRef = useRef<HTMLDivElement>(null);
   const [panelHeight, setPanelHeight] = useState<number | null>(null);
+  const [tabBarHeight, setTabBarHeight] = useState(0);
 
   useLayoutEffect(() => {
     if (!emp) return;
@@ -40,6 +42,10 @@ export default function EmployeeDetailPage() {
     const updateHeight = () => {
       if (sidebarRef.current) {
         setPanelHeight(sidebarRef.current.offsetHeight);
+      }
+
+      if (tabBarRef.current) {
+        setTabBarHeight(tabBarRef.current.offsetHeight);
       }
     };
 
@@ -64,6 +70,7 @@ export default function EmployeeDetailPage() {
 
   const logs = getActivityLogs(emp.id);
   const connectorDetails = getConnectorDetails(emp.connectors);
+  const contentHeight = panelHeight ? Math.max(panelHeight - tabBarHeight - 16, 0) : undefined;
 
   const handleArchive = () => {
     setIsArchived(true);
@@ -112,12 +119,9 @@ export default function EmployeeDetailPage() {
       {/* Main content */}
       <div className="grid grid-cols-3 gap-5 items-stretch">
         {/* Left: Tab content */}
-        <div
-          className="col-span-2 animate-stagger flex flex-col min-h-0"
-          style={panelHeight ? { height: `${panelHeight}px` } : undefined}
-        >
+        <div className="col-span-2 animate-stagger flex flex-col min-h-0">
           {/* Tab switcher */}
-          <div className="flex gap-1 p-1 rounded-lg bg-muted mb-4 w-fit flex-shrink-0">
+          <div ref={tabBarRef} className="flex gap-1 p-1 rounded-lg bg-muted mb-4 w-fit flex-shrink-0">
             <button
               onClick={() => setActiveTab("activity")}
               className={cn(
@@ -144,7 +148,7 @@ export default function EmployeeDetailPage() {
             </button>
           </div>
 
-          <div className="flex-1 min-h-0 h-0">
+          <div className="flex-1 min-h-0" style={contentHeight ? { height: `${contentHeight}px` } : undefined}>
             {activeTab === "activity" ? (
               <ActivityLog entries={logs} />
             ) : (
