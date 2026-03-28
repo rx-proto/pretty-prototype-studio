@@ -27,20 +27,40 @@ export interface EmployeePreview {
   connectors: string[];
 }
 
+export type SkillSource = "platform" | "workspace" | "ai-generated";
+export type Visibility = "platform" | "workspace";
+export type SideEffect = "read_only" | "write_external" | "send_message" | "spend_budget" | "mutate_state";
+export type ToolSource = "platform" | "workspace" | "ai-generated";
+
 export interface SkillPreview {
   id: string;
   name: string;
-  summary: string;
-  usedBy: number;
+  displayTitle: string;
+  description: string;
+  source: SkillSource;
+  visibility: Visibility;
+  version: string;
   icon: string;
+  usedBy: number;
+  requiredTools: string[];
+  hasExamples: boolean;
+  hasReferences: boolean;
+  hasScripts: boolean;
 }
 
 export interface ToolPreview {
   id: string;
   name: string;
-  summary: string;
-  usedBy: number;
+  displayName: string;
+  description: string;
   icon: string;
+  usedBy: number;
+  source: ToolSource;
+  visibility: Visibility;
+  version: string;
+  sideEffects: SideEffect[];
+  inputParams: string[];
+  inputExample?: string;
 }
 
 export interface ConnectorPreview {
@@ -263,26 +283,27 @@ export const employees: EmployeePreview[] = [
 ];
 
 export const skills: SkillPreview[] = [
-  { id: "skill-1", name: "Market Watch", summary: "Continuously scans competitive landscape, pricing changes, and market signals.", usedBy: 4, icon: "eye" },
-  { id: "skill-2", name: "Research Briefs", summary: "Generates structured research summaries with citations and key takeaways.", usedBy: 3, icon: "file-text" },
-  { id: "skill-3", name: "Escalation Triage", summary: "Classifies incoming tickets by urgency and routes to the right team.", usedBy: 3, icon: "alert-triangle" },
-  { id: "skill-4", name: "Launch Checklist", summary: "Tracks cross-functional launch readiness and sends go/no-go status.", usedBy: 1, icon: "clipboard-check" },
-  { id: "skill-5", name: "Deal Risk Radar", summary: "Scans deal pipelines for risk signals like stalled engagement.", usedBy: 1, icon: "shield-alert" },
-  { id: "skill-6", name: "Follow-through", summary: "Monitors task completion and flags items that fall behind schedule.", usedBy: 4, icon: "refresh-cw" },
-  { id: "skill-7", name: "Sentiment Analysis", summary: "Analyzes customer communications to detect sentiment trends.", usedBy: 0, icon: "heart" },
-  { id: "skill-8", name: "Data Summarization", summary: "Condenses large datasets into actionable insights and visual summaries.", usedBy: 1, icon: "bar-chart-3" },
-  { id: "skill-9", name: "Content Generation", summary: "Produces channel-adapted content from topics and briefs for publishing.", usedBy: 1, icon: "pen-tool" },
-  { id: "skill-10", name: "Channel Publishing", summary: "Publishes content to configured channels within defined guardrails.", usedBy: 1, icon: "send" },
+  { id: "skill-1", name: "market-watch", displayTitle: "Market Watch", description: "Continuously scans competitive landscape, pricing changes, and market signals. Use when tracking competitor moves or market shifts.", source: "platform", visibility: "platform", version: "2026-03-15", icon: "eye", usedBy: 4, requiredTools: ["web_search", "browser"], hasExamples: true, hasReferences: false, hasScripts: false },
+  { id: "skill-2", name: "research-briefs", displayTitle: "Research Briefs", description: "Generates structured research summaries with citations and key takeaways. Use when synthesizing information from multiple sources into a readable brief.", source: "platform", visibility: "platform", version: "2026-03-10", icon: "file-text", usedBy: 3, requiredTools: ["web_search", "pdf_reader"], hasExamples: true, hasReferences: true, hasScripts: false },
+  { id: "skill-3", name: "escalation-triage", displayTitle: "Escalation Triage", description: "Classifies incoming tickets by urgency and routes to the right team. Use when processing support queues or incident pipelines.", source: "platform", visibility: "platform", version: "2026-02-28", icon: "alert-triangle", usedBy: 3, requiredTools: [], hasExamples: true, hasReferences: false, hasScripts: false },
+  { id: "skill-4", name: "launch-checklist", displayTitle: "Launch Checklist", description: "Tracks cross-functional launch readiness and sends go/no-go status. Use when coordinating multi-team releases.", source: "workspace", visibility: "workspace", version: "2026-03-20", icon: "clipboard-check", usedBy: 1, requiredTools: ["spreadsheet"], hasExamples: false, hasReferences: true, hasScripts: false },
+  { id: "skill-5", name: "deal-risk-radar", displayTitle: "Deal Risk Radar", description: "Scans deal pipelines for risk signals like stalled engagement or missing next steps. Use when monitoring sales pipeline health.", source: "workspace", visibility: "workspace", version: "2026-03-01", icon: "shield-alert", usedBy: 1, requiredTools: ["spreadsheet"], hasExamples: true, hasReferences: false, hasScripts: true },
+  { id: "skill-6", name: "follow-through", displayTitle: "Follow-through", description: "Monitors task completion and flags items that fall behind schedule. Use when ensuring accountability across teams.", source: "platform", visibility: "platform", version: "2026-01-20", icon: "refresh-cw", usedBy: 4, requiredTools: [], hasExamples: true, hasReferences: false, hasScripts: false },
+  { id: "skill-7", name: "sentiment-analysis", displayTitle: "Sentiment Analysis", description: "Analyzes customer communications to detect sentiment trends. Use when processing feedback, reviews, or support conversations.", source: "platform", visibility: "platform", version: "2026-03-05", icon: "heart", usedBy: 0, requiredTools: [], hasExamples: true, hasReferences: false, hasScripts: true },
+  { id: "skill-8", name: "data-summarization", displayTitle: "Data Summarization", description: "Condenses large datasets into actionable insights and visual summaries. Use when working with reports, spreadsheets, or data exports.", source: "workspace", visibility: "workspace", version: "2026-02-15", icon: "bar-chart-3", usedBy: 1, requiredTools: ["spreadsheet", "code_interpreter"], hasExamples: false, hasReferences: true, hasScripts: true },
+  { id: "skill-9", name: "content-generation", displayTitle: "Content Generation", description: "Produces channel-adapted content from topics and briefs for publishing. Use when drafting blog posts, social copy, or internal updates.", source: "ai-generated", visibility: "workspace", version: "2026-03-22", icon: "pen-tool", usedBy: 1, requiredTools: ["web_search"], hasExamples: true, hasReferences: false, hasScripts: false },
+  { id: "skill-10", name: "channel-publishing", displayTitle: "Channel Publishing", description: "Publishes content to configured channels within defined guardrails. Use after content has been generated and reviewed.", source: "ai-generated", visibility: "workspace", version: "2026-03-22", icon: "send", usedBy: 1, requiredTools: [], hasExamples: false, hasReferences: false, hasScripts: false },
 ];
 
 export const tools: ToolPreview[] = [
-  { id: "tool-1", name: "Web Search", summary: "Search the web for real-time information, news, and data.", usedBy: 7, icon: "globe" },
-  { id: "tool-2", name: "Browser", summary: "Navigate and interact with web pages to extract or verify information.", usedBy: 1, icon: "monitor" },
-  { id: "tool-3", name: "Code Interpreter", summary: "Run code to analyze data, create charts, and process files.", usedBy: 1, icon: "terminal" },
-  { id: "tool-4", name: "PDF Reader", summary: "Extract and analyze content from PDF documents.", usedBy: 3, icon: "file-text" },
-  { id: "tool-5", name: "Spreadsheet", summary: "Read, write, and analyze spreadsheet data.", usedBy: 5, icon: "table" },
-  { id: "tool-6", name: "Calendar", summary: "Check schedules, create events, and manage time-based triggers.", usedBy: 2, icon: "calendar" },
-  { id: "tool-7", name: "Image Generation", summary: "Create images and visual assets from text descriptions.", usedBy: 0, icon: "image" },
+  { id: "tool-1", name: "web_search", displayName: "Web Search", description: "Search the web for real-time information, news, and data.", usedBy: 7, icon: "globe", source: "platform", visibility: "platform", version: "2026-01-05", sideEffects: ["read_only"], inputParams: ["query", "max_results?", "date_range?"], inputExample: '{ "query": "OpenAI pricing changes 2026", "max_results": 10 }' },
+  { id: "tool-2", name: "browser", displayName: "Browser", description: "Navigate and interact with web pages to extract or verify information.", usedBy: 1, icon: "monitor", source: "platform", visibility: "platform", version: "2026-01-10", sideEffects: ["read_only"], inputParams: ["url", "action?", "selector?"], inputExample: '{ "url": "https://competitor.com/pricing" }' },
+  { id: "tool-3", name: "code_interpreter", displayName: "Code Interpreter", description: "Run code to analyze data, create charts, and process files.", usedBy: 1, icon: "terminal", source: "platform", visibility: "platform", version: "2026-02-01", sideEffects: ["read_only", "mutate_state"], inputParams: ["code", "language?", "files?"], inputExample: '{ "code": "import pandas as pd\\ndf.describe()" }' },
+  { id: "tool-4", name: "pdf_reader", displayName: "PDF Reader", description: "Extract and analyze content from PDF documents.", usedBy: 3, icon: "file-text", source: "platform", visibility: "platform", version: "2026-01-15", sideEffects: ["read_only"], inputParams: ["file", "pages?", "extract_tables?"], inputExample: '{ "file": "q4-report.pdf", "pages": "1-5" }' },
+  { id: "tool-5", name: "spreadsheet", displayName: "Spreadsheet", description: "Read, write, and analyze spreadsheet data.", usedBy: 5, icon: "table", source: "platform", visibility: "platform", version: "2026-01-08", sideEffects: ["read_only", "write_external"], inputParams: ["file", "operation", "range?", "data?"], inputExample: '{ "file": "revenue.xlsx", "operation": "read", "range": "A1:D50" }' },
+  { id: "tool-6", name: "calendar", displayName: "Calendar", description: "Check schedules, create events, and manage time-based triggers.", usedBy: 2, icon: "calendar", source: "platform", visibility: "platform", version: "2026-02-15", sideEffects: ["read_only", "write_external"], inputParams: ["action", "date?", "title?", "attendees?"], inputExample: '{ "action": "list", "date": "2026-03-28" }' },
+  { id: "tool-7", name: "image_generation", displayName: "Image Generation", description: "Create images and visual assets from text descriptions.", usedBy: 0, icon: "image", source: "platform", visibility: "platform", version: "2026-03-01", sideEffects: ["spend_budget"], inputParams: ["prompt", "size?", "style?"], inputExample: '{ "prompt": "Minimal logo for a fintech startup", "size": "1024x1024" }' },
+  { id: "tool-8", name: "slack_send_message", displayName: "Slack Message", description: "Send a message to a Slack channel or direct message.", usedBy: 4, icon: "send", source: "workspace", visibility: "workspace", version: "2026-03-28", sideEffects: ["send_message"], inputParams: ["channel", "text", "thread_ts?"], inputExample: '{ "channel": "#launch", "text": "Daily summary is ready." }' },
 ];
 
 export const connectors: ConnectorPreview[] = [

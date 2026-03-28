@@ -24,8 +24,8 @@ export function EditableTagList({ items: initialItems, type, icon, label }: Edit
   const [search, setSearch] = useState("");
 
   const allOptions = type === "skills"
-    ? allSkills.map(s => ({ name: s.name, summary: s.summary }))
-    : allTools.map(t => ({ name: t.name, summary: t.summary }));
+    ? allSkills.map(s => ({ name: s.name, summary: s.description }))
+    : allTools.map(t => ({ name: t.name, summary: t.description }));
 
   const available = useMemo(() => {
     const opts = allOptions.filter(o => !items.includes(o.name));
