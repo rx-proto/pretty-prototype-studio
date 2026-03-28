@@ -34,6 +34,26 @@ export default function EmployeeDetailPage() {
   const sidebarRef = useRef<HTMLDivElement>(null);
   const [panelHeight, setPanelHeight] = useState<number | null>(null);
 
+  useLayoutEffect(() => {
+    if (!emp) return;
+
+    const updateHeight = () => {
+      if (sidebarRef.current) {
+        setPanelHeight(sidebarRef.current.offsetHeight);
+      }
+    };
+
+    updateHeight();
+    const observer = new ResizeObserver(updateHeight);
+    if (sidebarRef.current) observer.observe(sidebarRef.current);
+    window.addEventListener("resize", updateHeight);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateHeight);
+    };
+  }, [activeTab, isArchived, emp]);
+
   if (!emp) {
     return (
       <div className="p-8">
@@ -54,24 +74,6 @@ export default function EmployeeDetailPage() {
     setIsArchived(false);
     toast.success(`${emp.name} has been restored`);
   };
-
-  useLayoutEffect(() => {
-    const updateHeight = () => {
-      if (sidebarRef.current) {
-        setPanelHeight(sidebarRef.current.offsetHeight);
-      }
-    };
-
-    updateHeight();
-    const observer = new ResizeObserver(updateHeight);
-    if (sidebarRef.current) observer.observe(sidebarRef.current);
-    window.addEventListener("resize", updateHeight);
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", updateHeight);
-    };
-  }, [activeTab, isArchived, emp.id]);
 
   return (
     <div className="p-8 max-w-[960px] mx-auto">
