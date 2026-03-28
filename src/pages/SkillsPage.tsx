@@ -244,7 +244,7 @@ export default function SkillsPage() {
 
       {/* ===== Skill Detail Dialog ===== */}
       <Dialog open={!!selected} onOpenChange={(open) => { if (!open) setSelected(null); }}>
-        <DialogContent className="sm:max-w-[520px]">
+        <DialogContent className="sm:max-w-[520px] max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             {selected && selectedEntry && (
               <div className="flex items-center gap-3 mb-1">
