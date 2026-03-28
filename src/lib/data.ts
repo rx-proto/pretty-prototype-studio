@@ -51,6 +51,7 @@ export interface SkillPreview {
 export interface ToolPreview {
   id: string;
   name: string;
+  displayName: string;
   description: string;
   icon: string;
   usedBy: number;
