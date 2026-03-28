@@ -32,20 +32,17 @@ export default function EmployeeDetailPage() {
   const [isArchived, setIsArchived] = useState(emp?.archived ?? false);
   const [activeTab, setActiveTab] = useState<"activity" | "messages">("activity");
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const tabBarRef = useRef<HTMLDivElement>(null);
-  const [panelHeight, setPanelHeight] = useState<number | null>(null);
-  const [tabBarHeight, setTabBarHeight] = useState(0);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [contentHeight, setContentHeight] = useState<number | null>(null);
 
   useLayoutEffect(() => {
     if (!emp) return;
 
     const updateHeight = () => {
-      if (sidebarRef.current) {
-        setPanelHeight(sidebarRef.current.offsetHeight);
-      }
-
-      if (tabBarRef.current) {
-        setTabBarHeight(tabBarRef.current.offsetHeight);
+      if (sidebarRef.current && contentRef.current) {
+        const sidebarBottom = sidebarRef.current.getBoundingClientRect().bottom;
+        const contentTop = contentRef.current.getBoundingClientRect().top;
+        setContentHeight(Math.max(Math.round(sidebarBottom - contentTop), 0));
       }
     };
 
@@ -70,7 +67,6 @@ export default function EmployeeDetailPage() {
 
   const logs = getActivityLogs(emp.id);
   const connectorDetails = getConnectorDetails(emp.connectors);
-  const contentHeight = panelHeight ? Math.max(panelHeight - tabBarHeight - 16, 0) : undefined;
 
   const handleArchive = () => {
     setIsArchived(true);
@@ -121,7 +117,7 @@ export default function EmployeeDetailPage() {
         {/* Left: Tab content */}
         <div className="col-span-2 animate-stagger flex flex-col min-h-0">
           {/* Tab switcher */}
-          <div ref={tabBarRef} className="flex gap-1 p-1 rounded-lg bg-muted mb-4 w-fit flex-shrink-0">
+          <div className="flex gap-1 p-1 rounded-lg bg-muted mb-4 w-fit flex-shrink-0">
             <button
               onClick={() => setActiveTab("activity")}
               className={cn(
@@ -148,7 +144,7 @@ export default function EmployeeDetailPage() {
             </button>
           </div>
 
-          <div className="flex-1 min-h-0" style={contentHeight ? { height: `${contentHeight}px` } : undefined}>
+          <div ref={contentRef} className="flex-1 min-h-0" style={contentHeight ? { height: `${contentHeight}px` } : undefined}>
             {activeTab === "activity" ? (
               <ActivityLog entries={logs} />
             ) : (
