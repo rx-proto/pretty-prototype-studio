@@ -27,20 +27,39 @@ export interface EmployeePreview {
   connectors: string[];
 }
 
+export type SkillSource = "platform" | "workspace" | "ai-generated";
+export type Visibility = "platform" | "workspace";
+export type SideEffect = "read_only" | "write_external" | "send_message" | "spend_budget" | "mutate_state";
+export type ToolSource = "platform" | "workspace" | "ai-generated";
+
 export interface SkillPreview {
   id: string;
   name: string;
-  summary: string;
-  usedBy: number;
+  displayTitle: string;
+  description: string;
+  source: SkillSource;
+  visibility: Visibility;
+  version: string;
   icon: string;
+  usedBy: number;
+  requiredTools: string[];
+  hasExamples: boolean;
+  hasReferences: boolean;
+  hasScripts: boolean;
 }
 
 export interface ToolPreview {
   id: string;
   name: string;
-  summary: string;
-  usedBy: number;
+  description: string;
   icon: string;
+  usedBy: number;
+  source: ToolSource;
+  visibility: Visibility;
+  version: string;
+  sideEffects: SideEffect[];
+  inputParams: string[];
+  inputExample?: string;
 }
 
 export interface ConnectorPreview {
