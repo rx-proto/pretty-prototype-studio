@@ -31,18 +31,18 @@ export default function EmployeeDetailPage() {
   const emp = getEmployeeById(id || "");
   const [isArchived, setIsArchived] = useState(emp?.archived ?? false);
   const [activeTab, setActiveTab] = useState<"activity" | "messages">("activity");
+  const leftColumnRef = useRef<HTMLDivElement>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [contentHeight, setContentHeight] = useState<number | null>(null);
+  const [leftColumnHeight, setLeftColumnHeight] = useState<number | null>(null);
 
   useLayoutEffect(() => {
     if (!emp) return;
 
     const updateHeight = () => {
-      if (sidebarRef.current && contentRef.current) {
+      if (sidebarRef.current && leftColumnRef.current) {
         const sidebarBottom = sidebarRef.current.getBoundingClientRect().bottom;
-        const contentTop = contentRef.current.getBoundingClientRect().top;
-        setContentHeight(Math.max(Math.round(sidebarBottom - contentTop), 0));
+        const leftColumnTop = leftColumnRef.current.getBoundingClientRect().top;
+        setLeftColumnHeight(Math.max(Math.round(sidebarBottom - leftColumnTop), 0));
       }
     };
 
@@ -115,9 +115,13 @@ export default function EmployeeDetailPage() {
       {/* Main content */}
       <div className="grid grid-cols-3 gap-5 items-stretch">
         {/* Left: Tab content */}
-        <div className="col-span-2 animate-stagger flex flex-col min-h-0">
+        <div
+          ref={leftColumnRef}
+          className="col-span-2 animate-stagger flex flex-col min-h-0 gap-4"
+          style={leftColumnHeight ? { height: `${leftColumnHeight}px` } : undefined}
+        >
           {/* Tab switcher */}
-          <div className="flex gap-1 p-1 rounded-lg bg-muted mb-4 w-fit flex-shrink-0">
+          <div className="flex gap-1 p-1 rounded-lg bg-muted w-fit flex-shrink-0">
             <button
               onClick={() => setActiveTab("activity")}
               className={cn(
@@ -144,7 +148,7 @@ export default function EmployeeDetailPage() {
             </button>
           </div>
 
-          <div ref={contentRef} className="flex-1 min-h-0" style={contentHeight ? { height: `${contentHeight}px` } : undefined}>
+          <div className="flex-1 min-h-0 h-0">
             {activeTab === "activity" ? (
               <ActivityLog entries={logs} />
             ) : (
