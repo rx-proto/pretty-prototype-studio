@@ -10,14 +10,16 @@ export interface ActivityLogEntry {
   detail?: string;
 }
 
-export interface ConnectorDetail {
-  id: string;
-  name: string;
-  icon: string;
-  status: "connected" | "error" | "disconnected";
-  lastSync?: string;
-  detail: string;
-  permissions?: string[];
+export type ReadinessState = "ready" | "needs_config" | "needs_verify" | "not_available";
+
+export interface ConnectionReadiness {
+  type: string;
+  required: boolean;
+  state: ReadinessState;
+  connectionId?: string;
+  connectionName?: string;
+  lastVerifiedAt?: string;
+  lastError?: string;
 }
 
 // Generate synthetic activity logs per employee
@@ -78,78 +80,64 @@ export function getActivityLogs(employeeId: string): ActivityLogEntry[] {
   ];
 }
 
-export function getConnectorDetails(connectorNames: string[]): ConnectorDetail[] {
-  const details: Record<string, ConnectorDetail> = {
+export function getConnectionReadiness(connectorNames: string[]): ConnectionReadiness[] {
+  const readinessMap: Record<string, ConnectionReadiness> = {
     Slack: {
-      id: "conn-slack",
-      name: "Slack",
-      icon: "message-square",
-      status: "connected",
-      lastSync: "2 min ago",
-      detail: "Sends updates to #team-updates and receives commands from DMs",
-      permissions: ["Read messages", "Send messages", "React to messages"],
+      type: "slack",
+      required: true,
+      state: "ready",
+      connectionId: "conn-slack",
+      connectionName: "Main Slack",
+      lastVerifiedAt: "2026-03-28T12:00:00Z",
     },
     Email: {
-      id: "conn-email",
-      name: "Email",
-      icon: "mail",
-      status: "connected",
-      lastSync: "15 min ago",
-      detail: "Sends digests and reports via workspace email",
-      permissions: ["Send email", "Read inbox"],
+      type: "email",
+      required: true,
+      state: "ready",
+      connectionId: "conn-email",
+      connectionName: "Workspace Email",
+      lastVerifiedAt: "2026-03-28T08:15:00Z",
     },
     Lark: {
-      id: "conn-lark",
-      name: "Lark",
-      icon: "message-circle",
-      status: "connected",
-      lastSync: "5 min ago",
-      detail: "Posts updates to Lark groups and receives event triggers",
-      permissions: ["Send messages", "Read group messages"],
+      type: "lark",
+      required: true,
+      state: "ready",
+      connectionId: "conn-lark",
+      connectionName: "Lark Workspace",
+      lastVerifiedAt: "2026-03-27T09:30:00Z",
     },
     Webhook: {
-      id: "conn-webhook",
-      name: "Webhook",
-      icon: "globe",
-      status: "connected",
-      lastSync: "1 min ago",
-      detail: "Receives events from external systems via HTTP POST",
-      permissions: ["Receive events"],
+      type: "webhook",
+      required: true,
+      state: "needs_verify",
+      connectionId: "conn-webhook",
+      connectionName: "Inbound Webhook",
+      lastVerifiedAt: "2026-03-25T14:00:00Z",
     },
     GitHub: {
-      id: "conn-github",
-      name: "GitHub",
-      icon: "code",
-      status: "connected",
-      lastSync: "10 min ago",
-      detail: "Monitors repos, PRs, and issues for status changes",
-      permissions: ["Read repos", "Read issues", "Read PRs"],
+      type: "github",
+      required: true,
+      state: "ready",
+      connectionId: "conn-github",
+      connectionName: "GitHub Org",
+      lastVerifiedAt: "2026-03-28T10:45:00Z",
     },
     Salesforce: {
-      id: "conn-salesforce",
-      name: "Salesforce",
-      icon: "database",
-      status: "disconnected",
-      detail: "Not connected — required for deal pipeline access",
-      permissions: ["Read Opportunities", "Read Contacts"],
+      type: "salesforce",
+      required: true,
+      state: "not_available",
+      lastError: "Connection not configured",
     },
     Browser: {
-      id: "conn-browser",
-      name: "Browser",
-      icon: "monitor",
-      status: "connected",
-      lastSync: "30 min ago",
-      detail: "Navigates and interacts with web pages",
-      permissions: ["Browse web"],
+      type: "browser",
+      required: false,
+      state: "ready",
     },
   };
 
-  return connectorNames.map(name => details[name] || {
-    id: `conn-${name.toLowerCase()}`,
-    name,
-    icon: "plug",
-    status: "connected" as const,
-    lastSync: "unknown",
-    detail: `Connected to ${name}`,
+  return connectorNames.map(name => readinessMap[name] || {
+    type: name.toLowerCase(),
+    required: true,
+    state: "not_available" as const,
   });
 }

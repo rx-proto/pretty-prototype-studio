@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getEmployeeById } from "@/lib/data";
-import { getActivityLogs, getConnectorDetails } from "@/lib/employee-detail-data";
+import { getActivityLogs, getConnectionReadiness } from "@/lib/employee-detail-data";
 import { StateDot, EmployeeAvatar } from "@/components/StateBadge";
 import { ActivityLog } from "@/components/employee-detail/ActivityLog";
 import { EditableTagList } from "@/components/employee-detail/EditableTagList";
@@ -66,7 +66,7 @@ export default function EmployeeDetailPage() {
   }
 
   const logs = getActivityLogs(emp.id);
-  const connectorDetails = getConnectorDetails(emp.connectors);
+  const connectionReadiness = getConnectionReadiness(emp.connectors);
 
   const handleArchive = () => {
     setIsArchived(true);
@@ -175,7 +175,7 @@ export default function EmployeeDetailPage() {
             label="Tools"
           />
 
-          <ConnectorsPanel details={connectorDetails} employeeName={emp.name} />
+          <ConnectorsPanel readiness={connectionReadiness} employeeName={emp.name} />
 
           {/* Archive / Restore */}
           {isArchived ? (
