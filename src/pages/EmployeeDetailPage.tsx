@@ -175,7 +175,7 @@ export default function EmployeeDetailPage() {
             label="Tools"
           />
 
-          <ConnectorsPanel details={connectorDetails} employeeName={emp.name} />
+          <ConnectorsPanel readiness={connectionReadiness} employeeName={emp.name} />
 
           {/* Archive / Restore */}
           {isArchived ? (
