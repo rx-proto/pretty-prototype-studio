@@ -63,12 +63,27 @@ export interface ToolPreview {
   inputExample?: string;
 }
 
-export interface ConnectorPreview {
-  id: string;
+export type ConnectionType = "slack" | "lark" | "email" | "webhook" | "github" | "salesforce" | "notion" | "telegram" | "database";
+export type VerificationStage = "unconfigured" | "config_saved" | "provider_verified";
+
+export interface ConnectorCatalogEntry {
+  type: ConnectionType;
   name: string;
   summary: string;
-  connected: boolean;
+  category: "channel" | "system";
+}
+
+export interface ConnectionInstance {
+  id: string;
+  type: ConnectionType;
+  name: string;
+  displayName: string;
+  summary: string;
+  verificationStage: VerificationStage;
+  lastVerifiedAt?: string;
+  lastError?: string;
   employeesUsing: number;
+  externalInstanceId?: string;
 }
 
 export interface RoleTemplate {
@@ -306,14 +321,26 @@ export const tools: ToolPreview[] = [
   { id: "tool-8", name: "slack_send_message", displayName: "Slack Message", description: "Send a message to a Slack channel or direct message.", usedBy: 4, icon: "send", source: "workspace", visibility: "workspace", version: "2026-03-28", sideEffects: ["send_message"], inputParams: ["channel", "text", "thread_ts?"], inputExample: '{ "channel": "#launch", "text": "Daily summary is ready." }' },
 ];
 
-export const connectors: ConnectorPreview[] = [
-  { id: "conn-slack", name: "Slack", summary: "Send and receive messages across your Slack workspace.", connected: true, employeesUsing: 8 },
-  { id: "conn-lark", name: "Lark", summary: "Connect to Lark for team messaging and updates.", connected: true, employeesUsing: 2 },
-  { id: "conn-email", name: "Email", summary: "Send digests, reports, and notifications via email.", connected: true, employeesUsing: 6 },
-  { id: "conn-webhook", name: "Webhook", summary: "Receive events from external systems and services.", connected: true, employeesUsing: 3 },
-  { id: "conn-github", name: "GitHub", summary: "Monitor repositories, PRs, and issues.", connected: true, employeesUsing: 2 },
-  { id: "conn-salesforce", name: "Salesforce", summary: "Connect to your CRM for deal and pipeline data.", connected: false, employeesUsing: 0 },
-  { id: "conn-notion", name: "Notion", summary: "Read and write pages in your Notion workspace.", connected: false, employeesUsing: 0 },
+export const connectorCatalog: ConnectorCatalogEntry[] = [
+  { type: "slack", name: "Slack", summary: "Send and receive messages across your Slack workspace.", category: "channel" },
+  { type: "lark", name: "Lark", summary: "Connect to Lark for team messaging and updates.", category: "channel" },
+  { type: "email", name: "Email", summary: "Send digests, reports, and notifications via email.", category: "channel" },
+  { type: "telegram", name: "Telegram", summary: "Send and receive messages via Telegram bots.", category: "channel" },
+  { type: "webhook", name: "Webhook", summary: "Receive events from external systems via HTTP.", category: "system" },
+  { type: "github", name: "GitHub", summary: "Monitor repositories, PRs, and issues.", category: "system" },
+  { type: "salesforce", name: "Salesforce", summary: "Connect to your CRM for deal and pipeline data.", category: "system" },
+  { type: "notion", name: "Notion", summary: "Read and write pages in your Notion workspace.", category: "system" },
+  { type: "database", name: "Database", summary: "Connect to external databases for data access.", category: "system" },
+];
+
+export const connectionInstances: ConnectionInstance[] = [
+  { id: "conn-slack", type: "slack", name: "Main Slack", displayName: "Slack", summary: "Send and receive messages across your Slack workspace.", verificationStage: "provider_verified", lastVerifiedAt: "2026-03-28T12:00:00Z", employeesUsing: 8, externalInstanceId: "T-ACME-01" },
+  { id: "conn-lark", type: "lark", name: "Lark Workspace", displayName: "Lark", summary: "Connect to Lark for team messaging and updates.", verificationStage: "provider_verified", lastVerifiedAt: "2026-03-27T09:30:00Z", employeesUsing: 2, externalInstanceId: "lark-tenant-01" },
+  { id: "conn-email", type: "email", name: "Workspace Email", displayName: "Email", summary: "Send digests, reports, and notifications via email.", verificationStage: "provider_verified", lastVerifiedAt: "2026-03-28T08:15:00Z", employeesUsing: 6 },
+  { id: "conn-webhook", type: "webhook", name: "Inbound Webhook", displayName: "Webhook", summary: "Receive events from external systems via HTTP.", verificationStage: "config_saved", lastVerifiedAt: "2026-03-25T14:00:00Z", employeesUsing: 3 },
+  { id: "conn-github", type: "github", name: "GitHub Org", displayName: "GitHub", summary: "Monitor repositories, PRs, and issues.", verificationStage: "provider_verified", lastVerifiedAt: "2026-03-28T10:45:00Z", employeesUsing: 2, externalInstanceId: "acme-org" },
+  { id: "conn-salesforce", type: "salesforce", name: "Salesforce", displayName: "Salesforce", summary: "Connect to your CRM for deal and pipeline data.", verificationStage: "unconfigured", employeesUsing: 0 },
+  { id: "conn-notion", type: "notion", name: "Notion", displayName: "Notion", summary: "Read and write pages in your Notion workspace.", verificationStage: "unconfigured", employeesUsing: 0 },
 ];
 
 export const roleTemplates: RoleTemplate[] = [
